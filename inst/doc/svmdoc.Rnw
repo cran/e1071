@@ -45,7 +45,7 @@ award-winning\footnote{The library won the IJCNN 2001 Challenge by solving two o
   three problems: the Generalization Ability Challenge (GAC) and the Text
   Decoding Challenge (TDC). For more information, see: \url{http://www.csie.ntu.edu.tw/~cjlin/papers/ijcnn.ps.gz}.}
 C++-implementation by Chih-Chung Chang and Chih-Jen Lin,
-\texttt{libsvm} (current version: 2.31), featuring:
+\texttt{libsvm} (current version: 2.6), featuring:
 \begin{itemize}
 \item $C$- and $\nu$-classification
 \item one-class-classification (novelty detection)

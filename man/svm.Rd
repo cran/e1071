@@ -66,7 +66,8 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     and \code{sigmoid} (default: 0)}
   \item{cost}{cost of constraints violation (default: 1)---it is the
     \sQuote{C}-constant of the regularization term in the Lagrange formulation.}
-  \item{nu}{parameter needed for \code{nu-classification} and \code{one-classification}}
+  \item{nu}{parameter needed for \code{nu-classification},
+    \code{nu-regression}, and \code{one-classification}}
   \item{class.weights}{a named vector of weights for the different
     classes, used for asymetric class sizes. Not all factor levels have
     to be supplied (default weight: 1). All components have to be named.}
