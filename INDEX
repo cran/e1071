@@ -1,43 +1,40 @@
-Discrete                 Discrete Distribution
-RTangle                  R Driver for Stangle
-RWeaveLatex              R/LaTeX Driver for Sweave
-Sweave                   Automatic Generation of Reports Using Noweb
-bclust                   Bagged Clustering
-bincombinations          Binary Combinations
-bootstrap.lca            Bootstrap Samples of LCA Results
-boxplot.bclust           Boxplot of cluster profiles
-classAgreement           Coefficients comparing classification agreement
-cmeans                   Fuzzy C-Means Clustering
-countpattern             Count Binary Patterns
-cshell                   Fuzzy C-Shell Clustering
-e1071-internal           Internal e1071 functions
-element                  Extract Elements of an Array
-fclustIndex              Fuzzy Cluster Indexes (Validity/Performance
-                         Measures)
-hamming.distance         Hamming Distances of Vectors
-hamming.window           Computes the Coefficients of a Hamming Window.
-hanning.window           Computes the Coefficients of a Hanning Window.
-ica                      Independent Component Analysis
-impute                   Replace Missing Values
-interpolate              Interpolate Values of Array
-kurtosis                 Kurtosis
-lca                      Latent Class Analysis (LCA)
-matchClasses             Find similar classes in two-way contingency
-                         tables
-moment                   Statistical Moment
-permutations             All permutations of integers 1:n
-plot.stft                Plot Short Time Fourier Transforms
-predict.svm              Predict method for Support Vector Machines
-rbridge                  Simulation of Brownian Bridge
-read.octave              Read Octave Data File
-rectangle.window         Computes the Coefficients of a Rectangle Window.
-rwiener                  Simulation of Wiener Process
-scaclust                 Fuzzy Clustering using Scatter Matrices
-allShortestPaths         Find Shortest Paths Between All Nodes in a
-                         Directed Graph
-sigmoid                  The logistic function and derivatives
-skewness                 Skewness
-sparsify                 Sparce Matrices Support
-stft                     Computes the Short Time Fourier Transform of a
-                         Vector
-svm                      Support Vector Machines
+Discrete                Discrete Distribution
+bclust                  Bagged Clustering
+bincombinations         Binary Combinations
+bootstrap.lca           Bootstrap Samples of LCA Results
+boxplot.bclust          Boxplot of cluster profiles
+classAgreement          Coefficients comparing classification agreement
+cmeans                  Fuzzy C-Means Clustering
+countpattern            Count Binary Patterns
+cshell                  Fuzzy C-Shell Clustering
+e1071-internal          Internal e1071 functions
+element                 Extract Elements of an Array
+fclustIndex             Fuzzy Cluster Indexes (Validity/Performance
+                        Measures)
+hamming.distance        Hamming Distances of Vectors
+hamming.window          Computes the Coefficients of a Hamming Window.
+hanning.window          Computes the Coefficients of a Hanning Window.
+ica                     Independent Component Analysis
+impute                  Replace Missing Values
+interpolate             Interpolate Values of Array
+kurtosis                Kurtosis
+lca                     Latent Class Analysis (LCA)
+matchClasses            Find similar classes in two-way contingency
+                        tables
+moment                  Statistical Moment
+permutations            All permutations of integers 1:n
+plot.stft               Plot Short Time Fourier Transforms
+predict.svm             Predict method for Support Vector Machines
+rbridge                 Simulation of Brownian Bridge
+read.octave             Read Octave Data File
+rectangle.window        Computes the Coefficients of a Rectangle
+                        Window.
+rwiener                 Simulation of Wiener Process
+scaclust                Fuzzy Clustering using Scatter Matrices
+allShortestPaths        Find Shortest Paths Between All Nodes in a
+                        Directed Graph
+sigmoid                 The logistic function and derivatives
+skewness                Skewness
+stft                    Computes the Short Time Fourier Transform of a
+                        Vector
+svm                     Support Vector Machines

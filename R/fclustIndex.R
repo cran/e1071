@@ -103,7 +103,7 @@ fclustIndex <- function ( y, x, index= "all" )
   partition.entropy <- function(clres){ 
     xrows <- dim(clres$me)[1]
     ncenters <- dim(clres$centers)[2]
-    partitionentropy_0.0
+    partitionentropy <- 0.0
     for (i in 1:xrows){
       for (k in 1:ncenters){
         if (clres$me[i,k]!=0.0)
