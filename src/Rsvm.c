@@ -298,7 +298,7 @@ void svmtrain (double *x, int *r, int *c,
 	
 	*nr  = model->l;
 	*nclasses = model->nr_class;
-	memcpy (rho, model->rho, *nclasses * sizeof(double));
+	memcpy (rho, model->rho, *nclasses * (*nclasses - 1)/2 * sizeof(double));
 	for (i = 0; i < *nclasses-1; i++)
 	    memcpy (coefs + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
 	

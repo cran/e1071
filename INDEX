@@ -45,4 +45,5 @@ stft                    Computes the Short Time Fourier Transform of a
                         Vector
 svm                     Support Vector Machines
 tune                    Parameter tuning of fuctions using grid search
-tune.rpart              Convenience tuning functions
+tune.control            control parameters for the tune function
+tune.wrapper            Convenience tuning wrapper functions

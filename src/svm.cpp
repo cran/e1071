@@ -20,7 +20,8 @@ template <class S, class T> inline void clone(T*& dst, S* src, int n)
 	dst = new T[n];
 	memcpy((void *)dst,(void *)src,sizeof(T)*n);
 }
-#define INF HUGE_VAL
+#define INF DBL_MAX
+//ISO C99 extension: #define INF HUGE_VAL
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 #if 0
 void info(char *fmt,...)

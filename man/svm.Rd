@@ -149,59 +149,59 @@ attach(iris)
 
 ## classification mode
 # default with factor response:
-model <- svm (Species~., data=iris)
+model <- svm(Species~., data=iris)
 
 # alternatively the traditional interface:
-x <- subset (iris, select = -Species)
+x <- subset(iris, select = -Species)
 y <- Species
-model <- svm (x, y) 
+model <- svm(x, y) 
 
-print (model)
-summary (model)
+print(model)
+summary(model)
 
 # test with train data
-pred <- predict (model, x)
+pred <- predict(model, x)
 
 # Check accuracy:
-table (pred,y)
+table(pred, y)
 
 ## try regression mode on two dimensions
 
 # create data
-x <- seq (0.1,5,by=0.05)
-y <- log(x) + rnorm (x, sd=0.2)
+x <- seq(0.1, 5, by = 0.05)
+y <- log(x) + rnorm(x, sd = 0.2)
 
 # estimate model and predict input values
-m   <- svm (x,y)
-new <- predict (m,x)
+m   <- svm(x, y)
+new <- predict(m, x)
 
 # visualize
-plot   (x,y)
-points (x, log(x), col=2)
-points (x, new, col=4)
+plot(x, y)
+points(x, log(x), col = 2)
+points(x, new, col = 4)
 
 ## density-estimation
 
 # create 2-dim. normal with rho=0:
-X <- data.frame (a=rnorm (1000), b=rnorm (1000))
-attach (X)
+X <- data.frame(a = rnorm(1000), b = rnorm(1000))
+attach(X)
 
 # traditional way:
-m <- svm (X, gamma=0.1)
+m <- svm(X, gamma = 0.1)
 
 # formula interface:
-m <- svm (~., data=X, gamma=0.1)
+m <- svm(~., data = X, gamma = 0.1)
 # or:
-m <- svm (~a+b, gamma=0.1)
+m <- svm(~ a + b, gamma = 0.1)
 
 # test:
-newdata <- data.frame(a=c(0,4), b=c(0,4))
+newdata <- data.frame(a = c(0,4), b = c(0,4))
 newdata
-predict (m, newdata)
+predict(m, newdata)
 
 # visualization:
-plot (as.matrix(X))
-points (as.matrix(X)[m$index,], col=2)
+plot(as.matrix(X))
+points(as.matrix(X)[m$index,], col = 2)
 }
 \keyword{neural}
 \keyword{nonlinear}

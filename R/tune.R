@@ -1,18 +1,34 @@
+tune.control <- function(random = FALSE,
+                         nrepeat = 1,
+                         repeat.aggregate = min,
+                         sampling = c("cross", "fix", "bootstrap"),
+                         sampling.aggregate = mean,
+                         cross = 10,
+                         fix = 2 / 3,
+                         nboot = 10,
+                         boot.size = 9 / 10,
+                         best.model = TRUE,
+                         performances = TRUE) {
+  structure(list(random = random,
+                 nrepeat = nrepeat,
+                 repeat.aggregate = repeat.aggregate,
+                 sampling = match.arg(sampling),
+                 sampling.aggregate = sampling.aggregate,
+                 cross = cross,
+                 fix = fix,
+                 nboot = nboot,
+                 boot.size = boot.size,
+                 best.model = best.model,
+                 performances = performances
+                 ),
+            class = "tune.control"
+            )
+}
+                         
 tune <- function(method, train.x, train.y = NULL, data = list(),
                  validation.x = NULL, validation.y = NULL,
-                 ranges,
-                 random = FALSE,
-                 nrepeat = 1,
-                 repeat.aggregate = min,
-                 sampling = c("cross", "fix", "bootstrap"),
-                 sampling.aggregate = mean,
-                 cross = 10,
-                 fix = 2 / 3,
-                 nboot = 10,
-                 boot.size = 9 / 10,
-                 predict.func = predict,
-                 best.model = TRUE,
-                 performances = TRUE,
+                 ranges = NULL, predict.func = predict,
+                 control = tune.control(),
                  ...
                  ) {
   ## internal helper functions
@@ -32,39 +48,41 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   }
   
   ## parameter handling
-  sampling <- match.arg(sampling)
   method <- deparse(substitute(method))
-  if (sampling == "cross") validation.x <- validation.y <- NULL
+  if (control$sampling == "cross") validation.x <- validation.y <- NULL
   useFormula <- is.null(train.y)
   if (useFormula && (is.null(data) || length(data) == 0))
     data <- model.frame(train.x)
   if (is.vector(train.x)) train.x <- t(t(train.x))
   
   ## prepare training indices
-  if (!is.null(validation.x)) fix <- 1
+  if (!is.null(validation.x)) control$fix <- 1
   n <- nrow(if (useFormula) data else train.x)
   perm.ind <- sample(n)
-  if (sampling == "cross") {
-    if (cross > n)
+  if (control$sampling == "cross") {
+    if (control$cross > n)
       stop("`cross' must not exceed sampling size!")
-    if (cross == 1)
+    if (control$cross == 1)
       stop("`cross' must be greater than 1!")
   }  
-  train.ind <- if (sampling == "cross")
-    tapply(1:n, cut(1:n, breaks = cross), function(x) perm.ind[-x])
-  else if (sampling == "fix")
-    list(perm.ind[1:trunc(n * fix)])
+  train.ind <- if (control$sampling == "cross")
+    tapply(1:n, cut(1:n, breaks = control$cross), function(x) perm.ind[-x])
+  else if (control$sampling == "fix")
+    list(perm.ind[1:trunc(n * control$fix)])
   else ## bootstrap
-    lapply(1:nboot, function(x) sample(n, n * boot.size))
+    lapply(1:control$nboot, function(x) sample(n, n * control$boot.size))
 
   ## find best model
-  parameters <- expand.grid(ranges)
+  parameters <- if (is.null(ranges))
+    data.frame(dummyparameter = 0)
+  else
+    expand.grid(ranges)
   p <- nrow(parameters)
-  if (!is.logical(random)) {
-    if (random < 1)
-      stop ("random must be a strictly positive integer")
-    if (random > p) random <- p
-    parameters <- parameters[sample(1:p, random),]
+  if (!is.logical(control$random)) {
+    if (control$random < 1)
+      stop("random must be a strictly positive integer")
+    if (control$random > p) control$random <- p
+    parameters <- parameters[sample(1:p, control$random),]
   }
   model.errors <- c()
   
@@ -77,20 +95,25 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
       repeat.errors <- c()
       
       ## - repeat training `nrepeat' times
-      for (reps in 1:nrepeat) {
+      for (reps in 1:control$nrepeat) {
 
         ## train one model
+        pars <- if (is.null(ranges))
+          NULL
+        else
+          parameters[para.set,,drop = FALSE]
+        
         model <- if (useFormula) 
           do.call(method, c(list(train.x,
                                  data = data,
                                  subset = train.ind[[sample]]), 
-                            parameters[para.set,,drop = FALSE], ...
+                            pars, ...
                             )
                   )
         else 
           do.call(method, c(list(train.x[train.ind[[sample]],],
                                  y = train.y[train.ind[[sample]]]),
-                            parameters[para.set,,drop = FALSE], ...
+                            pars, ...
                             )
                   )
 
@@ -99,9 +122,9 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                         if (!is.null(validation.x))
                           validation.x
                         else if (useFormula)
-                          data[-train.ind[[sample]],]
+                          data[-train.ind[[sample]],,drop = FALSE]
                         else 
-                          train.x[-train.ind[[sample]],]
+                          train.x[-train.ind[[sample]],,drop = FALSE]
                         )
         
         ## compute performance measure
@@ -117,45 +140,55 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
         else ## mean squared error
           crossprod(pred - true.y) / length(pred)
       }
-      sampling.errors[sample] <- repeat.aggregate(repeat.errors)
+      sampling.errors[sample] <- control$repeat.aggregate(repeat.errors)
     }
-    model.errors[para.set] <- sampling.aggregate(sampling.errors)
+    model.errors[para.set] <- control$sampling.aggregate(sampling.errors)
   }
 
   ## return results
   best <- which.min(model.errors)
+  pars <- if (is.null(ranges))
+    NULL
+  else
+    parameters[best,,drop = FALSE]
   structure(list(best.parameters  = parameters[best,,drop = FALSE],
                  best.performance = model.errors[best],
                  method           = method,
-                 sampling         = switch(sampling,
+                 nparcomb         = nrow(parameters),
+                 sampling         = switch(control$sampling,
                    fix = "fixed training/validation set",
                    bootstrap = "bootstrapping",
-                   cross = if (cross == n) "leave-one-out" else
-                           paste(cross,"-fold cross validation", sep="")
+                   cross = if (control$cross == n) "leave-one-out" else
+                           paste(control$cross,"-fold cross validation", sep="")
                    ),
-                 performances     = if (performances) cbind(parameters, error = model.errors),
-                 best.model       = if (best.model)
+                 performances     = if (control$performances) cbind(parameters, error = model.errors),
+                 best.model       = if (control$best.model)
                    if (useFormula) 
-                     do.call(method, c(list(train.x, data = substitute(data)),
-                                       parameters[best,,drop = FALSE], ...))
+                     do.call(method, c(list(train.x, data = data),
+                                       pars, ...))
                    else 
                      do.call(method, c(list(x = train.x,
                                             y = train.y),
-                                       parameters[best,,drop = FALSE], ...))
+                                       pars, ...))
                  ),
             class = "tune"
        )
 }
 
 print.tune <- function(x, ...) {
-  cat("\nParameter tuning of `", x$method, "':\n\n", sep="")
-  cat("- sampling method:", x$sampling,"\n\n")
-  cat("- best parameters:\n")
-  tmp <- x$best.parameters
-  rownames(tmp) <- ""
-  print(tmp)
-  cat("\n- best performance:", x$best.performance, "\n")
-  cat("\n")
+  if (x$nparcomb > 1) {
+    cat("\nParameter tuning of `", x$method, "':\n\n", sep="")
+    cat("- sampling method:", x$sampling,"\n\n")
+    cat("- best parameters:\n")
+    tmp <- x$best.parameters
+    rownames(tmp) <- ""
+    print(tmp)
+    cat("\n- best performance:", x$best.performance, "\n")
+    cat("\n")
+  } else {
+    cat("\nError estimation of `", x$method, "' using ",x$sampling,": ",
+        x$best.performance, "\n\n", sep="")
+  }
 }
 
 summary.tune <- function(object, ...)
@@ -163,7 +196,7 @@ summary.tune <- function(object, ...)
 
 print.summary.tune <- function(x, ...) {
   print.tune(x)
-  if (!is.null(x$performances)) {
+  if (!is.null(x$performances) && (x$nparcomb > 1)) {
     cat("- Detailed performance results:\n")
     print(x$performances)
     cat("\n")
@@ -192,7 +225,7 @@ plot.tune <- function(x,
   type = match.arg(type)
 
   if (is.null(main))
-    main <- paste("Performance of `",x$method,"' on `",x$data,"'", sep="")
+    main <- paste("Performance of `",x$method, "'", sep="")
   
   if (k == 2)
     plot(x$performances, type = "b", main = main)
@@ -237,44 +270,62 @@ plot.tune <- function(x,
 ## convenience functions for some methods
 #############################################
 
-tune.svm <- function(x, y = NULL, degree = NULL, gamma = NULL,
+tune.svm <- function(x, y = NULL, data = NULL, degree = NULL, gamma = NULL,
     coef0 = NULL, cost = NULL, nu = NULL, ...) {
   ranges <- list(degree = degree, gamma = gamma,
     coef0 = coef0, cost = cost, nu = nu)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
-    stop("No parameter range given.")
-  tune(svm, train.x = x, train.y = y, ranges = ranges, ...)
+    ranges = NULL
+  if (inherits(x, "formula"))
+    tune(svm, train.x = x, data = data, ranges = ranges, ...)
+  else
+    tune(svm, train.x = x, train.y = y, ranges = ranges, ...)
 }
   
 best.svm <- function(x, ...)
-  tune.svm(x, ..., best.model = TRUE)$best.model
+  tune.svm(x, ..., control = tune.control(best.model = TRUE))$best.model
 
-tune.nnet <- function(x, y = NULL, size = NULL, decay = NULL, nrepeat = 5, trace = FALSE,
-                      predict.func = function(...) predict(..., type="class"), ...) {
+tune.nnet <- function(x, y = NULL, data = NULL,
+                      size = NULL, decay = NULL, trace = FALSE, nrepeat = 5, ...) {
   require(nnet)
+  predict.func <- predict
+  useFormula <- inherits(x, "formula")
+  if (is.factor(y) ||
+      (useFormula && is.factor(model.response(model.frame(formula = x, data = data))))
+      )
+    predict.func = function(...) predict(..., type = "class")
   ranges <- list(size = size, decay = decay)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
-    stop("No parameter range given.")
-  tune(nnet, train.x = x, train.y = NULL, ranges = ranges, nrepeat = nrepeat, trace = trace,
-       predict.func = predict.func, ...)
+    ranges = NULL
+  if (useFormula)
+    tune(nnet, train.x = x, data = data, ranges = ranges, predict.func = predict.func,
+         control = tune.control(nrepeat = nrepeat),
+         trace = trace, ...)
+  else
+    tune(nnet, train.x = x, train.y = y, ranges = ranges, predict.func = predict.func,
+         control = tune.control(nrepeat = nrepeat),
+         trace = trace, ...)
 }
 
 best.nnet <- function(x, ...)
-  tune.nnet(x, ..., best.model = TRUE)$best.model
+  tune.nnet(x, ..., control = tune.control(best.model = TRUE))$best.model
 
-tune.randomForest <- function(x, y = NULL, nodesize = NULL, mtry = NULL, ntree = NULL, ...) {
+tune.randomForest <- function(x, y = NULL, data = NULL, nodesize = NULL, mtry = NULL, ntree = NULL, ...) {
   require(randomForest)
   ranges <- list(nodesize = nodesize, mtry = mtry, ntree = ntree)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
-    stop("No parameter range given.")
-  tune(randomForest, train.x = x, ranges = ranges, ...)
+    ranges = NULL
+  if (inherits(x, "formula"))
+    tune(randomForest, train.x = x, data = data, ranges = ranges, ...)
+  else
+    tune(randomForest, train.x = x, train.y = y, ranges = ranges, ...)
 }
   
 best.randomForest <- function(x, ...)
-  tune.randomForest(x, ..., best.model = TRUE)$best.model
+  tune.randomForest(x, ..., control = tune.control(best.model = TRUE))$best.model
 
 knn.wrapper <- function(x, y, k = 1, l = 0, ...)
   list(train = x, cl = y, k = k, l = l, ...)
@@ -284,7 +335,7 @@ tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
   ranges <- list(k = k, l = l)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
-    stop("No parameter range given.")
+    ranges = NULL
   tune(knn.wrapper,
        train.x = x, train.y = y, ranges = ranges,
        predict.func = function(x, ...) knn(train = x$train, cl = x$cl, k = x$k, l = x$l, ...),
@@ -314,10 +365,10 @@ tune.rpart <- function(formula, data, na.action = na.omit,
                  surrogatestyle=surrogatestyle, maxdepth=maxdepth)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
-    stop("No parameter range given.")
+    ranges <- NULL
   
   predict.func <- if (is.factor(model.response(model.frame(formula, data))))
-    function(...) predict(..., type="class")
+    function(...) predict(..., type = "class")
   else
     predict
   tune(rpart.wrapper, train.x = formula, data = data, ranges = ranges,
@@ -325,7 +376,7 @@ tune.rpart <- function(formula, data, na.action = na.omit,
 }
   
 best.rpart <- function(formula, ...)
-  tune.rpart(formula, ..., best.model = TRUE)$best.model
+  tune.rpart(formula, ..., control = tune.control(best.model = TRUE))$best.model
 
 
 

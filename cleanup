@@ -3,4 +3,5 @@
 rm config.* -f
 rm \#*\# -rf
 rm .\#* -rf
+rm autom4te.cache -rf
 

@@ -11,12 +11,8 @@
 }
 \usage{
 tune(method, train.x, train.y = NULL, data = list(), validation.x =
-     NULL, validation.y = NULL, ranges, random = FALSE, nrepeat = 1,
-     repeat.aggregate = min, sampling = c("cross", "fix", "bootstrap"),
-     sampling.aggregate = mean, cross = 10, fix = 2/3, nboot = 10,
-     boot.size = 9/10, predict.func = predict, best.model = TRUE,
-     performances = TRUE, ...)
-
+     NULL, validation.y = NULL, ranges = NULL, predict.func = predict,
+     control = tune.control(), ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -33,33 +29,10 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
     the (optional) validation set.}
   \item{ranges}{a named list of parameter vectors spanning the sampling
     space. The vectors will usually be created by \code{seq}.}
-  \item{random}{if an integer value is specified, \code{random}
-    parameter vectors are drawn from the parameter space.}
-  \item{nrepeat}{specifies how often training shall be repeated.}
-  \item{repeat.aggregate}{function for aggregating the repeated training results.}
-  \item{sampling}{sampling scheme. If \code{sampling = "cross"}, a
-    \code{cross}-times cross validation is performed. If \code{sampling
-      = "boot"}, \code{nboot} training sets of size \code{boot.size} (part)
-    are sampled from the supplied data. If \code{sampling
-      = "fix"}, a single split into training/validation set is
-    used, the training set containing a \code{fix} part of the supplied
-    data. Note that a separate validation set can be supplied via
-    \code{validation.x} and \code{validation.y}. It is only used for
-    \code{sampling = "boot"} and \code{sampling = "fix"}; in the latter
-    case, \code{fix} is set to 1.}
-  \item{sampling.aggregate}{function for aggregating the training
-    results on the generated training samples.}
-  \item{cross}{number of partitions for cross-validation.}
-  \item{fix}{part of the data used for training in fixed sampling.}
-  \item{nboot}{number of bootstrap replications.}
-  \item{boot.size}{size of the bootstrap samples.}
   \item{predict.func}{optional predict function, if the standard \code{predict}
-  behaviour is inadequate.}
-  \item{best.model}{if \code{TRUE}, the best model is trained and
-    returned (the best parameter set is used for
-    training on the complete training set).}
-  \item{performances}{if \code{TRUE}, the performance results for all
-    parameter combinations are returned.}
+    behaviour is inadequate.}
+  \item{control}{object of class \code{"tune.control"}, as created by the
+    function \code{tune.control()}.}
   \item{\dots}{Further parameters passed to the training functions.}
 }
 \value{
@@ -71,22 +44,31 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
   \item{if requested, the model trained on the complete training data
     using the best parameter combination.}
 }
-\note{
+\details{
   As performance measure, the classification error is used
-  for classification, and the mean squared error for regression.
+  for classification, and the mean squared error for regression. It is
+  possible to specify only one parameter combination (i.e., vectors of
+  length 1) to obtain an error estimation of the specified type
+  (bootstrap, cross-classification, etc.) on the given data set. For
+  conveneince, there
+  are several \code{tune.foo()} wrappers defined, e.g., for
+  \code{nnet()}, \code{randomForest()},
+  \code{rpart()}, \code{svm()}, and \code{knn()}.
 }
 \author{
   David Meyer\cr
   \email{david.meyer@ci.tuwien.ac.at}
 }
-\seealso{\code{\link{plot.tune}}, \code{\link{tune.svm}}}
+\seealso{\code{\link{tune.control}}, \code{\link{plot.tune}},
+  \code{\link{tune.svm}}, \link{tune.wrapper}}
 \examples{
   data(iris)
   ## tune `svm' for classification with RBF-kernel (default in svm),
   ## using one split for training/validation set
   
-  obj <- tune(svm, Species~., data = iris, sampling = "fix",
-              ranges = list(gamma = 2^(-1:1), cost = 2^(2:4))
+  obj <- tune(svm, Species~., data = iris, 
+              ranges = list(gamma = 2^(-1:1), cost = 2^(2:4)),
+              control = tune.control(sampling = "fix")
              )
 
   ## alternatively:
@@ -99,7 +81,7 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
   ## conventional interface and bootstrap sampling:
   x <- iris[,-5]
   y <- iris[,5]
-  obj2 <- tune.knn(x, y, k = 1:5, sampling = "boot")
+  obj2 <- tune.knn(x, y, k = 1:5, control = tune.control(sampling = "boot"))
   summary(obj2)
   plot(obj2)
 
@@ -108,6 +90,9 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
   obj3 <- tune.rpart(mpg~., data = mtcars, minsplit = c(5,10,15))
   summary(obj3)
   plot(obj3)
+
+  ## simple error estimation for lm using 10-fold cross validation
+  tune(lm, mpg~., data = mtcars)
 }
 \keyword{models}% at least one, from doc/KEYWORDS
 

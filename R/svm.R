@@ -101,11 +101,12 @@ function (x,
     if (length(scale) == 1)
       scale <- rep(scale, ncol(x))
     if (any(scale)) {
-      co <- !apply(x, 2, var)
+      co <- !apply(x[,scale, drop = FALSE], 2, var)
       if (any(co)) {
         scale <- rep(FALSE, ncol(x))
         warning(paste("Variable(s)",
-                      paste("`",colnames(x)[co], "'", sep="", collapse=" and "),
+                      paste("`",colnames(x[,scale, drop = FALSE])[co],
+                            "'", sep="", collapse=" and "),
                       "constant. Cannot scale data.")
                 )
       } else {
@@ -179,13 +180,13 @@ function (x,
   
   cret <- .C ("svmtrain",
               # data
-              as.double  (if (sparse) x$ra else t(x)),
+              as.double  (if (sparse) x@ra else t(x)),
               as.integer (nr), as.integer(ncol(x)),
               as.double  (y),
 
               # sparse index info
-              as.integer (if (sparse) x$ia else 0),
-              as.integer (if (sparse) x$ja else 0), 
+              as.integer (if (sparse) x@ia else 0),
+              as.integer (if (sparse) x@ja else 0), 
               
               # parameters
               as.integer (type),
@@ -293,19 +294,20 @@ predict.svm <- function (object, newdata, ..., na.action = na.omit) {
   }
 
   if (any(object$scaled))
-    newdata[,object$scaled] <- scale(newdata[,object$scaled],
-                                    center = object$x.scale$"scaled:center",
-                                    scale  = object$x.scale$"scaled:scale"
-                                    )
+    newdata[,object$scaled] <-
+      scale(newdata[,object$scaled, drop = FALSE],
+            center = object$x.scale$"scaled:center",
+            scale  = object$x.scale$"scaled:scale"
+            )
 
   if (ncol(object$SV) != ncol(newdata)) stop ("test data does not match model !")
 
   ret <- .C ("svmpredict",
              # model
-             as.double  (if (object$sparse) object$SV$ra else t(object$SV)),
+             as.double  (if (object$sparse) object$SV@ra else t(object$SV)),
              as.integer (nrow(object$SV)), as.integer(ncol(object$SV)),
-             as.integer (if (object$sparse) object$SV$ia else 0),
-             as.integer (if (object$sparse) object$SV$ja else 0),
+             as.integer (if (object$sparse) object$SV@ia else 0),
+             as.integer (if (object$sparse) object$SV@ja else 0),
              as.double  (as.vector(object$coefs)),
              as.double  (object$rho),
              as.integer (object$nclasses),
@@ -322,10 +324,10 @@ predict.svm <- function (object, newdata, ..., na.action = na.omit) {
              as.double  (object$coef0),
 
              # test matrix
-             as.double  (if (sparse) newdata$ra else t(newdata)),
+             as.double  (if (sparse) newdata@ra else t(newdata)),
              as.integer (nrow(newdata)),
-             as.integer (if (sparse) newdata$ia else 0),
-             as.integer (if (sparse) newdata$ja else 0),
+             as.integer (if (sparse) newdata@ia else 0),
+             as.integer (if (sparse) newdata@ja else 0),
              as.integer (sparse),
              
              # decision-values
