@@ -10,7 +10,7 @@ fclustIndex <- function ( y, x, index= "all" )
     {
       xrows <- dim(clres$me)[1]
       xcols <- dim(clres$ce)[2]
-      ncenters <- dim(clres$centers)[2]
+      ncenters <- dim(clres$centers)[1]
       scatter <- array(0.0, c(xcols, xcols, ncenters))   
       scatternew <- array(0.0, c(xcols, xcols, ncenters))
       fhv <-as.double(0)
@@ -58,7 +58,7 @@ fclustIndex <- function ( y, x, index= "all" )
     xrows <- dim(clres$me)[1]
     minimum<--1
     error <- clres$within#sd
-    ncenters <- dim(clres$centers)[2] 
+    ncenters <- dim(clres$centers)[1] 
     for (i in 1:(ncenters-1)){
       for (j in (i+1):ncenters){
         diff<- clres$ce[i,]-clres$ce[j,]
@@ -74,7 +74,7 @@ fclustIndex <- function ( y, x, index= "all" )
   
   fukuyama.sugeno <- function(clres){#for all m
     xrows <- dim(clres$me)[1]
-    ncenters <-dim(clres$centers)[2]
+    ncenters <-dim(clres$centers)[1]
     error <- clres$within#sd
     k2<-as.double(0)
     
@@ -102,7 +102,7 @@ fclustIndex <- function ( y, x, index= "all" )
   
   partition.entropy <- function(clres){ 
     xrows <- dim(clres$me)[1]
-    ncenters <- dim(clres$centers)[2]
+    ncenters <- dim(clres$centers)[1]
     partitionentropy <- 0.0
     for (i in 1:xrows){
       for (k in 1:ncenters){
@@ -118,7 +118,7 @@ fclustIndex <- function ( y, x, index= "all" )
     {
       xrows <- dim(clres$me)[1]
       xcols <- dim(x)[2]
-      ncenters <- dim(clres$centers)[2]
+      ncenters <- dim(clres$centers)[1]
       maxcluster <- double(ncenters)
       minimum <- -1.0
       ##hardpartition <- matrix(0,xrows,ncenters)
@@ -186,22 +186,22 @@ fclustIndex <- function ( y, x, index= "all" )
   
    vecallindex <- numeric(9)
 
-  if ((index==1) || (index==8)){
+  if (any(index==1) || (index==8)){
     gd <- gath.geva(clres, x)
     vecallindex[1] <- gd$fuzzy
     vecallindex[2] <- gd$average
     vecallindex[3] <- gd$partition}
-  if ((index==2) || (index==8))
+  if (any(index==2) || (index==8))
     vecallindex[4] <- xie.beni(clres)
-  if ((index==3) || (index==8))
+  if (any(index==3) || (index==8))
     vecallindex[5] <- fukuyama.sugeno(clres)
-  if ((index==4) || (index==8))
+  if (any(index==4) || (index==8))
     vecallindex[6] <- partition.coefficient(clres)
-  if ((index==5) || (index==8))
+  if (any(index==5) || (index==8))
     vecallindex[7] <- partition.entropy(clres)
-  if ((index==6) || (index==8))
+  if (any(index==6) || (index==8))
     vecallindex[8] <- proportion.exponent(clres)
-  if ((index==7) || (index==8)){
+  if (any(index==7) || (index==8)){
     require(mva)
     vecallindex[9] <- separation.index(clres,x)}
   

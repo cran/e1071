@@ -6,11 +6,11 @@ print.fclust <- function (x, ...)
     else
       cat("\n                              Clustering on Test Set\n\n\n")
     
-    cat("Number  of  Clusters: ", dim(clobj$centers)[2], "\n")
+    cat("Number  of  Clusters: ", dim(clobj$centers)[1], "\n")
     cat("Sizes   of  Clusters: ", clobj$size, "\n\n")
 #    cat("Centers of  Clusters: ", "\n")
     #matrix(clobj$centers, ncol=dim(clobj$ce)[2]), "\n\n")
-    clobj$centers
+#    clobj$centers
     
 #    cat("Learning Parameters:",clobj$call,"\n\n")
     

@@ -1,3 +1,12 @@
+Changes in Version 1.3-3:
+
+  o Bug fixes in various bclust routines: stop() if required packages
+    are not found
+  o svm() now interfaces LIBSVM 2.35 which is a bug fix release.
+    A call with invalid parameters now no longer causes R to be
+    terminated, and the C(++) code became completely silent.
+  o Bugs fixed in fclustIndex function and print.fclust.  
+    
 Changes in Version 1.3-1:
 
   o Functions rmvnorm and dmvnorm for multivariate normal

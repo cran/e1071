@@ -241,14 +241,16 @@ void svmtrain (double *x, int *r, int *c, int *cols,
 
 	       double *cresults,
 	       double *ctotal1,
-	       double *ctotal2)
+	       double *ctotal2,
+	       char   **error)
 {
     struct svm_parameter par;
     struct svm_problem   prob;
-    struct svm_model    *model;
-    int                  i, ii;
+    struct svm_model    *model = NULL;
+    int i, ii;
+    const char* s;
     
-    /* 1. set parameter */
+    /* set parameters */
     par.svm_type    = *svm_type;
     par.kernel_type = *kernel_type;
     par.degree      = *degree;
@@ -268,42 +270,55 @@ void svmtrain (double *x, int *r, int *c, int *cols,
     par.p           = *epsilon;
     par.shrinking   = *shrinking;
 
-    /* 2. set problem */
+    /* set problem */
     prob.l = *r;
     prob.y = y;
     
     if (*sparse > 0)
-	prob.x = transsparse (x, *r, c, cols);
+	prob.x = transsparse(x, *r, c, cols);
     else
-	prob.x = sparsify (x, *r, *c);
+	prob.x = sparsify(x, *r, *c);
     
-    /* 3. call svm_train */
-    model = svm_train (&prob, &par);
+    /* check parameters & copy error message */
+    s = svm_check_parameter(&prob, &par);
+    if (s) {
+	strcpy(*error, s);
+    } else {
+	/* call svm_train */
+	model = svm_train(&prob, &par);
     
-    /* 4. set up return values */
-    for (ii = 0; ii < model->l; ii++)
-	for (i = 0; i < *r;	i++)
-	    if (prob.x[i] == model->SV[ii]) index[ii] = i+1;
-    
-    *nr  = model->l;
-    *nclasses = model->nr_class;
-    memcpy (rho, model->rho, *nclasses * sizeof(double));
-    for (i = 0; i < *nclasses-1; i++)
-      memcpy (coefs + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
-    
-    if (*svm_type < 2) {
-	memcpy (labels, model->label, *nclasses * sizeof(int));
-	memcpy (nSV, model->nSV, *nclasses * sizeof(int));
+	/* set up return values */
+	for (ii = 0; ii < model->l; ii++)
+	    for (i = 0; i < *r;	i++)
+		if (prob.x[i] == model->SV[ii]) index[ii] = i+1;
+	
+	*nr  = model->l;
+	*nclasses = model->nr_class;
+	memcpy (rho, model->rho, *nclasses * sizeof(double));
+	for (i = 0; i < *nclasses-1; i++)
+	    memcpy (coefs + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
+	
+	if (*svm_type < 2) {
+	    memcpy (labels, model->label, *nclasses * sizeof(int));
+	    memcpy (nSV, model->nSV, *nclasses * sizeof(int));
+	}
+	
+	/* Perform cross-validation, if requested */
+	if (*cross > 0)
+	    do_cross_validation (&prob, &par, *cross, cresults,
+				 ctotal1, ctotal2);
+	
+	/* clean up memory */
+	svm_destroy_model (model);
     }
-
-    /* 5. Perform cross-validation, if requested */
-    if (*cross > 0)
-      do_cross_validation (&prob, &par, *cross, cresults, ctotal1, ctotal2);
-
-    /* 6. clean up memory */
-    svm_destroy_model (model);
-    for (i = 0; i < *r; i++) free (prob.x[i]);
     
+    /* clean up memory */
+    if (par.nr_weight > 0) {
+	free(par.weight);
+	free(par.weight_label);
+    }
+    
+    for (i = 0; i < *r; i++) free (prob.x[i]);
     free (prob.x);
 }
 	     
@@ -374,6 +389,9 @@ void svmpredict  (double *v, int *r, int *c, int *cols,
 	free (m.SV[i]);
     free (m.SV);
     
+    for (i = 0; i < m.nr_class - 1; i++)
+      free(m.sv_coef[i]);
+    free(m.sv_coef);
 }	     
 		
 

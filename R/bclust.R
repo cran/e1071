@@ -5,8 +5,9 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
           verbose = TRUE, final.kmeans = FALSE, docmdscale=FALSE,
           resample=TRUE, weights=NULL, maxcluster=base.centers, ...) 
 {
-    require(mva)
-    require(class)
+    if (!require("mva")) stop("Could not load required package mva")
+    if (!require("class"))
+        stop("Could not load required package class from bundle VR")
 
     xr <- nrow(x)
     xc <- ncol(x)
@@ -102,12 +103,13 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
               hclust.method = object$hclust.method, final.kmeans = FALSE,
               docmdscale = FALSE, maxcluster=object$maxcluster) 
 {
-    require(mva)
-    require(class)
+    if (!require("mva")) stop("Could not load required package mva")
 
     d <- dist(object$allcenters, method = dist.method)
-    if(hclust.method=="diana")
+    if(hclust.method=="diana"){
+        if (!require("cluster")) stop("Could not load required package cluster")        
         object$hclust <- as.hclust(diana(d, diss=TRUE))
+    }
     else
         object$hclust <- hclust(d, method = hclust.method)
     
@@ -132,7 +134,8 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
     function (x, maxcluster=x$maxcluster,
               main = deparse(substitute(x)), ...) 
 {
-    require(mva)
+    if (!require("mva")) stop("Could not load required package mva")
+
     opar <- par(c("mar", "oma"))
     on.exit(par(opar))
 
@@ -161,7 +164,7 @@ function (x, n = nrow(x$centers), bycluster = TRUE,
           main = deparse(substitute(x)), oneplot=TRUE,
           which=1:n, ...) 
 {
-    require(mva)
+    if (!require("mva")) stop("Could not load required package mva")
     N <- length(which)
 
     opar <- par(c("mfrow", "oma", "mgp","xpd"))

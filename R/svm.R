@@ -64,15 +64,19 @@ function (x,
                           "nu-classification",
                           "one-classification",
                           "eps-regression",
-                          "nu-regression"),1) - 1
+                          "nu-regression"),99) - 1
+
+  if (type > 10) stop("wrong type specification!")
   
   kernel <- pmatch (kernel, c("linear",
                               "polynomial",
                               "radial",
-                              "sigmoid"),3) - 1
+                              "sigmoid"),99) - 1
 
-  if (!is.vector(y) && !is.factor (y) && !(type==2)) stop ("y must be a vector or a factor.")
-  if ((type !=2) && nrows != nrow(x)) stop ("x and y don't match.")
+  if (kernel > 10) stop("wrong kernel specification!")
+
+  if (!is.vector(y) && !is.factor (y) && !(type==2)) stop("y must be a vector or a factor.")
+  if ((type !=2) && nrows != nrow(x)) stop("x and y don't match.")
 
   if (cachesize < 0.1) cachesize <- 0.1
   
@@ -134,8 +138,12 @@ function (x,
               
               cresults = double  (cross),
               ctotal1  = double  (1),
-              ctotal2  = double  (1)
+              ctotal2  = double  (1),
+              error    = character(1)
              )
+
+  if (nchar(cret$error))
+    stop(paste(cret$error, "!", sep=""))
 
   ret <- list (
                call     = match.call(),
