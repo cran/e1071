@@ -1,40 +1,65 @@
-read.matrix.csr <- function (file, fac = TRUE, ncol = NULL) {
-  library(methods)
-  if(!require(SparseM))
+read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
+{
+  if (!require(SparseM)) 
     stop("Need `SparseM' package!")
-  
-  con <- file(file)
-  open(con)
-  y <- vector()
-  x <- new("matrix.csr")
-  x@ia <- 1
-  i <- 1
-  maxcol <- 1
-  while (isOpen(con) & length(buf <- readLines (con, 1)) > 0) {
-    s <- strsplit(buf, "[ ]+",extended=TRUE)[[1]]
-    
-    ## y
-    if (length(grep(":", s[1])) == 0) {
-      y[i] <- if (fac) s[1] else as.numeric(s[1])
-      s <- s[-1]
-    }
+  l <- strsplit(readLines(file(file)), "[ ]+")
 
-    ## x-values
-    if (length(s)) {
-      tmp <- do.call("rbind", strsplit(s, ":"))
-      x@ra <- c(x@ra, as.numeric(tmp[,2]))
-      x@ja <- c(x@ja, as.numeric(tmp[,1]))
-    }
-    i <- i + 1
-    x@ia[i] <- x@ia[i-1] + length(s) 
-  }
-  x@dimension <- c(i - 1, if (is.null(ncol)) max(x@ja) else max(ncol, x@ja))
-  class(x) <- "matrix.csr"
-  
+  ## y-values
+  y <- sapply(l, function(x) x[1])
+
+  ## x-values
+  rja <- do.call("rbind", lapply(l, function(x) do.call("rbind", strsplit(x[-1], ":"))))
+  ja <- as.integer(rja[,1])
+  ia <- cumsum(c(1, sapply(l, length) - 1))
+
+  max.ja <- max(ja)
+  dimension <- c(length(l), if (is.null(ncol)) max.ja else max(ncol, max.ja))
+  x = new("matrix.csr", as.numeric(rja[,2]), ja, as.integer(ia), as.integer(dimension))
   if (length(y)) 
-    list (x = x, y = if (fac) as.factor(y) else y)
+    list(x = x, y = if (fac) as.factor(y) else as.numeric(y))
   else x
 }
+
+## old version: slow, but uses less memory
+# read.matrix.csr <- function (file, fac = TRUE, ncol = NULL) 
+# {
+#     library(methods)
+#     if (!require(SparseM)) 
+#         stop("Need `SparseM' package!")
+#     con <- file(file)
+#     open(con)
+#     y <- vector()
+#     ia <- 1
+#     ra <- ja <- c()
+#     i <- 1
+#     maxcol <- 1
+#     while (isOpen(con) & length(buf <- readLines(con, 1)) > 0) {
+#         s <- strsplit(buf, "[ ]+", extended = TRUE)[[1]]
+
+#         ## y
+#         if (length(grep(":", s[1])) == 0) {
+#             y[i] <- if (fac) 
+#                 s[1]
+#             else as.numeric(s[1])
+#             s <- s[-1]
+#         }
+
+#         ## x
+#         if (length(s)) {
+#             tmp <- do.call("rbind", strsplit(s, ":"))
+#             ra <- c(ra, as.numeric(tmp[, 2]))
+#             ja <- c(ja, as.numeric(tmp[, 1]))
+#         }
+        
+#         i <- i + 1
+#         ia[i] <- ia[i - 1] + length(s)
+#     }
+#     dimension <- c(i - 1, if (is.null(ncol)) max(ja) else max(ncol, ja))
+#     x = new("matrix.csr", ra, as.integer(ja), as.integer(ia), as.integer(dimension))
+#     if (length(y)) 
+#         list(x = x, y = if (fac) as.factor(y) else y)
+#     else x
+# }
 
 write.matrix.csr <- function (x, file="out.dat", y=NULL) {
   library(methods)

@@ -1,15 +1,35 @@
+Changes in Version 1.3-12:
+
+  o The x argument of cmeans() and bclust() is now automatically coerced
+    to a matrix.
+
+  o Started tests directory
+
+  o New method: `naiveBayes' classifier for categorical predictors
+
+  o optimization of `read.matrix.csr' which used to be rather slow
+
+  o Bug fixes for the `svm' interface: when the data included
+    categorical predictors, the scaling procedure did not only
+    affect the metric variables, but also the binary variables
+    in the model matrix.
+
+  o Function `scaclust removed'. Bug has to be fixed. 
+
 Changes in Version 1.3-10:
 
   o Now supports libsvm 2.4
 
+  
 Changes in Version 1.3-9:
 
   o rdiscrete() is now simply a wrapper for sample() and provided for backwards     compatibility only. 
 
   o Minor bug fixes in `svm' and `tune' (mostly interface issues). New
     plot function for objects of class `svm' working for the 2d-classification 
-    case. 
-	
+    case.
+
+    
 Changes in Version 1.3-7:
 
   o svm() now supports the `matrix.csr' format, as handled by the

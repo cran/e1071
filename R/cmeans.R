@@ -2,6 +2,7 @@ cmeans <- function (x, centers, iter.max = 100, verbose = FALSE,
                     dist = "euclidean", method = "cmeans",
                     m=2, rate.par = NULL) 
 {
+  x <- as.matrix(x)
   xrows <- dim(x)[1]
   xcols <- dim(x)[2]
   xold <- x

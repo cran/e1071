@@ -64,7 +64,7 @@ knn.wrapper(x, y, k = 1, l = 0, ...)
 }
 
 \author{
-  David Meyer (based on C/C++-code by Chih-Chung Chang and Chih-Jen Lin)\cr
+  David Meyer\cr
   \email{david.meyer@ci.tuwien.ac.at}
 }
 \seealso{\code{\link{tune}}}

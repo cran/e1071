@@ -1,4 +1,6 @@
 Discrete                Discrete Distribution
+HouseVotes84            United States Congressional Voting Records
+                        1984
 bclust                  Bagged Clustering
 bincombinations         Binary Combinations
 bootstrap.lca           Bootstrap Samples of LCA Results
@@ -22,10 +24,12 @@ lca                     Latent Class Analysis (LCA)
 matchClasses            Find similar classes in two-way contingency
                         tables
 moment                  Statistical Moment
+naiveBayes              Naive Bayes Classifier
 permutations            All permutations of integers 1:n
 plot.stft               Plot Short Time Fourier Transforms
 plot.svm                Plot svm objects
 plot.tune               Plot tuning object
+predict.naiveBayes      Naive Bayes Classifier
 predict.svm             Predict method for Support Vector Machines
 rbridge                 Simulation of Brownian Bridge
 read.matrix.csr         read/write sparse data
@@ -33,7 +37,6 @@ read.octave             Read Octave Data File
 rectangle.window        Computes the Coefficients of a Rectangle
                         Window.
 rwiener                 Simulation of Wiener Process
-scaclust                Fuzzy Clustering using Scatter Matrices
 allShortestPaths        Find Shortest Paths Between All Nodes in a
                         Directed Graph
 sigmoid                 The logistic function and derivatives

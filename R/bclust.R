@@ -9,6 +9,7 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
     if (!require("class"))
         stop("Could not load required package class from bundle VR")
 
+    x <- as.matrix(x)
     xr <- nrow(x)
     xc <- ncol(x)
     CLUSFUN <- get(base.method)

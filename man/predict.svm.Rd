@@ -5,17 +5,28 @@
   This function predicts values based upon a model trained by \code{svm}.
 }
 \usage{
-\method{predict}{svm}(object, newdata, ...)
+\method{predict}{svm}(object, newdata, ..., na.action = na.omit)
 }
 
 \arguments{
-  \item{object}{object of class \code{"svm"}, created by \code{svm}.}
-  \item{newdata}{a matrix containing the new input data.}
-  \item{\dots}{currently not used.}
+  \item{object}{Object of class \code{"svm"}, created by \code{svm}.}
+  \item{newdata}{A matrix containing the new input data. A vector will
+    be transformed to a n x 1 matrix.}
+  \item{na.action}{A function to specify the action to be taken if `NA's are
+    found. The default action is \code{na.omit}, which leads to rejection of cases
+    with missing values on any required variable. An alternative
+    is \code{na.fail}, which causes an error if \code{NA} cases
+    are found. (NOTE: If given, this argument must be named.)}	
+  \item{\dots}{Currently not used.}
 }
 \value{
   The predicted value (for classification: the label, for density
   estimation: \code{TRUE} or \code{FALSE}).
+}
+\note{
+  If the training set was scaled by \code{svm} (done by default), the
+  new data is scaled accordingly using scale and center of
+  the training data.
 }
 \references{
   \itemize{

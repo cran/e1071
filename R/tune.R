@@ -151,7 +151,9 @@ print.tune <- function(x, ...) {
   cat("\nParameter tuning of `", x$method, "':\n\n", sep="")
   cat("- sampling method:", x$sampling,"\n\n")
   cat("- best parameters:\n")
-  print(x$best.parameters)
+  tmp <- x$best.parameters
+  rownames(tmp) <- ""
+  print(tmp)
   cat("\n- best performance:", x$best.performance, "\n")
   cat("\n")
 }

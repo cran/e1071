@@ -29,7 +29,7 @@ rdiscrete(n, probs, values = 1:length(probs), ...)
   \item{...}{ignored (only there for backwards compatibility)}
 }
 \details{
-  The random number generator is sinply a wrapper for
+  The random number generator is simply a wrapper for
   \code{\link{sample}} and provided for backwards compatibility only.
 }
 \author{Andreas Weingessel and Friedrich Leisch}

@@ -13,12 +13,12 @@ out general regression and classification (of nu and epsilon-type), as
 well as density-estimation. A formula interface is provided.
 }
 \usage{
-\method{svm}{formula}(formula, data = list(), subset, na.action = na.fail,
-...)
-\method{svm}{default}(x, y = NULL, scale = TRUE, subset, na.action =
-na.fail, type = NULL, kernel = "radial", degree = 3, gamma = 1 / dim(x)[2],
-coef0 = 0, cost = 1, nu = 0.5, class.weights = NULL, cachesize = 40,
-tolerance = 0.001, epsilon = 0.5, shrinking = TRUE, cross = 0, fitted = TRUE, ...)
+\method{svm}{formula}(formula, data = list(), ..., subset, na.action =
+na.omit, scale = TRUE)
+\method{svm}{default}(x, y = NULL, scale = TRUE, type = NULL, kernel =
+"radial", degree = 3, gamma = 1 / dim(x)[2], coef0 = 0, cost = 1, nu = 0.5,
+class.weights = NULL, cachesize = 40, tolerance = 0.001, epsilon = 0.5,
+shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
 }
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Note, that an
@@ -32,17 +32,21 @@ tolerance = 0.001, epsilon = 0.5, shrinking = TRUE, cross = 0, fitted = TRUE, ..
   \item{y}{a response vector with one label for each row/component of \code{x}. Can be either
     a factor (for classification tasks) or a numeric vector (for
     regression).}
-  \item{scale}{Per default, data are scaled internally (both \code{x} and \code{y}
+  \item{scale}{A logical vector indicating the variables to be
+    scaled. If \code{scale} is of length 1, the value is recycled as
+    many times as needed.
+    Per default, data are scaled internally (both \code{x} and \code{y}
     variables) to zero mean and unit variance. The center and scale
     values are returned and used for later predictions.}
   \item{type}{\code{svm} can be used as a classification
-    machine, as a regresson machine or a density estimator. Depending of whether \code{y} is
+    machine, as a regresson machine, or for novelty detection.
+    Depending of whether \code{y} is
     a factor or not, the default setting for \code{type} is \code{C-classification} or \code{eps-regression}, respectively, but may be overwritten by setting an explicit value.\cr
     Valid options are:
     \itemize{
       \item \code{C-classification}
       \item \code{nu-classification}
-      \item \code{one-classification} (for density estimation)
+      \item \code{one-classification} (for novelty detection)
       \item \code{eps-regression}
       \item \code{nu-regression}
     }
@@ -84,20 +88,21 @@ tolerance = 0.001, epsilon = 0.5, shrinking = TRUE, cross = 0, fitted = TRUE, ..
   \item{subset}{An index vector specifying the cases to be used in the
           training sample.  (NOTE: If given, this argument must be
           named.)}
-  \item{na.action}{A function to specify the action to be taken if `NA's are
-          found. The default action is for the procedure to fail.  An
-          alternative is `na.omit', which leads to rejection of cases
-          with missing values on any required variable.  (NOTE: If
-          given, this argument must be named.)}	
+  \item{na.action}{A function to specify the action to be taken if \code{NA}s are
+          found. The default action is \code{na.omit}, which leads to rejection of cases
+          with missing values on any required variable. An alternative
+	  is \code{na.fail}, which causes an error if \code{NA} cases
+	  are found. (NOTE: If given, this argument must be named.)}	
 }
 
 \value{
   An object of class \code{"svm"} containing the fitted model, including:
-  \item{SV}{the resulting support vectors (possibly scaled)}
-  \item{index}{the index of the resulting support vectors in the data matrix}
-  \item{coefs}{the corresponding coefficients times the training labels}
-  \item{rho}{the negative intercept}
-  (Use \code{summary} and \code{print} to get some output).
+  \item{SV}{The resulting support vectors (possibly scaled).}
+  \item{index}{The index of the resulting support vectors in the data
+    matrix. Note that this index refers to the preprocessed data (after
+    the possible effect of \code{na.omit} and \code{subset})}
+  \item{coefs}{The corresponding coefficients times the training labels.}
+  \item{rho}{The negative intercept.}
 }
 \details{For multiclass-classification with k levels, k>2, \code{libsvm} uses the
   `one-against-one'-approach, in which k(k-1)/2 binary classifiers are
