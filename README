@@ -1,0 +1,46 @@
+Copyright (C) 1997,1998  Friedrich Leisch
+	
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+ 
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details. 
+  
+You should have received a copy of the GNU General Public License
+along with this file.  If not, write to the Free Software Foundation,
+59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+-------------------
+
+This package contains miscellaneous functions used at the Department
+of Statistics at TU Wien (E1071) for which we don't know a better
+place (i.e., a special package) where to put them.
+
+Authors: Kurt.Hornik@ci.tuwien.ac.at
+         Friedrich.Leisch@ci.tuwien.ac.at
+         Andreas.Weingessel@ci.tuwien.ac.at
+
+The latest version of this package can always be downloaded from any
+CRAN mirror. The CRAN master site can be found at
+
+	http://www.ci.tuwien.ac.at/R
+	ftp://ftp.ci.tuwien.ac.at/pub/R
+
+Please do not hesitate to send any comments or bug reports to one of
+the authors.
+
+
+=====================================================================
+                         Friedrich  Leisch                             
+ Institut für Statistik                      Tel: (+43 1) 58801 4541
+ Technische Universität Wien                 Fax: (+43 1)  504 14 98
+ Wiedner Hauptstraße 8-10/1071      Friedrich.Leisch@ci.tuwien.ac.at
+ A-1040 Wien, Austria             http://www.ci.tuwien.ac.at/~leisch
+      PGP public key http://www.ci.tuwien.ac.at/~leisch/pgp.key
+=====================================================================
+
+

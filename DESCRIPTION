@@ -1,0 +1,6 @@
+Package: e1071
+Version: 0.9-2
+Author: Compiled by Friedrich Leisch <Friedrich.Leisch@ci.tuwien.ac.at>.
+Description: Miscellaneous functions used at the Department of
+	Statistics at TU Wien (E1071). 
+License: GPL version 2 or newer

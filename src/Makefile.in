@@ -1,0 +1,11 @@
+OBJS= @PNMOBJS@
+
+all: @PNMSO@
+
+@PNMSO@: $(OBJS)
+	$(SHLIBLD) $(SHLIBLDFLAGS) -o $@ $(OBJS) @EXTRALIBS@
+
+clean:
+	@rm -f *.o *.so
+
+realclean: clean

@@ -1,0 +1,20 @@
+Discrete		 The Discrete Distribution
+Mvnorm                   The Multivariate Normal Distribution
+bincombinations          Binary Combinations
+element                  Extract Elements of an Array
+hamming.distance         Hamming Distances of Vectors
+hamming.window           Computes the Coefficients of a Hamming Window.
+hanning.window           Computes the Coefficients of a Hanning Window.
+ica                      Independent Component Analysis
+interpolate              Interpolate Values of Array
+kurtosis                 Kurtosis
+moment                   Statistical Moment
+pnm                      Portable Anymap Images
+plot.stft                Plots an Object of Type stft.
+rbridge                  Simulation of Brownian Bridge
+read.octave              Read Octave Data File
+rectangle.window         Computes the Coefficients of a Rectangle Window.
+rwiener                  Simulation of Wiener Process
+skewness                 Skewness
+stft                     Computes the Short Time Fourier Transform of a
+                         Vector
