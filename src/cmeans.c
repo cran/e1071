@@ -1,471 +1,337 @@
-/*****************************************************************/
-/*
- *  Copyright (C)2000 Evgenia Dimitriadou
- *               
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
+/* C code for (weighted) fuzzy c-means, rewritten from scratch by KH. */
 
 #include <stdlib.h>
 #include <math.h>
-#include "R.h"
+#include <R.h>
 
+/* Enhance readability of matrix-subscripting for matrices stored in
+   row-major order. */
+#define MSUB(x, i, j, n)	x[(i) + (n) * (j)]
 
-int  subcmeans(int *xrows, int *xcols, double *x, int *ncenters,
-	       double *centers, int *itermax, int *iter,
-	       int *verbose, int *dist, double *U, double *UANT, double
-	       *f, double *ermin, int *converge)
+static double *d;
+static double *dwrk, *dwrk_x, *dwrk_w;
+static int *iwrk;
+
+static void
+cmeans_setup(int nr_x, int nr_p, int dist)
 {
-  int k, col, i, m, n ;
-
-  double serror;
-
-  
-  double sum1;
-  double sum2;
-  double temp,tempu, tempu1, tempu2;
-  int j;
-  double suma;
-  double exponente,epsi1,conv;
-  epsi1=0.002;
-
-  conv=0.0;
-  
-/*  *ermin=0.0;*/
-  serror=0.0;
-  
-  
-  sum1=0;
-  sum2=0;
+    int len_u_d = nr_x * nr_p;
     
-
-  /*update UANT*/
-  for(i=0;i<*ncenters;i++){
-      for(k=0;k<*xrows;k++){
-	  UANT[k+(*xrows)*i]=U[k+(*xrows)*i];
-      }}
-    
-  
-  /*NEW CENTERS*/
-
-  for(i=0;i<*ncenters;i++)
-  {
-      sum1=0;
-      sum2=0;
-      for(col=0;col<*xcols;col++)
-	  centers[i+(*ncenters)*col]=0.0;
-      for(k=0;k<*xrows;k++)
-      {
-	  temp=pow(UANT[k+(*xrows)*i],*f);
-	  sum2=sum2+temp;
-
-	  for(col=0;col<*xcols;col++)
-	  {
-	      centers[i+(*ncenters)*col]+= temp*x[k+(*xrows)*col];
-	  }
-      }
-      for(col=0;col<*xcols;col++)
-	      centers[i+(*ncenters)*col]/=sum2;
-  }
-  
-  
-  /*Membership Matrix */
-  
-  exponente=2.0/(*f-1.0);
-  
-  for(i=0;i<*ncenters;i++)
-  {
-      
-      for(k=0;k<*xrows;k++)
-      {
-	  suma=0;
-	  for(j=0;j<*ncenters;j++)
-	  {
-	      tempu=0;
-	      tempu1=0;
-	      tempu2=0;
-	      for (col=0;col<*xcols;col++)
-	      {
-		  if (*dist==0){
-		      tempu1+=(x[k+(*xrows)*col]-centers[i+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-		      tempu2+=(x[k+(*xrows)*col]-centers[j+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		  }
-		   else if(*dist ==1){
-		       tempu1+=fabs(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-		       tempu2+=fabs(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		   }					     
-	      }
-	      if (*dist==0){
-		  tempu=sqrt(tempu1)/sqrt(tempu2);
-	      }
-	      else if(*dist ==1){
-		  tempu=tempu1/tempu2;
-	      }
-	      suma=suma+pow(tempu,exponente);
-	  }
-	  U[k+(*xrows)*i]=1.0/suma;
-	  /* UANT[k+(*xrows)*i]=U[k+(*xrows)*i];*/
-      }
-      
-  }
-   
-  /*ERROR MINIMIZATION*/
-
-  for (m=0;m<*ncenters;m++){
-      for (k=0;k<*xrows;k++){
-	  serror = 0.0;
-	  conv += fabs(U[k+(*xrows)*m]-UANT[k+(*xrows)*m]);
-	  for(n=0;n<*xcols;n++){
-	      if(*dist == 0){
-		  serror += (x[k+(*xrows)*n] - centers[m
-						      +(*ncenters)*n])*(x[k+(*xrows)*n] - centers[m +(*ncenters)*n]);                                        
-	      }
-	      else if(*dist ==1){
-		  serror += fabs(x[k+(*xrows)*n] - centers[m + (*ncenters)*n]);
-	      }
-	      
-	  }
-	  *ermin+=pow(U[k+(*xrows)*m],*f)*serror;
-      }
-  }
-  /* *ermin=*ermin/(*xrows));*/
-
-  if (conv<= ((*xrows)*(*xcols)*epsi1)){
-      if (*verbose){
-      Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));}
-      /**iter=*itermax;}*/
-      *converge=0;}
-  else
-      if (*verbose){
-	  Rprintf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
-      }
-  
-  return 0;
-}
-    
-int cmeans(int *xrows, int *xcols, double *x, int *ncenters,
-	   double *centers, int *itermax, int *iter, 
-	   int *verbose, int *dist, double *U, double *f, double *ermin)
-    
-{
-
-/*typedef enum {FALSE,TRUE} bool;
-  bool converge;*/
-
-    int k;
-    int i,j,col;
-    double suma,tempu,exponente,tempu1,tempu2;
-
-    int *converge;
-    double *UANT;
-    
-    converge = (int *) R_alloc((1), sizeof(int));
-    UANT = (double *) R_alloc((*xrows)*(*ncenters), sizeof(double));
-
-    
-    *iter=0;
-    
-    /*Initialize Membership Matrix */
-    exponente=2.0/(*f-1.0);
-    
-    for(i=0;i<*ncenters;i++)
-    {
-	
-	for(k=0;k<*xrows;k++)
-	{
-	    suma=0;
-	    for(j=0;j<*ncenters;j++)
-	    {
-		tempu=0;
-		tempu1=0;
-		tempu2=0;
-		for (col=0;col<*xcols;col++)
-		{
-		    if (*dist==0){
-			tempu1+=(x[k+(*xrows)*col]-centers[i+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-			tempu2+=(x[k+(*xrows)*col]-centers[j+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		    }
-		    else if(*dist ==1){
-			tempu1+=fabs(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-			tempu2+=fabs(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		   }					     
-		}
-
-		if (*dist==0){
-		    tempu=sqrt(tempu1)/sqrt(tempu2);
-		}
-		else if(*dist ==1){
-		    tempu=tempu1/tempu2;
-		}
-		
-		suma=suma+pow(tempu,exponente);
-	    }
-	    
-	    UANT[k+(*xrows)*i]=1.0/suma;
-	    
-      }
+    d = (double *) R_alloc(len_u_d, sizeof(double));
+    if(dist == 1) {
+	/* Needed for weighted medians. */
+	dwrk_x = (double *) R_alloc(nr_x, sizeof(double));
+	dwrk_w = (double *) R_alloc(nr_x, sizeof(double));
+	dwrk = (double *) R_alloc(nr_x, sizeof(double));
+	iwrk = (int *) R_alloc(nr_x, sizeof(int));
     }
-  
-    for(i=0;i<*ncenters;i++)
-    {
-	
-	for(j=0;j<*xrows;j++)
-	    
-	    U[j+(*xrows)*i]=UANT[j+(*xrows)*i];
-	
-    }
-    
-    *converge=1;
-
-    
-    while(*converge && ((*iter)++ < *itermax)) {
-	
-	*ermin=0.0;
-	
-	subcmeans(xrows, xcols, x, ncenters, centers, itermax,
-		  iter, verbose, dist, U, UANT, f, ermin, converge);
-    }
-    
-    return 0;
 }
 
- 
-/*****************************************************************/
 /*
- *  Copyright (C)2000 Evgenia Dimitriadou
- *               
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-
-int  subufcl(int *xrows, int *xcols, double *x, int *ncenters,
-	     double *centers, int *itermax, int *iter,
-	     int *verbose, int *dist, double *U, double *UANT, double
-	     *f, double *par, double *ermin, int *converge)
+static void
+cmeans_copy_vector(double *from, double *to, int len)
 {
-  int k, col, i, m, n ;
-
-  double serror;
-
-  
-  double tempu, tempu1, tempu2;
-  int j;
-  double suma;
-  double exponente, lrate;
-
-/*  *ermin=0.0;*/
-  double epsi1, conv;
-  epsi1=0.002;
-  serror=0.0;
-  conv=0.0;
-  
-  
-  /*update UANT*/
-    for(i=0;i<*ncenters;i++){
-      for(k=0;k<*xrows;k++){
-	  UANT[k+(*xrows)*i]=U[k+(*xrows)*i];
-      }}
-
-  
-  /*Membership Matrix Computation*/
-  
-  exponente=2.0/(*f-1.0);
-  
-  for(k=0;k<*xrows;k++)
-  {
-      for(i=0;i<*ncenters;i++)
-      {
-	  suma=0;
-	  for(j=0;j<*ncenters;j++)
-	  {
-	      tempu=0;
-	      tempu1=0;
-	      tempu2=0;
-	      for (col=0;col<*xcols;col++)
-	      {
-		  if (*dist==0){
-		      tempu1+=(x[k+(*xrows)*col]-centers[i+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-		      tempu2+=(x[k+(*xrows)*col]-centers[j+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		  }
-		   else if(*dist ==1){
-		       tempu1+=fabs(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-		       tempu2+=fabs(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		   }					     
-	      }
-	      if (*dist==0){
-		  tempu=sqrt(tempu1)/sqrt(tempu2);
-	      }
-	      else if(*dist ==1){
-		  tempu=tempu1/tempu2;
-	      }
-	      suma=suma+pow(tempu,exponente);
-	  }
-	  U[k+(*xrows)*i]=1.0/suma;
-
-
-	  /*UPDATE CENTERS*/
-	  lrate = (*par)*(1-(double)*iter/(*itermax));
-	      for (n=0;n<*xcols;n++){
-		  centers[i+(*ncenters)*n]+=lrate*pow(U[k+(*xrows)*i],*f)*(x[k+(*xrows)*n]-centers[i+(*ncenters)*n]);
-	      }
-      }
-      
-  }      
-  /*Stochastic Approximate ERROR MINIMIZATION*/
-  
-  for (m=0;m<*ncenters;m++){
-      for (k=0;k<*xrows;k++){
-	  serror=0.0;
-	  conv += fabs(U[k+(*xrows)*m]-UANT[k+(*xrows)*m]);
-	  for(n=0;n<*xcols;n++){
-		  
-	      if(*dist == 0){
-		  serror += (x[k+(*xrows)*n] - centers[m
-						      +(*ncenters)*n])*(x[k+(*xrows)*n] - centers[m +(*ncenters)*n]);                                        
-	      }
-	      else if(*dist ==1){
-		  serror += fabs(x[k+(*xrows)*n] - centers[m + (*ncenters)*n]);
-	      }
-	      
-	      }
-	  *ermin+=pow(U[k+(*xrows)*m],*f)*serror;
-      }
-  }
-  /* *ermin=*ermin/(*xrows));*/
-
-  if (conv<= ((*xrows)*(*xcols)*epsi1)){
-      if (*verbose){
-      Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));}
-      /**iter=*itermax;}*/
-      *converge=0;}
-  else
-      if (*verbose){
-	  Rprintf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
-      }
-  
-  return 0;
+    int i;
+    for(i = 0; i < len; i++)
+	to[i] = from[i];
 }
 
-int ufcl(int *xrows, int *xcols, double *x, int *ncenters,
-	 double *centers, int *itermax, int *iter, 
-	 int *verbose, int *dist, double *U, double
-	 *f, double *par, double *ermin)
-    
+static double
+cmeans_delta_old_new(double *old, double *new, int len)
 {
-    int i, k;
-    int *converge;
-    double *UANT;
-    
-    converge = (int *) R_alloc((1), sizeof(int));
-    UANT = (double *) R_alloc((*xrows)*(*ncenters), sizeof(double));
-    
-    *iter=0;
+    int i;
+    double sum = 0;
+    for(i = 0; i < len; i++)
+	sum += fabs(new[i] - old[i]);
+    return(sum / len);
+}
+*/
 
-    /*initialize UANT*/
-    for(i=0;i<*ncenters;i++){
-	for(k=0;k<*xrows;k++){
-	    UANT[k+(*xrows)*i]=0.0;
-	}}
+static int
+cmeans_sign(double x)
+{
+    if(x == 0) return(0);
+    return((x > 0) ? 1 : -1);
+}
+
+static double
+cmeans_weighted_median(double *x, double *w, int len)
+{
+    int i;
+    double sum, val, marg, mval, cumsum_w, cumsum_w_x;
+
+    /* Sort x. */
+    for(i = 0; i < len; i++)
+	iwrk[i] = i;
+    rsort_with_index(x, iwrk, len);
     
-    *converge=1;
-
-    while(*converge && ((*iter)++ < *itermax)) {
-
-	*ermin=0.0;
-	
-	subufcl(xrows, xcols, x, ncenters, centers, itermax,
-		iter, verbose, dist, U, UANT, f, par, ermin, converge);
+    /* Permute w using iwrk, and normalize. */
+    sum = 0;    
+    for(i = 0; i < len; i++) {
+	dwrk[i] = w[iwrk[i]];
+	sum += dwrk[i];
     }
-    
-    return 0;
-}
+    for(i = 0; i < len; i++) {
+	w[i] = dwrk[i] / sum;
+    }
 
-
-/*************************************************************/
-/******only for prediction************************************/
-/*************************************************************/
-
-int fuzzy_assign(int *xrows, int *xcols, double *x, int *ncenters,
-		double *centers, int *dist, double *U,	double *f)
-{
-    int k, col, i;
-    double tempu, tempu1, tempu2;
-    int j;
-    double suma;
-    double exponente;
-    
-    
-    /*Membership Matrix Computation*/
-    
-    exponente=2.0/(*f-1.0);
-    
-    for(k=0;k<*xrows;k++)
-    {
-	for(i=0;i<*ncenters;i++)
-	{
-	    suma=0;
-	    for(j=0;j<*ncenters;j++)
-	    {
-		tempu=0;
-		tempu1=0;
-		tempu2=0;
-		for (col=0;col<*xcols;col++)
-		{
-		    if (*dist==0){
-			tempu1+=(x[k+(*xrows)*col]-centers[i+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-			tempu2+=(x[k+(*xrows)*col]-centers[j+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		    }
-		    else if(*dist ==1){
-			tempu1+=fabs(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
-			tempu2+=fabs(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
-		    }					     
-		}
-		if (*dist==0){
-		    tempu=sqrt(tempu1)/sqrt(tempu2);
-		}
-		else if(*dist ==1){
-		    tempu=tempu1/tempu2;
-		}
-		suma=suma+pow(tempu,exponente);
-	    }
-	    U[k+(*xrows)*i]=1.0/suma;
-	    
+    cumsum_w = cumsum_w_x = 0;
+    mval = R_PosInf;
+    marg = *x;			/* -Wall */
+    for(i = 0; i < len; i++) {
+	cumsum_w += w[i];
+	cumsum_w_x += w[i] * x[i];
+	val = x[i] * (cumsum_w - .5) - cumsum_w_x;
+	if(val < mval) {
+	    marg = x[i];
+	    mval = val;
 	}
     }
-    return 0;
+
+    return(marg);
 }
 
+/* Update the dissimilarities (between objects and prototypes) for a
+ * single object (i.e., a single row of the dissimilarity matrix. */
+static void
+ufcl_dissimilarities(double *x, double *p,
+		     int nr_x, int nc, int nr_p,
+		     int dist, int ix, double *d)
+{
+    int ip, j;
+    double sum, v;
+    
+    for(ip = 0; ip < nr_p; ip++) {
+	sum = 0;
+	for(j = 0; j < nc; j++) {
+	    v = MSUB(x, ix, j, nr_x) - MSUB(p, ip, j, nr_p);
+	    if(dist == 0)
+		sum += v * v;
+	    else if(dist == 1)
+		sum += fabs(v);
+	}
+	MSUB(d, ix, ip, nr_x) = sum;
+    }
+}
 
+static void
+cmeans_dissimilarities(double *x, double *p,
+		       int nr_x, int nc, int nr_p,
+		       int dist, double *d)
+{
+    int ix;
+    
+    for(ix = 0; ix < nr_x; ix++) {
+	/* Loop over all objects ... */
+	ufcl_dissimilarities(x, p, nr_x, nc, nr_p, dist, ix, d);
+    }
+}
 
+/* Update the memberships for a single object (i.e., a single row of the
+ * membership matrix.) */
+static void
+ufcl_memberships(double *d, int nr_x, int nr_p,
+		 double exponent, int ix,
+		 double *u)
+{
+    int ip, n_of_zeroes;
+    double sum, v;
 
+    n_of_zeroes = 0;
+    for(ip = 0; ip < nr_p; ip++) {
+	if(MSUB(d, ix, ip, nr_x) == 0)
+	    n_of_zeroes++;
+    }
+    if(n_of_zeroes > 0) {
+	v = 1 / n_of_zeroes;
+	for(ip = 0; ip < nr_p; ip++)
+	    MSUB(u, ix, ip, nr_x) =
+		((MSUB(d, ix, ip, nr_x) == 0) ? v : 0);
+    }
+    else {
+	/* Use the assumption that in general, pow() is more
+	 * expensive than subscripting. */
+	sum = 0;
+	for(ip = 0; ip < nr_p; ip++) {
+	    v = 1 / pow(MSUB(d, ix, ip, nr_x), exponent);
+	    sum += v;
+	    MSUB(u, ix, ip, nr_x) = v;
+	}
+	for(ip = 0; ip < nr_p; ip++)
+	    MSUB(u, ix, ip, nr_x) /= sum;
+    }
+}
 
+static void
+cmeans_memberships(double *d,
+		   int nr_x, int nr_p,
+		   double exponent, double *u)
+{
+    int ix;
 
+    for(ix = 0; ix < nr_x; ix++) {
+	/* Loop over all objects ... */
+	ufcl_memberships(d, nr_x, nr_p, exponent, ix, u);
+    }
+}
+
+static void
+cmeans_prototypes(double *x, double *u, double *w,
+		  int nr_x, int nc, int nr_p,
+		  double f, int dist, double *p)
+{
+    int ix, ip, j;
+    double sum, v;
+
+    if(dist == 0) {
+	/* Euclidean: weighted means. */
+	for(ip = 0; ip < nr_p; ip++) {
+	    for(j = 0; j < nc; j++)
+		MSUB(p, ip, j, nr_p) = 0;
+	    sum = 0;
+	    for(ix = 0; ix < nr_x; ix++) {
+		v = w[ix] * pow(MSUB(u, ix, ip, nr_x), f);
+		sum += v;
+		for(j = 0; j < nc; j++)
+		    MSUB(p, ip, j, nr_p) += v * MSUB(x, ix, j, nr_x);
+	    }
+	    for(j = 0; j < nc; j++)
+		MSUB(p, ip, j, nr_p) /= sum;
+	}
+    }
+    else {
+	/* Manhattan: weighted medians. */
+	for(ip = 0; ip < nr_p; ip++)
+	    for(j = 0; j < nc; j++) {
+		for(ix = 0; ix < nr_x; ix++) {
+		    dwrk_x[ix] = MSUB(x, ix, j, nr_x);
+		    dwrk_w[ix] = w[ix] * pow(MSUB(u, ix, ip, nr_x), f);
+		}
+		MSUB(p, ip, j, nr_p) =
+		    cmeans_weighted_median(dwrk_x, dwrk_w, nr_x);
+	    }
+    }
+}
+
+static double
+cmeans_error_fn(double *u, double *d, double *w,
+		int nr_x, int nr_p, double f)
+{
+    int ix, ip;    
+    double sum;
+
+    sum = 0;
+    for(ix = 0; ix < nr_x; ix++)    
+	for(ip = 0; ip < nr_p; ip++)
+	    sum += w[ix] * pow(MSUB(u, ix, ip, nr_x), f)
+		* MSUB(d, ix, ip, nr_x);
+    return(sum);
+}
+
+void
+cmeans(double *x, int *nr_x, int *nc, double *p, int *nr_p, double *w,
+       double *f, int *dist, int *itermax, double *reltol, int *verbose,
+       double *u, double *ermin, int *iter)
+{
+    double exponent = 1 / (*f - 1);
+    double old_value, new_value;
+
+    cmeans_setup(*nr_x, *nr_p, *dist);
+    
+    cmeans_dissimilarities(x, p, *nr_x, *nc, *nr_p, *dist, d);
+    cmeans_memberships(d, *nr_x, *nr_p, exponent, u);
+    old_value = new_value = cmeans_error_fn(u, d, w, *nr_x, *nr_p, *f);
+    
+    *iter = 0;
+    while((*iter)++ < *itermax) {
+	cmeans_prototypes(x, u, w, *nr_x, *nc, *nr_p, *f, *dist, p);
+	cmeans_dissimilarities(x, p, *nr_x, *nc, *nr_p, *dist, d);
+	cmeans_memberships(d, *nr_x, *nr_p, exponent, u);
+	new_value = cmeans_error_fn(u, d, w, *nr_x, *nr_p, *f);
+	if(fabs(old_value - new_value) < *reltol * (old_value + *reltol)) {
+	    if(*verbose)
+		Rprintf("Iteration: %3d converged, Error: %13.10f\n",
+			*iter, new_value);
+	    break;
+	}
+	else {
+	    if(*verbose) {
+		*ermin = cmeans_error_fn(u, d, w, *nr_x, *nr_p, *f);
+		Rprintf("Iteration: %3d, Error: %13.10f\n",
+			*iter, new_value);
+	    }
+	    old_value = new_value;
+	}
+    }
+
+    *ermin = new_value;
+}
+
+/* Update prototypes based on a single object. */
+static void
+ufcl_prototypes(double *x, double *u, double *w,
+		int nr_x, int nc, int nr_p,
+		double f, int dist, double lrate, int ix, double *p)
+{
+    int ip, j;
+    double grad;
+
+    for(ip = 0; ip < nr_p; ip++) {
+	for(j = 0; j < nc; j++) {
+	    grad = MSUB(x, ix, j, nr_x) - MSUB(p, ip, j, nr_p);
+	    if(dist == 1)
+		grad = cmeans_sign(grad);
+	    MSUB(p, ip, j, nr_p) +=
+		lrate * w[ix] * pow(MSUB(u, ix, ip, nr_x), f) * grad;
+	}
+    }
+}
+
+void
+ufcl(double *x, int *nr_x, int *nc, double *p, int *nr_p, double *w,
+     double *f, int *dist, int *itermax, double *reltol, int *verbose,
+     double *rate_par,
+     double *u, double *ermin, int *iter)
+{
+    double exponent = 1 / (*f - 1);
+    double old_value, new_value;
+
+    int ix;
+    double lrate;
+
+    cmeans_setup(*nr_x, *nr_p, 0);
+    
+    /* Need some starting values ... */
+    cmeans_dissimilarities(x, p, *nr_x, *nc, *nr_p, *dist, d);
+    cmeans_memberships(d, *nr_x, *nr_p, exponent, u);
+    old_value = new_value = cmeans_error_fn(u, d, w, *nr_x, *nr_p, *f);
+    
+    *iter = 0;
+    while((*iter)++ < *itermax) {
+	/* Turns out that sampling the objects is a bad idea ... */
+	lrate = *rate_par * (1 - (double) *iter / *itermax);
+	for(ix = 0; ix < *nr_x; ix++) {
+	    ufcl_dissimilarities(x, p, *nr_x, *nc, *nr_p, *dist, ix, d);
+	    ufcl_memberships(d, *nr_x, *nr_p, exponent, ix, u);
+	    ufcl_prototypes(x, u, w, *nr_x, *nc, *nr_p, *f, *dist,
+			    lrate, ix, p);
+	}
+	new_value = cmeans_error_fn(u, d, w, *nr_x, *nr_p, *f);
+	if(fabs(old_value - new_value) < *reltol * (old_value + *reltol)) {
+	    if(*verbose)
+		Rprintf("Iteration: %3d converged, Error: %13.10f\n",
+			*iter, new_value);
+	    break;
+	}
+	else {
+	    if(*verbose) {
+		*ermin = cmeans_error_fn(u, d, w, *nr_x, *nr_p, *f);
+		Rprintf("Iteration: %3d, Error: %13.10f\n",
+			*iter, new_value);
+	    }
+	    old_value = new_value;
+	}
+    }
+
+    *ermin = new_value;
+}	

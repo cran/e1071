@@ -103,7 +103,11 @@ cshell <- function (x, centers, iter.max = 100, verbose = FALSE,
       op <- sum( (U[,i]^m) * (normdist-r) )^2
       ##equation 4
       equationmatrix <- ((U[,i]^m) * (1-r/normdist))*distmat
-      op<- op+apply(equationmatrix, 2, sum)^2
+      ## <FIXME KH 2005-01-14>
+      ## This had just apply(), but optim() really needs a scalar fn.
+      ## What do we really want here?
+      op<- op+sum(apply(equationmatrix, 2, sum)^2)
+      ## </FIXME>
       
     }
     

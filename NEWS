@@ -1,18 +1,32 @@
+Changes in Version 1.5-6
+
+  o cmeans() is substantially enhanced, with a complete rewrite of the
+    underlying C code.  It is now possible to specify case weights and
+    the relative convergence tolerance.  For Manhattan distances, centers
+    are correctly computed as suitably weighted medians (rather than
+    means) of the observations.  The print method for fclust objects is
+    now more in parallel with related methods, and registered in the name
+    space.
+
+
 Changes in Version 1.5-5
 
   o read.octave() is now deprecated in favor of a substantially enhanced
     version in package foreign for reading in files in Octave text data
     format. 
 
+
 Changes in Version 1.5-4
 
   o Use lazy loading.
+
 
 Changes in Version 1.5-3
 
   o New arguments in plot.svm for customizing plot symbols and colors
 
   o Fix of broken code in plot.svm for the `fill=FALSE' (non-default) case
+
 
 Changes in Version 1.5-2
 
