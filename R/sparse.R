@@ -4,17 +4,27 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
     stop("Need `SparseM' package!")
   l <- strsplit(readLines(file(file)), "[ ]+")
 
-  ## y-values
-  y <- sapply(l, function(x) x[1])
-
+  ## extract y-values, if any
+  y <- if (length(grep(":",l[[1]][1])))
+    NULL
+  else
+    sapply(l, function(x) x[1])
+  
   ## x-values
-  rja <- do.call("rbind", lapply(l, function(x) do.call("rbind", strsplit(x[-1], ":"))))
+  rja <- do.call("rbind",
+                 lapply(l, function(x)
+                        do.call("rbind",
+                                strsplit(if (is.null(y)) x else x[-1], ":")
+                                )
+                        )
+                 )
   ja <- as.integer(rja[,1])
-  ia <- cumsum(c(1, sapply(l, length) - 1))
+  ia <- cumsum(c(1, sapply(l, length) - !is.null(y)))
 
   max.ja <- max(ja)
   dimension <- c(length(l), if (is.null(ncol)) max.ja else max(ncol, max.ja))
-  x = new("matrix.csr", as.numeric(rja[,2]), ja, as.integer(ia), as.integer(dimension))
+  x = new("matrix.csr", ra = as.numeric(rja[,2]), ja = ja,
+    ia = as.integer(ia), dimension = as.integer(dimension))
   if (length(y)) 
     list(x = x, y = if (fac) as.factor(y) else as.numeric(y))
   else x
@@ -62,6 +72,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 # }
 
 write.matrix.csr <- function (x, file="out.dat", y=NULL) {
+  on.exit(sink())
   library(methods)
   if (!is.null(y) & (length(y) != nrow(x)))
     stop(paste("Length of y (=", length(y),
@@ -74,7 +85,6 @@ write.matrix.csr <- function (x, file="out.dat", y=NULL) {
       cat(x@ja[j], ":", x@ra[j], " ", sep="")
     cat("\n")
   }
-  sink()
 }
 
 na.fail.matrix.csr <- function(object, ...) {

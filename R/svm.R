@@ -386,14 +386,15 @@ predict.svm <- function (object, newdata,
     colns = c()
     for (i in 1:(object$nclasses - 1))
       for (j in (i + 1):object$nclasses)
-        colns <- c(colns, paste(object$levels[i],"/",object$levels[j], sep = ""))
+        colns <- c(colns, paste(object$levels[object$labels[i]],
+                                "/", object$levels[object$labels[j]], sep = ""))
     attr(ret2, "decision.values") <- matrix(ret$dec, nrow = nrow(newdata), byrow = TRUE)
     colnames(attr(ret2, "decision.values")) <- colns
   }
 
   if (probability && object$type < 2) {
     attr(ret2, "probabilities") <- matrix(ret$prob, nrow = nrow(newdata), byrow = TRUE)
-    colnames(attr(ret2, "probabilities")) <- object$levels
+    colnames(attr(ret2, "probabilities")) <- object$levels[object$labels]
   }
 
   ret2
