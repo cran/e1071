@@ -459,9 +459,9 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                      plot.axes = {
                        axis(1)
                        axis(2)
-                       colors <- as.numeric(model.response(model.frame(x, data[-x$index,])))
-                       points(formula, data = data[-x$index,], col = colors)
-                       points(formula, data = data[x$index,], pch = "x", col = colors)
+                       colors <- as.numeric(model.response(model.frame(x, data)))
+                       points(formula, data = data[-x$index,], col = colors[-x$index])
+                       points(formula, data = data[x$index,], pch = "x", col = colors[x$index])
                      },
                      levels = 1:(length(unique(as.numeric(preds)))+1),
                      key.axes = axis(4,
@@ -474,9 +474,9 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                      )
     } else {
       plot(formula, data = data, type = "n", ...)
-      colors <- as.numeric(model.response(model.frame(m, data[-x$index,])))
-      points(formula, data = data[-x$index,], col = colors)
-      points(formula, data = data[x$index,], pch = "x", col = colors)
+      colors <- as.numeric(model.response(model.frame(m, data)))
+      points(formula, data = data[-x$index,], col = colors[-x$index])
+      points(formula, data = data[x$index,], pch = "x", col = colors[x$index])
     }
   }
 }

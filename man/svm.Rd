@@ -74,7 +74,7 @@ shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
     to be supplied (default weight: 1). All components have to be named.}
   \item{cachesize}{cache memory in MB (default 40)}
   \item{tolerance}{tolerance of termination criterion (default: 0.001)}
-  \item{epsilon}{epsilon in the insensitive-loss function (default: 0.5)}
+  \item{epsilon}{epsilon in the insensitive-loss function (default: 0.1)}
   \item{shrinking}{option whether to use the shrinking-heuristics
     (default: \code{TRUE})}
   \item{cross}{if a integer value k>0 is specified, a k-fold cross

@@ -1,6 +1,3 @@
-Discrete                Discrete Distribution
-HouseVotes84            United States Congressional Voting Records
-                        1984
 bclust                  Bagged Clustering
 bincombinations         Binary Combinations
 bootstrap.lca           Bootstrap Samples of LCA Results
@@ -10,12 +7,16 @@ classAgreement          Coefficients comparing classification
 cmeans                  Fuzzy C-Means Clustering
 countpattern            Count Binary Patterns
 cshell                  Fuzzy C-Shell Clustering
+Discrete                Discrete Distribution
 element                 Extract Elements of an Array
 fclustIndex             Fuzzy Cluster Indexes (Validity/Performance
                         Measures)
+Glass                   Glass Identification Database
 hamming.distance        Hamming Distances of Vectors
 hamming.window          Computes the Coefficients of a Hamming Window.
 hanning.window          Computes the Coefficients of a Hanning Window.
+HouseVotes84            United States Congressional Voting Records
+                        1984
 ica                     Independent Component Analysis
 impute                  Replace Missing Values
 interpolate             Interpolate Values of Array
@@ -25,6 +26,7 @@ matchClasses            Find similar classes in two-way contingency
                         tables
 moment                  Statistical Moment
 naiveBayes              Naive Bayes Classifier
+Ozone                   Los Angeles ozone pollution data, 1976
 permutations            All permutations of integers 1:n
 plot.stft               Plot Short Time Fourier Transforms
 plot.svm                Plot svm objects
@@ -44,6 +46,6 @@ skewness                Skewness
 stft                    Computes the Short Time Fourier Transform of a
                         Vector
 svm                     Support Vector Machines
-tune                    Parameter tuning of fuctions using grid search
 tune.control            control parameters for the tune function
+tune                    Parameter tuning of fuctions using grid search
 tune.wrapper            Convenience tuning wrapper functions
