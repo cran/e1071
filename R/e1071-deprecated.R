@@ -1,4 +1,6 @@
-read.octave <- function (file, quiet=FALSE) {
+read.octave <- function(file, quiet = FALSE) {
+
+  .Deprecated("read.octave", "foreign")    
 
   nr <- 0
   nc <- 0
