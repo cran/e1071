@@ -13,11 +13,11 @@ out general regression and classification (of nu and epsilon-type), as
 well as density-estimation. A formula interface is provided.
 }
 \usage{
-\method{svm}{formula}(formula, data = list(), ..., subset, na.action =
+\method{svm}{formula}(formula, data = NULL, ..., subset, na.action =
 na.omit, scale = TRUE)
 \method{svm}{default}(x, y = NULL, scale = TRUE, type = NULL, kernel =
-"radial", degree = 3, gamma = 1 / dim(x)[2], coef0 = 0, cost = 1, nu = 0.5,
-class.weights = NULL, cachesize = 40, tolerance = 0.001, epsilon = 0.5,
+"radial", degree = 3, gamma = 1 / ncol(as.matrix(x)), coef0 = 0, cost = 1, nu = 0.5,
+class.weights = NULL, cachesize = 40, tolerance = 0.001, epsilon = 0.1,
 shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
 }
 \arguments{
@@ -149,7 +149,7 @@ attach(iris)
 
 ## classification mode
 # default with factor response:
-model <- svm(Species~., data=iris)
+model <- svm(Species ~ ., data = iris)
 
 # alternatively the traditional interface:
 x <- subset(iris, select = -Species)
@@ -161,9 +161,15 @@ summary(model)
 
 # test with train data
 pred <- predict(model, x)
+# (same as:)
+pred <- fitted(model)
 
 # Check accuracy:
 table(pred, y)
+
+# compute decision values:
+pred <- predict(model, x, decision.values = TRUE)
+attr(pred, "decision.values")[1:4,]
 
 ## try regression mode on two dimensions
 
@@ -195,13 +201,8 @@ m <- svm(~., data = X, gamma = 0.1)
 m <- svm(~ a + b, gamma = 0.1)
 
 # test:
-newdata <- data.frame(a = c(0,4), b = c(0,4))
-newdata
-predict(m, newdata)
-
-# visualization:
-plot(as.matrix(X))
-points(as.matrix(X)[m$index,], col = 2)
+newdata <- data.frame(a = c(0, 4), b = c(0, 4))
+predict (m, newdata)
 }
 \keyword{neural}
 \keyword{nonlinear}

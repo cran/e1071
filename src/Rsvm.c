@@ -326,7 +326,8 @@ void svmtrain (double *x, int *r, int *c,
     free (prob.x);
 }
 	     
-void svmpredict  (double *v, int *r, int *c,
+void svmpredict  (int    *decisionvalues,
+		  double *v, int *r, int *c,
 		  int    *rowindex,
 		  int    *colindex,
 		  double *coefs,
@@ -348,7 +349,8 @@ void svmpredict  (double *v, int *r, int *c,
 		  int    *xcolindex,
 		  int    *sparsex,
 		  
-		  double *ret)
+		  double *ret,
+		  double *dec)
 {
     struct svm_model m;
     struct svm_node ** train;
@@ -387,9 +389,14 @@ void svmpredict  (double *v, int *r, int *c,
     else
 	train = sparsify(x, *xr, *c);
 
-    /* call svm-function for each x-row */
+    /* call svm-predict-function for each x-row */
     for (i = 0; i < *xr; i++)
-	ret[i] = svm_predict (&m, train[i]);
+	ret[i] = svm_predict(&m, train[i]);
+
+    /* optionally, compute decision values */
+    if (*decisionvalues)
+      for (i = 0; i < *xr; i++)
+	svm_predict_values(&m, train[i], dec + i * *nclasses * (*nclasses - 1) / 2);
 
     /* clean up memory */
     for (i = 0; i < *xr; i++)

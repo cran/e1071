@@ -2,7 +2,7 @@
 \alias{impute}
 \title{Replace Missing Values}
 \usage{
-impute(x, what="median")
+impute(x, what = c("median", "mean"))
 }
 \arguments{
  \item{x}{A matrix or dataframe.}

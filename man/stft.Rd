@@ -2,7 +2,7 @@
 \title{Computes the Short Time Fourier Transform of a Vector}
 
 \usage{stft(X, win=min(80,floor(length(X)/10)), inc=min(24,
-floor(length(X)/30)), coef=64, wtype="hanning")}  
+floor(length(X)/30)), coef=64, wtype="hanning.window")}  
 \alias{stft}
 
 \arguments{

@@ -1,13 +1,15 @@
 Package: e1071
-Version: 1.3-13
-Date: 2003-09-25
+Version: 1.3-14
+Date: 2003-12-03
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
-Depends: R (>= 1.3.1), mva, class, mlbench
+Depends: mva, class
+Suggests: mlbench
 Author: Evgenia Dimitriadou, Kurt Hornik, Friedrich Leisch,
 	David Meyer, and Andreas Weingessel
 Maintainer: Friedrich Leisch <Friedrich.Leisch@ci.tuwien.ac.at>
 Description: Functions for latent class analysis, short time Fourier
 	     transform, fuzzy clustering, support vector machines,
-	     shortest path computation, bagged clustering, ...
+	     shortest path computation, bagged clustering, naive Bayes
+	     classifier, ...
 License: GPL version 2.  See COPYRIGHT.svm.cpp for the
 	copyright of the svm C++ code.

@@ -15,7 +15,7 @@ bclust(x, centers=2, iter.base=10, minsize=0,
 hclust.bclust(object, x, centers, dist.method=object$dist.method,
               hclust.method=object$hclust.method, final.kmeans=FALSE,
               docmdscale = FALSE, maxcluster=object$maxcluster)
-\method{plot}{bclust}(x, maxcluster=object$maxcluster, main, ...)
+\method{plot}{bclust}(x, maxcluster=x$maxcluster, main, ...)
 centers.bclust(object, k)
 clusters.bclust(object, k, x=NULL)
 }

@@ -1,4 +1,40 @@
-naiveBayes <- function(formula, data, ..., subset, na.action = na.pass) {
+naiveBayes <- function(x, ...)
+  UseMethod("naiveBayes")
+
+naiveBayes.default <- function(x, y, ...) {
+  call <- match.call()
+  Yname <- deparse(substitute(y))
+
+  ## estimation-function
+  est <- function(var)
+    if (is.numeric(var)) {
+      cbind(tapply(var, y, mean),
+            tapply(var, y, sd))
+    } else {
+      tab <- table(y, var)
+      tab / rowSums(tab)
+    }
+  
+  ## create tables
+  apriori <- table(y)
+  tables <- lapply(x, est)
+  
+  ## fix dimname names
+  for (i in 1:length(tables))
+    names(dimnames(tables[[i]])) <- c(Yname, colnames(x)[i])
+  names(dimnames(apriori)) <- Yname
+
+  structure(list(apriori = apriori,
+                 tables = tables,
+                 levels = levels(y),
+                 call   = call
+                 ),
+            
+            class = "naiveBayes"
+            )
+}
+
+naiveBayes.formula <- function(formula, data, ..., subset, na.action = na.pass) {
   call <- match.call()
   Yname <- as.character(formula[[2]])
 
@@ -15,16 +51,7 @@ naiveBayes <- function(formula, data, ..., subset, na.action = na.pass) {
     Y <- model.extract(m, "response")
     X <- m[,-attr(Terms, "response")]
 
-    ## create tables
-    apriori <- table(Y)
-    tables <- lapply(X, function(x) {tab <- table(Y, x); tab / rowSums(tab)})
-
-    ## fix dimname names
-    for (i in 1:length(tables))
-      names(dimnames(tables[[i]])) <- c(Yname, colnames(X)[i])
-    names(dimnames(apriori)) <- Yname
-
-    classlevels <- levels(Y)
+    return(naiveBayes(X, Y, ...))
   } else if (is.array(data)) {
     ## Find Class dimension
     Yind <- which(names(dimnames(data)) == Yname)
@@ -40,17 +67,16 @@ naiveBayes <- function(formula, data, ..., subset, na.action = na.pass) {
     tables <- lapply(Vind,
                      function(i) margin.table(data, c(Yind, i)) / as.numeric(apriori))
 
-    classlevels <- names(apriori)
-  } else stop("naiveBayes handles data frames or arrays only")
+    structure(list(apriori = apriori,
+                   tables = tables,
+                   levels = names(apriori),
+                   call   = call
+                   ),
+              
+              class = "naiveBayes"
+              )
+  } else stop("naiveBayes formula interface handles data frames or arrays only")
 
-  structure(list(apriori = apriori,
-                 tables = tables,
-                 levels = classlevels,
-                 call   = call
-                 ),
-            
-            class = "naiveBayes"
-            )
 }
 
 
@@ -73,6 +99,7 @@ predict.naiveBayes <- function(object,
                                ...) {
   type <- match.arg(type)
   nattribs <- ncol(newdata)
+  isnumeric <- sapply(newdata, is.numeric)
   L <- sapply(1:nrow(newdata), function(i) {
     ndata <- as.numeric(newdata[i,])
     L <- object$apriori *
@@ -81,7 +108,11 @@ predict.naiveBayes <- function(object,
         if(is.na(nd))
           rep(1, length(object$apriori))
         else {
-          prob <- object$tables[[v]][,nd]
+          prob <- if (isnumeric[v]) {
+            msd <- object$tables[[v]]
+            dnorm(nd, msd[,1], msd[,2])
+          } else
+            object$tables[[v]][,nd]
           prob[prob == 0] <- threshold
           prob
         }

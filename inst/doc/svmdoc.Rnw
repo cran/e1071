@@ -234,18 +234,18 @@ data(Ozone)
 ## split data into a train and test set
 index     <- 1:nrow(Ozone)
 testindex <- sample(index, trunc(length(index)/3))
-testset   <- na.omit(Ozone[testindex,])
-trainset  <- na.omit(Ozone[-testindex,])
+testset   <- na.omit(Ozone[testindex,-3])
+trainset  <- na.omit(Ozone[-testindex,-3])
 
 ## svm
 svm.model <- svm(V4 ~ ., data = trainset, cost = 1000, gamma = 0.0001)
-svm.pred  <- predict(svm.model, testset[,-4])
-crossprod(svm.pred - testset[,4]) / length(testindex)
+svm.pred  <- predict(svm.model, testset[,-3])
+crossprod(svm.pred - testset[,3]) / length(testindex)
 
 ## rpart
 rpart.model <- rpart(V4 ~ ., data = trainset)
-rpart.pred  <- predict(rpart.model, testset[,-4])
-crossprod(rpart.pred - testset[,4]) / length(testindex)
+rpart.pred  <- predict(rpart.model, testset[,-3])
+crossprod(rpart.pred - testset[,3]) / length(testindex)
 @ 
 
 <<results=tex,echo=FALSE>>=
@@ -256,18 +256,18 @@ for (i in 1:reps) {
   ## split data into a train and test set
   index     <- 1:nrow(Ozone)
   testindex <- sample(index, trunc(length(index)/3))
-  testset   <- na.omit(Ozone[testindex,])
-  trainset  <- na.omit(Ozone[-testindex,])
+  testset   <- na.omit(Ozone[testindex,-3])
+  trainset  <- na.omit(Ozone[-testindex,-3])
   
   ## svm
   svm.model <- svm(V4 ~ ., data = trainset, cost = 1000, gamma = 0.0001)
-  svm.pred  <- predict(svm.model, testset[,-4])
-  sv.res[i] <- crossprod(svm.pred - testset[,4]) / length(testindex)
+  svm.pred  <- predict(svm.model, testset[,-3])
+  sv.res[i] <- crossprod(svm.pred - testset[,3]) / length(testindex)
   
   ## rpart
   rpart.model <- rpart(V4 ~ ., data = trainset)
-  rpart.pred  <- predict(rpart.model, testset[,-4])
-  rp.res[i] <- crossprod(rpart.pred - testset[,4]) / length(testindex)
+  rpart.pred  <- predict(rpart.model, testset[,-3])
+  rp.res[i] <- crossprod(rpart.pred - testset[,3]) / length(testindex)
 }
 xtable(rbind(svm = summary(sv.res), rpart = summary(rp.res)), 
        label = "tab:reg", caption = "Performance of \\texttt{svm()} and\

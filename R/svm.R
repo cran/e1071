@@ -77,6 +77,27 @@ function (x,
   x.scale <- y.scale <- NULL
   formula <- inherits(x, "svm.formula")
   
+  ## determine model type
+  if (is.null(type)) type <-
+    if (is.null(y)) "one-classification"
+    else if (is.factor(y)) "C-classification"
+    else "eps-regression"
+
+  type <- pmatch(type, c("C-classification",
+                         "nu-classification",
+                         "one-classification",
+                         "eps-regression",
+                         "nu-regression"), 99) - 1
+
+  if (type > 10) stop("wrong type specification!")
+  
+  kernel <- pmatch(kernel, c("linear",
+                             "polynomial",
+                             "radial",
+                             "sigmoid"), 99) - 1
+
+  if (kernel > 10) stop("wrong kernel specification!")
+
   ## scaling, subsetting, and NA handling
   if (sparse) {
     scale <- rep(FALSE, ncol(x))
@@ -113,7 +134,7 @@ function (x,
         xtmp <- scale(x[,scale])
         x[,scale] <- xtmp
         x.scale <- attributes(xtmp)[c("scaled:center","scaled:scale")]
-        if (is.numeric(y)) {
+        if (is.numeric(y) && (type > 2)) {
           y <- scale(y)
           y.scale <- attributes(y)[c("scaled:center","scaled:scale")]
           y <- as.vector(y)
@@ -121,27 +142,6 @@ function (x,
       }
     }
   }
-
-  ## determine model type
-  if (is.null(type)) type <-
-    if (is.null(y)) "one-classification"
-    else if (is.factor(y)) "C-classification"
-    else "eps-regression"
-
-  type <- pmatch(type, c("C-classification",
-                         "nu-classification",
-                         "one-classification",
-                         "eps-regression",
-                         "nu-regression"), 99) - 1
-
-  if (type > 10) stop("wrong type specification!")
-  
-  kernel <- pmatch(kernel, c("linear",
-                             "polynomial",
-                             "radial",
-                             "sigmoid"), 99) - 1
-
-  if (kernel > 10) stop("wrong kernel specification!")
 
   ## further parameter checks
   nr <- nrow(x)
@@ -152,7 +152,7 @@ function (x,
   if (type != 2 && length(y) != nr) stop("x and y don't match.")
 
   if (cachesize < 0.1) cachesize <- 0.1
-  
+
   lev <- NULL
   weightlabels <- NULL
   # in case of classification: transform factors into integers
@@ -273,7 +273,8 @@ function (x,
   ret
 } 
 
-predict.svm <- function (object, newdata, ..., na.action = na.omit) {
+predict.svm <- function (object, newdata,
+                         decision.values = FALSE, ..., na.action = na.omit) {
   if (missing(newdata))
     return(fitted(object))
 
@@ -303,6 +304,8 @@ predict.svm <- function (object, newdata, ..., na.action = na.omit) {
   if (ncol(object$SV) != ncol(newdata)) stop ("test data does not match model !")
 
   ret <- .C ("svmpredict",
+             as.integer (decision.values),
+             
              # model
              as.double  (if (object$sparse) object$SV@ra else t(object$SV)),
              as.integer (nrow(object$SV)), as.integer(ncol(object$SV)),
@@ -332,21 +335,33 @@ predict.svm <- function (object, newdata, ..., na.action = na.omit) {
              
              # decision-values
              ret = double(nrow(newdata)),
+             dec = double(nrow(newdata) * object$nclasses * (object$nclasses - 1) / 2),
 
              PACKAGE = "e1071"
-            )$ret
-
-  if (is.character(object$levels))
+            )
+  
+  ret2 <- if (is.character(object$levels))
     # classification: return factors
-    factor (object$levels[ret], levels=object$levels)
+    factor (object$levels[ret$ret], levels=object$levels)
   else if (object$type == 2)
     # one-class-classification: return TRUE/FALSE
-    ret == 1 
+    ret$ret == 1 
   else if (any(object$scaled))
     # return raw values, possibly scaled back
-    ret * object$y.scale$"scaled:scale" + object$y.scale$"scaled:center"
+    ret$ret * object$y.scale$"scaled:scale" + object$y.scale$"scaled:center"
   else
-    ret
+    ret$ret
+
+  if (decision.values) {
+    colns = c()
+    for (i in 1:(object$nclasses - 1))
+      for (j in (i + 1):object$nclasses)
+        colns <- c(colns, paste(object$levels[i],"/",object$levels[j], sep = ""))
+    attr(ret2, "decision.values") <- matrix(ret$dec, nrow = nrow(newdata), byrow = TRUE)
+    colnames(attr(ret2, "decision.values")) <- colns
+  }
+
+  ret2
 }
 
 print.svm <- function (x, ...) {
