@@ -59,7 +59,7 @@ struct svm_node ** sparsify (double *x, int r, int c)
 	/* set column elements */
 	for (count = ii = 0; ii < c; ii++)
 	    if (x[i * c + ii] != 0) {
-		sparse[i][count].index = ii;
+		sparse[i][count].index = ii + 1;
 		sparse[i][count].value = x[i * c + ii];
 		count++;
 	    }
@@ -84,7 +84,7 @@ struct svm_node ** transsparse (double *x, int r, int *rowindex, int *colindex)
 
 	/* set column elements */
 	for (ii = 0; ii < nnz; ii++) {
-	    sparse[i][ii].index = colindex[count] - 1;
+	    sparse[i][ii].index = colindex[count];
 	    sparse[i][ii].value = x[count];
 	    count++;
 	}
@@ -412,6 +412,65 @@ void svmpredict  (int    *decisionvalues,
     free(m.sv_coef);
 }	     
 		
+void svmwrite (double *v, int *r, int *c,
+		  int    *rowindex,
+		  int    *colindex,
+		  double *coefs,
+		  double *rho,
+		  int    *nclasses,
+		  int    *totnSV,
+		  int    *labels,
+		  int    *nSV,
+		  int    *sparsemodel,
 
+		  int    *svm_type,
+		  int    *kernel_type,
+		  double *degree,
+		  double *gamma,
+		  double *coef0,
+
+		  char **filename) 
+
+{
+    struct svm_model m;
+    int i;
+	char *fname = *filename;    
+
+    /* set up model */
+    m.l        = *totnSV;
+    m.nr_class = *nclasses;
+    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double));
+    for (i = 0; i < m.nr_class - 1; i++) {
+      m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
+      memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
+    }
+    
+    if (*sparsemodel > 0)
+	m.SV   = transsparse(v, *r, rowindex, colindex);
+    else
+	m.SV   = sparsify(v, *r, *c);
+    
+    m.rho      = rho;
+    m.label    = labels;
+    m.nSV      = nSV;
+
+    /* set up parameter */
+    m.param.svm_type    = *svm_type;
+    m.param.kernel_type = *kernel_type;
+    m.param.degree      = *degree;
+    m.param.gamma       = *gamma;
+    m.param.coef0       = *coef0;
+
+    m.free_sv           = 1;
+
+	/* write svm model */
+	svm_save_model(fname, &m);
+
+    for (i = 0; i < m.nr_class - 1; i++)
+      free(m.sv_coef[i]);
+    free(m.sv_coef);
+
+
+}
 
 

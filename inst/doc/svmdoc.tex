@@ -175,12 +175,12 @@ A cross-tabulation of the true versus the predicted values yields:
 \begin{Soutput}
     true
 pred 1  2  3  5  6  7 
-   1 15  9  2  0  0  1
-   2 10 14  0  5  3  2
-   3  0  1  1  0  0  0
-   5  0  0  0  0  0  0
+   1 17  3  2  0  0  0
+   2  6 18  0  4  1  3
+   3  1  3  2  0  0  0
+   5  0  0  0  1  0  0
    6  0  0  0  0  1  0
-   7  0  0  0  0  0  7
+   7  0  0  0  0  0  9
 \end{Soutput}
 \begin{Sinput}
 > table(pred = rpart.pred, true = testset[, 10])
@@ -188,30 +188,30 @@ pred 1  2  3  5  6  7
 \begin{Soutput}
     true
 pred 1  2  3  5  6  7 
-   1 18 10  1  0  0  1
-   2  5 12  1  0  3  0
-   3  2  1  1  0  0  0
-   5  0  1  0  4  1  0
+   1 17  0  0  0  0  0
+   2  7 21  1  0  1  0
+   3  0  3  3  0  0  1
+   5  0  0  0  4  1  0
    6  0  0  0  0  0  0
-   7  0  0  0  1  0  9
+   7  0  0  0  1  0 11
 \end{Soutput}
 \end{Schunk}
 
 %% results table
 
 \begin{Schunk}
-% latex table generated in R 1.9.0 by xtable 1.1-2 package
-% Wed Dec 10 18:05:04 2003
-\begin{table}
+% latex table generated in R 1.9.0 by xtable 1.2-2 package
+% Mon Mar  1 00:45:44 2004
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{rlllllll}
 \hline
  & method & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
 \hline
-Accuracy &   svm & 0.58 & 0.61 & 0.63 & 0.63 & 0.66 & 0.68 \\
- & rpart & 0.41 & 0.44 & 0.47 & 0.47 &  0.5 & 0.52 \\
-Kappa &   svm & 0.63 & 0.65 & 0.65 & 0.67 & 0.71 & 0.73 \\
-  & rpart & 0.49 & 0.51 & 0.52 & 0.55 &  0.6 & 0.62 \\
+Accuracy &   svm & 0.55 &  0.6 & 0.61 & 0.62 & 0.64 & 0.66 \\
+ & rpart & 0.36 & 0.42 & 0.46 & 0.45 & 0.47 & 0.52 \\
+Kappa &   svm & 0.56 & 0.61 & 0.63 & 0.64 & 0.67 & 0.73 \\
+  & rpart & 0.41 & 0.44 &  0.5 &  0.5 & 0.52 & 0.63 \\
 \hline
 \end{tabular}
 \caption{Performance of \texttt{svm()} and
@@ -244,8 +244,8 @@ into a train and test set.
 > crossprod(svm.pred - testset[, 3])/length(testindex)
 \end{Sinput}
 \begin{Soutput}
-         [,1]
-[1,] 11.71535
+        [,1]
+[1,] 9.70247
 \end{Soutput}
 \begin{Sinput}
 > rpart.model <- rpart(V4 ~ ., data = trainset)
@@ -254,21 +254,21 @@ into a train and test set.
 \end{Sinput}
 \begin{Soutput}
          [,1]
-[1,] 18.73392
+[1,] 18.93308
 \end{Soutput}
 \end{Schunk}
 
 \begin{Schunk}
-% latex table generated in R 1.9.0 by xtable 1.1-2 package
-% Wed Dec 10 18:05:05 2003
-\begin{table}
+% latex table generated in R 1.9.0 by xtable 1.2-2 package
+% Mon Mar  1 00:45:45 2004
+\begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrrrr}
 \hline
  & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
 \hline
-svm & 7.38 & 9.35 & 11.57 & 11.26 & 12.04 & 15.40 \\
-rpart & 14.57 & 17.56 & 19.20 & 20.97 & 23.94 & 29.52 \\
+svm & 9.12 & 10.87 & 12.12 & 11.99 & 13.01 & 14.56 \\
+rpart & 17.33 & 19.22 & 20.87 & 21.32 & 23.63 & 25.71 \\
 \hline
 \end{tabular}
 \caption{Performance of \texttt{svm()} and

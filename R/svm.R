@@ -442,6 +442,7 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
     if(is.null(formula)) stop("missing formula.")
     if (fill) {
       sub <- model.frame(formula, data)
+      browser()
       xr <- seq(min(sub[,2]), max(sub[,2]), length = grid)
       yr <- seq(min(sub[,1]), max(sub[,1]), length = grid)
       l <- length(slice)
@@ -469,7 +470,7 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                        labels = levels(preds)[unique(preds)], las = 3
                        ),
                      plot.title = title(main = "SVM classification plot",
-                       xlab = names(lis)[1], ylab = names(lis)[2]),
+                       xlab = names(lis)[2], ylab = names(lis)[1]),
                      ...
                      )
     } else {
@@ -479,4 +480,34 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
       points(formula, data = data[x$index,], pch = "x", col = colors[x$index])
     }
   }
+}
+
+write.svm <- function (object, file="Rdata.svm") {
+
+  ret <- .C ("svmwrite",
+             # model
+             as.double  (if (object$sparse) object$SV@ra else t(object$SV)),
+             as.integer (nrow(object$SV)), as.integer(ncol(object$SV)),
+             as.integer (if (object$sparse) object$SV@ia else 0),
+             as.integer (if (object$sparse) object$SV@ja else 0),
+             as.double  (as.vector(object$coefs)),
+             as.double  (object$rho),
+             as.integer (object$nclasses),
+             as.integer (object$tot.nSV),
+             as.integer (object$labels),
+             as.integer (object$nSV),
+             as.integer (object$sparse),
+             
+             # parameter
+             as.integer (object$type),
+             as.integer (object$kernel),
+             as.double  (object$degree),
+             as.double  (object$gamma),
+             as.double  (object$coef0),
+
+             # filename
+             as.character(file),
+
+             PACKAGE = "e1071"
+            )$ret
 }

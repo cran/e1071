@@ -85,7 +85,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
     parameters <- parameters[sample(1:p, control$random),]
   }
   model.errors <- c()
-  
+
   ## - loop over all models
   for (para.set in 1:p) {
     sampling.errors <- c()
@@ -186,7 +186,7 @@ print.tune <- function(x, ...) {
     cat("\n- best performance:", x$best.performance, "\n")
     cat("\n")
   } else {
-    cat("\nError estimation of `", x$method, "' using ",x$sampling,": ",
+    cat("\nError estimation of ", sQuote(x$method), " using ", x$sampling, ": ",
         x$best.performance, "\n\n", sep="")
   }
 }
