@@ -1,11 +1,11 @@
 \name{ica}
+\alias{ica}
+\alias{plot.ica}
+\alias{print.ica}
 \title{Independent Component Analysis}
 \usage{
 ica(X, lrate, epochs=100, ncomp=dim(X)[2], fun="negative")
 }
-\alias{ica}
-\alias{print.ica}
-\alias{plot.ica}
 \arguments{
  \item{X}{The matrix for which the ICA is to be computed}
  \item{lrate}{learning rate}
@@ -27,7 +27,7 @@ which provides ICA for sources with negative (positive) kurtosis. For
 \code{fun == "4th moments"} the signed square function is used.
 }
 \value{
-  An object of class "ica" containing
+  An object of class \code{"ica"} which is a list with components
   \item{weights}{ICA weight matrix}
   \item{projection}{Projected data}
   \item{epochs}{Number of iterations}
@@ -36,18 +36,15 @@ which provides ICA for sources with negative (positive) kurtosis. For
   \item{initweights}{Initial weight matrix}
 }
 
-\references{Oja et al., "Learning in Nonlinear Constrained Hebbian
-Networks", in Proc. ICANN-91, pp. 385-390.
+\references{
+  Oja et al., ``Learning in Nonlinear Constrained Hebbian Networks'', in
+  Proc. ICANN-91, pp. 385--390.
 
-Karhunen and Joutsensalo, "Generalizations of Principal Component
-Analysis, Optimization Problems, and Neural Networks", Neural Networks,
-v. 8, no. 4, pp. 549-562, 1995.}
-
+  Karhunen and Joutsensalo, ``Generalizations of Principal Component
+  Analysis, Optimization Problems, and Neural Networks'', Neural Networks,
+  v. 8, no. 4, pp. 549--562, 1995.
+}
 \note{Currently, there is no reconstruction from the ICA subspace to the
   original input space.}
-
 \author{Andreas Weingessel}
-\seealso{}
-
-\examples{}
-\keyword{ICA}
+\keyword{multivariate}

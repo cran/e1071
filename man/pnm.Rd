@@ -1,20 +1,20 @@
 \name{pnm}
 \title{Portable Anymap Images}
+\alias{write.pgm}
+\alias{read.pnm}
+\alias{plot.pnm}
+\alias{channel.pnm}
 \usage{
 read.pnm(file)
 plot(pnmobj, xlab="", ylab="", axes=FALSE, ...)
 write.pgm(pnmobj, file="Rimage.pgm", forceplain=FALSE)
 channel.pnm(pnmobj, chan = "red")
 }
-\alias{write.pgm}
-\alias{read.pnm}
-\alias{plot.pnm}
-\alias{channel.pnm}
 \arguments{
-  \item{pnmobj}{an object of class \code{pnm}}
-  \item{file}{name of the pnm file}
-  \item{forceplain}{If \code{TRUE}, an ASCII pgm file is written. Default
-    is to write a binary (raw) pgm file.}
+  \item{pnmobj}{an object of class \code{"pnm"}.}
+  \item{file}{name of the pnm file.}
+  \item{forceplain}{If \code{TRUE}, an ASCII pgm file is written.
+    Default is to write a binary (raw) pgm file.}
   \item{chan}{Channel to extract (one of \code{"red"}, \code{"green"}
     and \code{"blue"}).}
 }
@@ -44,4 +44,5 @@ channel.pnm(pnmobj, chan = "red")
 }
 \author{Friedrich Leisch}
 \seealso{\code{\link{image}}}
-\keyword{file,hplot}
+\keyword{file}
+\keyword{hplot}

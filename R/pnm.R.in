@@ -66,17 +66,17 @@ read.pnm <- function(file){
 }
 
 
-write.pgm <- function(pgmobj, file="Rimage.pgm",
+write.pgm <- function(pnmobj, file="Rimage.pgm",
                       forceplain=FALSE){
 
     if(! @HAVEPNM@) stop("Sorry, no pnm library available")
 
     retval <- .C("writepgm",
                  file = as.character(file),
-                 image = as.integer(t(pgmobj)),
-                 nc = as.integer(ncol(pgmobj)),
-                 nr = as.integer(nrow(pgmobj)),
-                 maxval = as.integer(attr(pgmobj, "maxval")),
+                 image = as.integer(t(pnmobj)),
+                 nc = as.integer(ncol(pnmobj)),
+                 nr = as.integer(nrow(pnmobj)),
+                 maxval = as.integer(attr(pnmobj, "maxval")),
                  forceplain = as.integer(forceplain))
 }
 

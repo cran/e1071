@@ -20,8 +20,8 @@ classAgreement <- function(tab){
 }
 
 
-matchClasses <- function(tab, method = "rowmax", iter=1, verbose=TRUE,
-                         maxexact=9){
+matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
+                         verbose=TRUE){
 
     methods <- c("rowmax", "greedy", "exact")
     method <- pmatch(method, methods)
@@ -144,8 +144,9 @@ matchClasses <- function(tab, method = "rowmax", iter=1, verbose=TRUE,
     retval
 }
 
-compareMatchedClasses <- function(x, y, maxexact=9,
-                                   method="rowmax", iter=1, verbose=FALSE)
+compareMatchedClasses <- function(x, y,
+                                  method="rowmax", iter=1, maxexact=9,
+                                  verbose=FALSE)
 {
     if(missing(y)){
         retval <- list(diag=matrix(NA, nrow=ncol(x), ncol=ncol(x)),
@@ -190,7 +191,13 @@ compareMatchedClasses <- function(x, y, maxexact=9,
 }
 
 
-permutations <- function(n) { 
+permutations <- function(n) {
+
+    if(n ==1)
+        return(matrix(1))
+    else if(n<2)
+        stop("n must be a positive integer")
+    
     z <- matrix(1)
     for (i in 2:n) { 
         x <- cbind(z, i)

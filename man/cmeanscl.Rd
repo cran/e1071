@@ -1,10 +1,10 @@
 \name{cmeanscl}
+\alias{cmeanscl}
 \title{Fuzzy C-Means Clustering}
 \usage{
 cmeanscl (x, centers, iter.max=100, verbose=FALSE, dist="euclidean",
         method="cmeans", m=2, rate.par = NULL)
 }
-\alias{cmeanscl}
 \arguments{
   \item{x}{Data matrix}
   \item{centers}{Number of clusters or initial values for cluster centers}
@@ -101,9 +101,4 @@ cl<-cmeanscl(x,6,20,verbose=TRUE,method="cmeans")
 plot(cl,x)
 
 }
-\keyword{fclust}
-
-
-
-
-
+\keyword{cluster}

@@ -28,7 +28,18 @@ rdiscrete <- function (n, probs, values = 1:length(probs), method="inverse",
         {
             if (missing(aliasmatrix))
                 aliasmatrix <- aliasmat(probs)
-            return(rdiscrete.alias(n, probs, aliasmatrix))
+            
+            x <- sample(1:nrow(aliasmatrix), n, replace=TRUE)
+            y <- runif(n)
+            
+            retval <- rep(0, length=n)
+    
+            eins <- (y <= aliasmatrix[x,1])
+    
+            retval[eins] <- values[aliasmatrix[x[eins],2]]
+            retval[!eins] <- values[aliasmatrix[x[!eins],3]]
+            
+            return(retval)
         }
     }
 }
@@ -54,34 +65,18 @@ aliasmat <- function(p)
     return(r)
 }
 
-rdiscrete.alias <- function(n, p, aliasmatrix = aliasmat(p))
+    
+aliasmat2prob <- function(aliasmatrix)
 {
-    x <- sample(1:nrow(aliasmatrix), n, replace=TRUE)
-    y <- runif(n)
-    
-    retval <- rep(0, length=n)
-    
-    eins <- (y <= aliasmatrix[x,1])
-    
-    retval[eins] <- (1:length(p))[aliasmatrix[x[eins],2]]
-    retval[!eins] <- (1:length(p))[aliasmatrix[x[!eins],3]]
-    
-    return(retval)
-}
-
-    
-    
-aliasmat2prob <- function(r)
-{
-    p <- rep(0, length = length(unique(r[,2:3])))
-    names(p) <- (pnames <- sort(unique(r[,2:3])))
+    p <- rep(0, length = length(unique(aliasmatrix[,2:3])))
+    names(p) <- (pnames <- sort(unique(aliasmatrix[,2:3])))
     
     for(n in pnames){
-        if(any(r[,2]==n)){
-            p[n] <- r[r[,2]==n,1]
+        if(any(aliasmatrix[,2]==n)){
+            p[n] <- aliasmatrix[aliasmatrix[,2]==n,1]
         }
-        if(any(r[,3]==n)){
-            p[n] <- p[n] + sum(1 - r[r[,3]==n,1])
+        if(any(aliasmatrix[,3]==n)){
+            p[n] <- p[n] + sum(1 - aliasmatrix[aliasmatrix[,3]==n,1])
         }
     }
     p<- p/length(p)

@@ -34,3 +34,5 @@ skewness                 Skewness
 stft                     Computes the Short Time Fourier Transform of a
                          Vector
 svm                      Support Vector Machines
+validity.measures	 Computes validity measures for comparing and
+			 evaluating fuzzy partitions 

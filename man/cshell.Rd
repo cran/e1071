@@ -1,11 +1,10 @@
 \name{cshell}
+\alias{cshell}
 \title{Fuzzy C-Shell Clustering}
 \usage{
-cshell (x, centers, iter.max=100, verbose=FALSE, dist="euclidean",
-        method="cshell", m=2, radius = NULL)
-
+cshell(x, centers, iter.max=100, verbose=FALSE, dist="euclidean",
+       method="cshell", m=2, radius = NULL)
 }
-\alias{cshell}
 \arguments{
   \item{x}{Data matrix}
   \item{centers}{Number of clusters or initial values for cluster centers}
@@ -81,16 +80,11 @@ cshell (x, centers, iter.max=100, verbose=FALSE, dist="euclidean",
   pp. 343-355, 1996.
 }
 \examples{
-# a 2-dimensional example
+## a 2-dimensional example
 x<-rbind(matrix(rnorm(50,sd=0.3),ncol=2),
          matrix(rnorm(50,mean=1,sd=0.3),ncol=2))
 cl<-cshell(x,2,20,verbose=TRUE,method="cshell",m=2)
 print(cl)
 plot(cl,x)
 }
-\keyword{fclust}
-
-
-
-
-
+\keyword{cluster}

@@ -1,56 +1,57 @@
 \name{Discrete}
-\title{Discrete Distribution}
-\usage{
-ddiscrete(x, probs, values=1:length(probs))
-pdiscrete(q, probs, values=1:length(probs))
-qdiscrete(p, probs, values=1:length(probs))
-rdiscrete(n, probs, values=1:length(probs), method="inverse", aliasmatrix=NULL)
-aliasmat(p)
-}
 \alias{ddiscrete}
 \alias{pdiscrete}
 \alias{qdiscrete}
 \alias{rdiscrete}
-\alias{rdiscrete.alias}
 \alias{aliasmat}
 \alias{aliasmat2prob}
+\title{Discrete Distribution}
+\description{
+  These functions provide information about the discrete distribution
+  where the probability of the elements of \code{values} is proportional
+  to the values given in \code{probs}, which are normalized to sum up to
+  1.  \code{ddiscrete} gives the density, \code{pdiscrete} gives the
+  distribution function, \code{qdiscrete} gives the quantile function
+  and \code{rdiscrete} generates random deviates.
+}
+\usage{
+ddiscrete(x, probs, values = 1:length(probs))
+pdiscrete(q, probs, values = 1:length(probs))
+qdiscrete(p, probs, values = 1:length(probs))
+rdiscrete(n, probs, values = 1:length(probs),
+          method = "inverse", aliasmatrix = NULL)
+aliasmat(p)
+aliasmat2prob(aliasmatrix)
+}
 \arguments{
   \item{x,q}{vector or array of quantiles.}
   \item{p}{vector or array of probabilites.}
   \item{n}{number of observations.}
   \item{probs}{probabilities of the distribution.}
   \item{values}{values of the distribution.}
-  \item{method}{generation method, can be "inverse" or "alias"}
-  \item{aliasmatrix}{matrix needed by alias method}
+  \item{method}{generation method, can be \code{"inverse"} or
+    \code{"alias"}.}
+  \item{aliasmatrix}{matrix needed by alias method.}
 }
-\description{
-  These functions provide information about the discrete distribution
-  where the probability of the elements of \code{values} is proportional
-  to the values given in \code{probs}, which are normalized to sum up to
-  1. \code{ddiscrete} gives the density, \code{pdiscrete} gives the
-  distribution function, \code{qdiscrete} gives the quantile function and
-  \code{rdiscrete} generates random deviates.
-
+\details{
   For the generation of the random deviates, one can choose between the
-  method "inverse" which basically makes a lookup in the vector of the
-  probabilities and the method "alias". The later method computes an
-  aliasmatrix by the function \code{aliasmat} which allows a faster data
-  generation once this matrix is computed. If such a matrix has already
-  been computed, it can be passed as further argument to \code{rdiscrete}.
-
+  method \code{"inverse"} which basically makes a lookup in the vector
+  of the probabilities and the method \code{"alias"}.  The latter method
+  computes an aliasmatrix by the function \code{aliasmat} which allows a
+  faster data generation once this matrix is computed.  If such a matrix
+  has already been computed, it can be passed as further argument to
+  \code{rdiscrete}. \code{aliasmat2prob} computed probabilities from a
+  given \code{aliasmatrix}.
 }
 \author{Andreas Weingessel and Friedrich Leisch}
 \examples{
-# a vector of length 30 whose elements are 1 with probability 0.2 and 2
-# with probability 0.8.
+## a vector of length 30 whose elements are 1 with probability 0.2
+## and 2 with probability 0.8.
 rdiscrete (30, c(0.2, 0.8))
 
-# a vector of length 100 whose elements are A, B, C, D.
-# The probabilities of the four values have the relation 1:2:3:3
+## a vector of length 100 whose elements are A, B, C, D.
+## The probabilities of the four values have the relation 1:2:3:3
 rdiscrete (100, c(1,2,3,3), c("A","B","C","D"))
 
 }
-\keyword{distribution}%-- one or more ...
-
-
-
+\keyword{distribution}

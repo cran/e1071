@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <svm.h>
+#include "svm.h"
 
 /*
  * svm_model

@@ -5,7 +5,6 @@ interpolate(x, a, adims=lapply(dimnames(a), as.numeric),
             method="linear")
 }
 \alias{interpolate}
-\alias{convexcoeff}
 \arguments{
  \item{x}{Matrix of values at which interpolation shall take place.}
  \item{a}{Array of arbitrary dimension.}

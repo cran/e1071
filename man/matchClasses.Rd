@@ -3,8 +3,9 @@
 \alias{compareMatchedClasses}
 \title{Find similar classes in two-way contingency tables}
 \usage{
-matchClasses(tab, method="rowmax", iter=1, verbose=TRUE)
-compareMatchedClasses(x, y, maxexact=9, method="rowmax", iter=1, verbose=FALSE)
+matchClasses(tab, method="rowmax", iter=1, maxexact=9, verbose=TRUE)
+compareMatchedClasses(x, y, method="rowmax", iter=1,
+                      maxexact=9, verbose=FALSE)
 }
 \arguments{
  \item{tab}{Two-way contingency table of class memberships}
@@ -13,6 +14,8 @@ compareMatchedClasses(x, y, maxexact=9, method="rowmax", iter=1, verbose=FALSE)
  \item{iter}{Number of iterations used in greedy search.}
  \item{verbose}{If \code{TRUE}, display some status messages during
    computation.}
+ \item{maxexact}{Maximum number of variables for which all possible
+   permutations are computed.}
  \item{x, y}{Vectors or matrices with class memberships.}
 }
 \description{
@@ -36,7 +39,9 @@ compareMatchedClasses(x, y, maxexact=9, method="rowmax", iter=1, verbose=FALSE)
 
     If \code{method="exact"}, then for the remaining rows and columns,
     all possible permutations are computed and the optimum is
-    returned. This can get computationally infeasible very fast. If
+    returned. This can get computationally infeasible very fast. If more
+    than \code{maxexact} rows and columns remain after applying the
+    necessary condition, then \code{method} is reset to \code{"greedy"}. If
     \code{method="greedy"}, then a greedy heuristic is tried \code{iter}
     times. Repeatedly a row is picked at random and matched to the free
     column with the maximum value.

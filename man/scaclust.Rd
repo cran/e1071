@@ -1,8 +1,10 @@
 \name{scaclust}
-\title{Fuzzy Clustering using Scatter Matrices}
-\usage{scaclust (x, centers, iter.max=100, verbose=FALSE, method="ad", theta = NULL)
-}
 \alias{scaclust}
+\title{Fuzzy Clustering using Scatter Matrices}
+\usage{
+scaclust(x, centers, iter.max=100, verbose=FALSE, method="ad",
+         theta = NULL)
+}
 \arguments{
   \item{x}{Data matrix}
   \item{centers}{Number of clusters or initial values for cluster centers}
@@ -71,16 +73,11 @@
   p.135-151, 1996.
   }
 \examples{
-# a 2-dimensional example
+## a 2-dimensional example
 x<-rbind(matrix(rnorm(100,sd=0.3),ncol=2),
          matrix(rnorm(100,mean=1,sd=0.3),ncol=2))
 cl<-scaclust(x,2,20,verbose=TRUE,method="ad")
 print(cl)
-plot(cl,x)   
+plot(cl,x)
 }
-\keyword{fclust}
-
-
-
-
-
+\keyword{cluster}
