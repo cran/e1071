@@ -18,7 +18,7 @@ struct svm_model
 			           (sv_coef[n-1][l]) */
     double *rho;		/* constants in decision functions
 				   (rho[n*(n-1)/2]) */
-    double *probA;              // pairwise probability information
+    double *probA;              /* pairwise probability information */
     double *probB;
     
     /* for classification only */
