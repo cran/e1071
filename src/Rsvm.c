@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -309,7 +310,7 @@ void svmtrain (double *x, int *r, int *c,
 
 	if (*probability && par.svm_type != ONE_CLASS) {
 	  if (par.svm_type == EPSILON_SVR || par.svm_type == NU_SVR)
-	    probA = model->probA;
+	    *sigma = svm_get_svr_probability(model);
 	  else {
 	    memcpy(probA, model->probA, 
 		    *nclasses * (*nclasses - 1)/2 * sizeof(double));
@@ -331,10 +332,6 @@ void svmtrain (double *x, int *r, int *c,
 	    do_cross_validation (&prob, &par, *cross, cresults,
 				 ctotal1, ctotal2);
 
-	/* compute sigma (for regression models + probability) */
-	if (svm_check_probability_model(model))
-	  *sigma = svm_get_svr_probability(model);
-	
 	/* clean up memory */
 	svm_destroy_model(model);
     }

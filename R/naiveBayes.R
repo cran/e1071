@@ -8,8 +8,8 @@ naiveBayes.default <- function(x, y, ...) {
   ## estimation-function
   est <- function(var)
     if (is.numeric(var)) {
-      cbind(tapply(var, y, mean),
-            tapply(var, y, sd))
+      cbind(tapply(var, y, mean, na.rm = TRUE),
+            tapply(var, y, sd, na.rm = TRUE))
     } else {
       tab <- table(y, var)
       tab / rowSums(tab)

@@ -51,11 +51,14 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   
   ## parameter handling
   method <- deparse(substitute(method))
-  if (tunecontrol$sampling == "cross") validation.x <- validation.y <- NULL
+  if (tunecontrol$sampling == "cross")
+    validation.x <- validation.y <- NULL
   useFormula <- is.null(train.y)
   if (useFormula && (is.null(data) || length(data) == 0))
     data <- model.frame(train.x)
   if (is.vector(train.x)) train.x <- t(t(train.x))
+  if (is.data.frame(train.y))
+    train.y <- as.matrix(train.y)
   
   ## prepare training indices
   if (!is.null(validation.x)) tunecontrol$fix <- 1
@@ -109,13 +112,13 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
           do.call(method, c(list(train.x,
                                  data = data,
                                  subset = train.ind[[sample]]), 
-                            pars, ...
+                            pars, list(...)
                             )
                   )
         else 
           do.call(method, c(list(train.x[train.ind[[sample]],],
                                  y = train.y[train.ind[[sample]]]),
-                            pars, ...
+                            pars, list(...)
                             )
                   )
 
@@ -167,11 +170,11 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                  best.model       = if (tunecontrol$best.model) {
                    modeltmp <- if (useFormula) 
                      do.call(method, c(list(train.x, data = data),
-                                       pars, ...))
+                                       pars, list(...)))
                    else 
                      do.call(method, c(list(x = train.x,
                                             y = train.y),
-                                       pars, ...))
+                                       pars, list(...)))
                    call[[1]] <- as.symbol("best.tune")
                    modeltmp$call <- call
                    modeltmp

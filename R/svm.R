@@ -163,7 +163,7 @@ function (x,
   weightlabels <- NULL
   # in case of classification: transform factors into integers
   if (type == 2) # one class classification --> set dummy
-    y <- 1
+    y <- rep(1, nr)
   else
     if (is.factor(y)) {
       lev <- levels(y)

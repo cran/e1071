@@ -1,5 +1,10 @@
 Changes in Version 1.5-1
 
+  o Fixed memory leak in svm
+
+  
+Changes in Version 1.5-1
+
   o Fixed C++ style comments
 
   
