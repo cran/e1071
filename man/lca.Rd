@@ -8,25 +8,22 @@
 
 \title{Latent Class Analysis (LCA)}
 \usage{
-l <- lca(x, nclass, niter=100, matchdata=FALSE, verbose=FALSE)
-print(l)
-summary(l)
-predict(l,x)
+lca(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
 }
 
 \arguments{
  \item{x}{Either a data matrix of binary observations or a list of
      patterns as created by \code{\link{countpattern}}}
- \item{nclass}{Number of classes used for LCA}
+ \item{k}{Number of classes used for LCA}
  \item{niter}{Number of Iterations}
- \item{matchdata}{If TRUE and \code{x} is a data matrix, the class
+ \item{matchdata}{If \code{TRUE} and \code{x} is a data matrix, the class
      membership of every data point is returned, otherwise the class
      membership of every pattern is returned.}
- \item{verbose}{If TRUE some output is printed during the computations.}
+ \item{verbose}{If \code{TRUE} some output is printed during the computations.}
 }
 
 \description{
-A latent class analysis with \code{nclass} classes is performed on the
+A latent class analysis with \code{k} classes is performed on the
 data given by \code{x}.
 }
 
@@ -54,16 +51,23 @@ data given by \code{x}.
 
 \seealso{\code{\link{countpattern}}, \code{\link{bootstrap.lca}}}
 
-%\examples{
-%## No examples with small data sets
+\examples{
 
-%library(sfb)
-%data(scen.1)
-%l <- lca(scen.1$x, 6, niter=20)
-%print(l)
-%summary(l)
-%p <- predict(l, scen.1$x)
-%table(p, scen.1$classes)
-%}
+## Generate a 4-dim. sample with 2 latent classes of 500 data points each.
+## The probabilities for the 2 classes are given by type1 and type2.
+type1 <- c(0.8,0.8,0.2,0.2)
+type2 <- c(0.2,0.2,0.8,0.8)
+x <- matrix(runif(4000),nr=1000)
+x[1:500,] <- t(t(x[1:500,])<type1)*1
+x[501:1000,] <- t(t(x[501:1000,])<type2)*1
+
+
+
+l <- lca(x, 2, niter=5)
+print(l)
+summary(l)
+p <- predict(l, x)
+table(p, c(rep(1,500),rep(2,500)))
+}
 
 \keyword{multivariate, cluster}

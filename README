@@ -1,33 +1,40 @@
-Copyright (C) 1997-2000  Friedrich Leisch
-	
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
- 
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details. 
-  
-You should have received a copy of the GNU General Public License
-along with this file.  If not, write to the Free Software Foundation,
-59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
--------------------
-
 This package contains miscellaneous functions used at the Department
 of Statistics at TU Wien (E1071) for which we don't know a better
 place (i.e., a special package) where to put them.
 
-Authors: Kurt.Hornik@ci.tuwien.ac.at
-         Friedrich.Leisch@ci.tuwien.ac.at
-	 Evgenia.Dimitriadou@ci.tuwien.ac.at	
-	 David.Meyer@ci.tuwien.ac.at
-         Andreas.Weingessel@ci.tuwien.ac.at
+Authors:
+Evgenia.Dimitriadou@ci.tuwien.ac.at	
+Kurt.Hornik@ci.tuwien.ac.at
+Friedrich.Leisch@ci.tuwien.ac.at	 
+David.Meyer@ci.tuwien.ac.at
+Andreas.Weingessel@ci.tuwien.ac.at
 
 Please do not hesitate to send any comments or bug reports to one of
 the authors.
+
+
+Copyright
+---------
+
+All of this software (except the SVM C++ code) is copyrighted by the
+list of authors given above and subject to the GNU GENERAL PUBLIC LICENSE,
+Version 2 or newer, see the file COPYING for details. The SVM C++ code
+is copyright Chih-Chung Chang and Chih-Jen Lin, see the file
+COPYRIGHT.svm.cpp for details.
+
+Installation
+------------
+
+This package should be installed using the `R INSTALL' mechanism, see
+the R online help or R manuals for details on how to install packages.
+
+The functions for reading and writing PNM images need the netpbm
+libraries and header files (which can be downloaded from
+http://netpbm.sourceforge.net).  If netpbm is not found at INSTALL
+time, support wir reading and writing PNM images is disabled.
+
+Platform-specific hints:
+*) Debian Linux: install debian packages netpbm and netpbm-dev
 
 
 =====================================================================

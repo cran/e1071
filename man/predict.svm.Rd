@@ -62,7 +62,10 @@ print (model)
 summary (model)
 
 # test with train data
-predict (model, x)
+pred <- predict (model, x)
+
+# should be TRUE:
+all.equal (pred, y)
 
 # try regression mode on two dimensions in linear mode
 model <- svm (x[,"Petal.Length"], x[,"Petal.Width"],

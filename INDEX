@@ -2,6 +2,7 @@ Discrete                 Discrete Distribution
 Mvnorm                   The Multivariate Normal Distribution
 bincombinations          Binary Combinations
 bootstrap.lca            Bootstrap Samples of LCA Results
+classAgreement           Coefficients comparing classification agreement
 cmeanscl                 Fuzzy C-Means Clustering
 countpattern             Count Binary Patterns
 cshell                   Fuzzy C-Shell Clustering
@@ -10,10 +11,14 @@ hamming.distance         Hamming Distances of Vectors
 hamming.window           Computes the Coefficients of a Hamming Window.
 hanning.window           Computes the Coefficients of a Hanning Window.
 ica                      Independent Component Analysis
+impute                   Replace Missing Values
 interpolate              Interpolate Values of Array
 kurtosis                 Kurtosis
 lca                      Latent Class Analysis (LCA)
+matchClasses             Find similar classes in two-way contingency
+                         tables
 moment                   Statistical Moment
+permutations             All permutations of integers 1:n
 plot.fclust              Plot Clustered Data
 plot.stft                Plots an Object of Type stft.
 pnm                      Portable Anymap Images
@@ -24,6 +29,7 @@ read.octave              Read Octave Data File
 rectangle.window         Computes the Coefficients of a Rectangle Window.
 rwiener                  Simulation of Wiener Process
 scaclust                 Fuzzy Clustering using Scatter Matrices
+sigmoid                  The logistic function and derivatives
 skewness                 Skewness
 stft                     Computes the Short Time Fourier Transform of a
                          Vector

@@ -10,7 +10,8 @@ function (x,
           nu          = 0.5,
           cachesize   = 40,
           tolerance   = 0.001,
-          epsilon     = 0.5)
+          epsilon     = 0.5,
+          shrinking   = TRUE)
 {
   if (is.vector(x))
     x <- t(t(x))
@@ -60,6 +61,7 @@ function (x,
               as.double  (cachesize),
               as.double  (tolerance),
               as.double  (epsilon),
+              as.integer (shrinking),
               nr    = integer (1),
               index = integer (nrow(x)),
               coefs = double  (nrow(x)),
@@ -125,7 +127,7 @@ predict.svm <- function (model, x, type = "class") {
   else {
     ret2 <- rep (model$levels[2],nrow(x))
     ret2 [which(ret < 0)] <- model$levels[1]
-    ret2
+    as.factor (ret2)
   }
 }
 

@@ -12,11 +12,11 @@ countpattern(x, matching=FALSE)
      which row belongs to which pattern}
 }
 \description{
-Every row of \code{x} is transformed into a binary pattern and these
-patterns are counted.
+Every row of the binary matrix \code{x} is transformed into a binary
+pattern and these patterns are counted.
 }
 \value{
-A vector of length \code{2^ncol(x)} giving the number of times each
+A vector of length \code{2\^ncol(x)} giving the number of times each
 pattern occurs in the rows of \code{x}. The names of this vector are the
 binary patterns. They are sorted according to their numeric value.
 If \code{matching} is \code{TRUE}, a list of the following two vectors is returned.

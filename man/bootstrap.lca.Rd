@@ -10,18 +10,18 @@ a new LCA model for each sample. The quality of fit of these models is
 compared to the original model.
 }
 \usage{
-bl <- bootstrap.lca(l, nsamples=10, lcaiter=30, verbose=FALSE)
-print(bl)
+bootstrap.lca(l, nsamples=10, lcaiter=30, verbose=FALSE)
 }
 
 \arguments{
   \item{l}{An LCA model as created by \code{\link{lca}}}
   \item{nsamples}{Number of bootstrap samples}
-  \item{lcaiter}{Number of LCA Iterations}
-  \item{verbose}{If TRUE some output is printed during the computations.}
+  \item{lcaiter}{Number of LCA iterations}
+  \item{verbose}{If \code{TRUE} some output is printed during the
+    computations.} 
 }
 \details{
-From a given LCA model \code{l} \code{nsamples} bootstrap samples are
+From a given LCA model \code{l}, \code{nsamples} bootstrap samples are
 drawn. For each sample a new LCA model is fitted. The goodness of fit
 for each model is computed via Likelihood Ratio and Pearson's
 Chisquare. The values for the fitted models are compared with the values
@@ -58,14 +58,19 @@ the data to which \code{l} was originally fitted come from an LCA model.
     
 \seealso{\code{\link{lca}}}
 
-%\examples{
-%## Attention, this may take its time
-%library(sfb)
-%data(scen.1)
-%l <- lca(scen.1$x, 6, niter=10)
-%bl <- bootstrap.lca(l,nsamples=3,lcaiter=5,verbose=T)
-%bl
-%  }
+\examples{
+## Generate a 4-dim. sample with 2 latent classes of 500 data points each.
+## The probabilities for the 2 classes are given by type1 and type2.
+type1 <- c(0.8,0.8,0.2,0.2)
+type2 <- c(0.2,0.2,0.8,0.8)
+x <- matrix(runif(4000),nr=1000)
+x[1:500,] <- t(t(x[1:500,])<type1)*1
+x[501:1000,] <- t(t(x[501:1000,])<type2)*1
+
+l <- lca(x, 2, niter=5)
+bl <- bootstrap.lca(l,nsamples=3,lcaiter=5)
+bl
+}
 
 \keyword{multivariate}
 

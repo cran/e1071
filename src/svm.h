@@ -32,6 +32,7 @@ struct svm_parameter
 	double C;	// for C_SVC and C_SVR
 	double nu;	// for NU_SVC and ONE_CLASS
 	double p;	// for C_SVR
+	int shrinking;	// use the shrinking heuristics
 };
 
 struct svm_model;
@@ -43,8 +44,7 @@ int svm_save_model(const char *model_file_name, const struct svm_model *model);
 
 struct svm_model *svm_load_model(const char *model_file_name);
 
-int svm_classify(const struct svm_model *model, const struct svm_node *x,
-		 double label, double *decision_value);
+double svm_classify(const struct svm_model *model, const struct svm_node *x);
 
 void svm_destroy_model(struct svm_model *model);
 

@@ -1,4 +1,4 @@
-lca <- function(x, nclass, niter=100, matchdata=FALSE, verbose=FALSE)
+lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
 {
 
     ## if x is a data matrix -> create patterns
@@ -26,56 +26,47 @@ lca <- function(x, nclass, niter=100, matchdata=FALSE, verbose=FALSE)
         b[, nvar+1-i] <- rep(rep(c(0,1),c(2^(i-1),2^(i-1))),2^(nvar-i))
 
     ## initialize probabilities
-    classprob <- runif(nclass)
+    classprob <- runif(k)
     classprob <- classprob/sum(classprob)
-    names(classprob) <- 1:nclass
-    p <- matrix(runif(nvar*nclass), nclass)
+    names(classprob) <- 1:k
+    p <- matrix(runif(nvar*k), k)
 
     
-    pas <- matrix(0, nclass, npat)
-    classsize <- numeric(nclass)
+    pas <- matrix(0, k, npat)
+    classsize <- numeric(k)
     
     for (i in 1:niter)
     {
-        for (j in 1:nclass)
+        for (j in 1:k)
         {
             ## P(pattern|class)
             mp <- t(b)*p[j,]+(1-t(b))*(1-p[j,])
-            pas[j,] <- mp[1,]
-            for (k in 2:nvar)
-                pas[j,] <- pas[j,]*mp[k,]
+            pas[j,] <- drop(exp(rep(1,nvar)%*%log(mp))) # column product
         }
         ##  P(pattern|class)*P(class)
         pas <- t(t(pas)*classprob)        
         
         ## P(class|pattern)
-        sump <- pas[1,]
-        for (k in 2:nclass)
-            sump <- sump + pas[k,]
+        sump <- drop(rep(1,k)%*%pas)  # column sums
         pas <- t(t(pas)/sump)
 
         spas <- t(t(pas)*x)
-        for (j in 1:nclass)
-            classsize[j] <- sum(spas[j,])
+        classsize <- drop(spas%*%rep(1,npat))  # row sums
         classprob <- classsize/n
         p <- pas%*%(x*b)/classsize
         if (verbose)
             cat("Iteration:", i, "\n")
     }
 
-    for (j in 1:nclass)
+    for (j in 1:k)
     {
         mp <- t(b)*p[j,]+(1-t(b))*(1-p[j,])
-        pas[j,] <- mp[1,]
-        for (k in 2:nvar)
-            pas[j,] <- pas[j,]*mp[k,]
-        pas[j,] <- pas[j,]*classprob[j]
+        pas[j,] <- drop(exp(rep(1,nvar)%*%log(mp)))*classprob[j]
+                                        # column product
     }
 
     ## LogLikelihood
-    pmust <- pas[1,]
-    for (k in 2:nclass)
-        pmust <- pmust+pas[k,]
+    pmust <-  drop(rep(1,k)%*%pas)  # column sums
     ll <- sum(x*log(pmust))
 
     ## Likelihoodquotient
@@ -84,16 +75,14 @@ lca <- function(x, nclass, niter=100, matchdata=FALSE, verbose=FALSE)
     lq <- 2*(ll0-ll)
 
     ## bic
-    bic <- -2*ll+log(n)*(nclass*(nvar+1)-1)
+    bic <- -2*ll+log(n)*(k*(nvar+1)-1)
     bicsat <- -2*ll0+log(n)*(2^nvar-1)
     
     ## chisq
     ch <- sum((x-n*pmust)^2/(n*pmust))
     
     ## P(class|pattern)
-    sump <- pas[1,]
-    for (k in 2:nclass)
-        sump <- sump + pas[k,]
+    sump <- drop(rep(1,k)%*%pas)  # column sums
     pas <- t(t(pas)/sump)
 
     mat <- max.col(t(pas))
@@ -101,12 +90,12 @@ lca <- function(x, nclass, niter=100, matchdata=FALSE, verbose=FALSE)
         mat <- mat[xmat]
 
     colnames(p) <- 1:nvar
-    rownames(p) <- 1:nclass
+    rownames(p) <- 1:k
     
     lcaresult <- list(classprob=classprob, p=p, matching=mat,
                       logl=ll, loglsat=ll0,
                       chisq=ch, lhquot=lq, bic=bic, bicsat=bicsat, n=n,
-                      np=(nclass*(nvar+1)-1), matchdata=matchdata)
+                      np=(k*(nvar+1)-1), matchdata=matchdata)
 
     class(lcaresult) <- "lca"
     return(lcaresult)
@@ -134,7 +123,7 @@ summary.lca <- function(l)
     l$df <- 2^nvar-1-l$np
     l$pvallhquot <- 1-pchisq(l$lhquot,l$df)
     l$pvalchisq <- 1-pchisq(l$chisq,l$df)
-    l$nclass <- length(l$classprob)
+    l$k <- length(l$classprob)
 
     ## remove unnecessary list elements
     l$classprob <- NULL
@@ -152,7 +141,7 @@ print.summary.lca <- function(l)
     cat("----------\n\n")
 
     cat("Datapoints:", l$n, "\n")
-    cat("Classes:   ", l$nclass, "\n")
+    cat("Classes:   ", l$k, "\n")
 
     cat("\nGoodness of fit statistics:\n\n")
     cat("Number of parameters, estimated model:", l$np, "\n")

@@ -11,8 +11,9 @@ more than 2 classes can be classified.
 }
 \usage{
 svm(x, y, svm.type=NULL, kernel.type="radial", degree=3, gamma=1/dim(x)[2],
-coef0=0, cost=1, nu=0.5, cachesize=40, tolerance=0.001, epsilon=0.5)
-sumamry (svm.obj)
+coef0=0, cost=1, nu=0.5, cachesize=40, tolerance=0.001, epsilon=0.5,
+shrinking=TRUE)
+summary (svm.obj)
 }
 \arguments{
   \item{x}{A data matrix.}
@@ -49,6 +50,7 @@ sumamry (svm.obj)
   \item{cachesize}{cache memory in MB. (default 40)}
   \item{tolerance}{tolerance of termination criterion (default: 0.001)}
   \item{epsilon}{epsilon in the insensitive-loss function (default: 0.5)}
+  \item{shrinking}{option whether to use the shrinking-heuristics (default: TRUE)}
   \item{svm.obj}{An object of type \code{svm} as returned by \code{svm}}
 }
 
@@ -100,7 +102,10 @@ print (model)
 summary (model)
 
 # test with train data
-predict (model, x)
+pred <- predict (model, x)
+
+# should be TRUE:
+all.equal (pred, y)
 
 # try regression mode on two dimensions in linear mode
 model <- svm (x[,"Petal.Length"], x[,"Petal.Width"],

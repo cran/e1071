@@ -59,6 +59,7 @@ void svmtrain (double *x, int *r, int *c,
 	       double *cache,
 	       double *tolerance,
 	       double *epsilon,
+	       int    *shrinking,
 	       int    *nr,
 	       int    *index,
 	       double *coefs,
@@ -80,6 +81,7 @@ void svmtrain (double *x, int *r, int *c,
     par.C           = *cost;
     par.nu          = *nu;
     par.p           = *epsilon;
+    par.shrinking   = *shrinking;
     
     /* 2. set problem */
     prob.l = *r;
@@ -128,7 +130,6 @@ void svmclassify (double *v, int *r, int *c,
 {
     struct svm_model m;
     struct svm_node ** train;
-    double label = 0;
     int i;
     
     /* set up model */
@@ -151,7 +152,7 @@ void svmclassify (double *v, int *r, int *c,
 
     /* call svm-function for each x-row */
     for (i = 0; i < *xr; i++)
-	svm_classify (&m, train[i], label, ret + i);
+	ret[i] = svm_classify (&m, train[i]);
 
     /* clean up memory */
     for (i = 0; i < *xr; i++)
