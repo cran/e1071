@@ -2,29 +2,35 @@ svm <- function (x, ...)
   UseMethod ("svm")
 
 svm.formula <-
-function (formula, data=NULL, ...)
+function (formula, data=NULL, subset, na.action=na.fail, ...)
 {
   call <- match.call()
   if (!inherits(formula, "formula")) 
     stop("method is only for formula objects")
-  m <- match.call(expand = FALSE)
-  if (is.matrix(eval(m$data, sys.frame(sys.parent())))) 
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval(m$data, parent.frame())))
     m$data <- as.data.frame(data)
   m$... <- NULL
   m[[1]] <- as.name("model.frame")
-    m <- eval(m, sys.frame(sys.parent()))
+  m <- eval(m, parent.frame())
   Terms <- attr(m, "terms")
   attr(Terms, "intercept") <- 0
   x <- model.matrix(Terms, m)
   y <- model.extract(m, response)
   ret <- svm.default (x, y, ...)
-  attr (ret, "call") <- call
+  ret$call <- call
+  ret$terms <- Terms
+  if (!is.null(attr(m, "na.action"))) 
+    ret$na.action <- attr(m, "na.action")
+  class (ret) <- c("svm.formula", class(ret))
   return (ret)
 }
 
 svm.default <-
 function (x,
           y         = NULL,
+          subset,
+          na.action = na.fail,
           type      = NULL,
           kernel    = "radial",
           degree    = 3,
@@ -35,15 +41,19 @@ function (x,
           class.weights = NULL,
           cachesize = 40,
           tolerance = 0.001,
-          epsilon   = 0.5,
+          epsilon   = 0.1,
           shrinking = TRUE,
           cross     = 0,
+          fitted    = TRUE,
           ...)
 {
-  if (is.vector(x))
-    x <- t(t(x))
-  else
-    x <- as.matrix(x)
+  sparse <- FALSE ## swich off sparse stuff
+  x     <- if (is.vector(x)) t(t(x)) else as.matrix(x)
+  x     <- na.action(x)
+  if (!missing(subset)) x <- x[subset,]
+  cols  <- 0
+  ncols <- ncol(x)
+  nrows <- nrow(x)
 
   if (is.null (type)) type <-
     if (is.null(y)) "one-classification"
@@ -62,7 +72,7 @@ function (x,
                               "sigmoid"),3) - 1
 
   if (!is.vector(y) && !is.factor (y) && !(type==2)) stop ("y must be a vector or a factor.")
-  if ((type !=2) && length(y) != nrow(x)) stop ("x and y don't match.")
+  if ((type !=2) && nrows != nrow(x)) stop ("x and y don't match.")
 
   if (cachesize < 0.1) cachesize <- 0.1
   
@@ -74,7 +84,7 @@ function (x,
   else
     if (is.factor(y)) {
       lev <- levels (y)
-      y <- codes (y)
+      y <- as.integer (y)
       if (!is.null(class.weights)) {
         if (is.null(names (class.weights)))
           stop ("Weights have to be specified along with their according level names !")
@@ -82,15 +92,19 @@ function (x,
         if (any(is.na(weightlabels)))
           stop ("At least one level name is missing or misspelled.")
       }
-    } else if (type < 3 && !is.integer (y))
-      stop ("dependent variable has to be of factor or integer type for classification mode.")
+    } else {
+      if (type < 3 && any(as.integer (y) != y))
+        stop ("dependent variable has to be of factor or integer type for classification mode.")
+      lev <- unique (y)
+    }
 
   nclass <- 2
   if (type < 2) nclass <- length (lev)
   
   cret <- .C ("svmtrain",
               # parameters
-              as.double  (t(x)), as.integer(nrow (x)), as.integer(ncol(x)),
+              as.double (t(x)),
+              as.integer(nrows), as.integer(ncols), as.integer(cols), 
               as.double  (y),
               as.integer (type),
               as.integer (kernel),
@@ -107,15 +121,16 @@ function (x,
               as.double  (epsilon),
               as.integer (shrinking),
               as.integer (cross),
+              as.integer (sparse), ## switch off sparse stuff
 
               # results
               nclasses = integer (1), 
               nr       = integer (1), # nr of support vectors
-              index    = integer (nrow(x)),
+              index    = integer (nrows),
               labels   = integer (nclass),
-              nSV      = integer (nrow(x)),
+              nSV      = integer (nrows),
               rho      = double  (nclass*(nclass-1)/2),
-              coefs    = double  (nrow(x)*(nclass-1)),
+              coefs    = double  (nrows*(nclass-1)),
               
               cresults = double  (cross),
               ctotal1  = double  (1),
@@ -132,14 +147,15 @@ function (x,
                coef0    = coef0,
                nu       = nu,
                epsilon  = epsilon,
+               sparse   = sparse,
                
                nclasses = cret$nclasses,            #number of classes
                levels   = lev,
                tot.nSV  = cret$nr,                  #total number of sv
                nSV      = cret$nSV[1:cret$nclasses],#number of SV in diff. classes
                labels   = cret$label[1:cret$nclasses],#labels of the SVs.
-               SV       = t(t(x[cret$index,])),  #copy of sv
-               index    = cret$index,            #indexes of sv in x
+               SV       = t(t(x[cret$index,])), #copy of SV
+               index    = cret$index[1:cret$nr],     #indexes of sv in x
                #constants in decision functions
                rho      = cret$rho[1:(cret$nclasses*(cret$nclasses-1)/2)],
                #coefficiants of sv
@@ -152,36 +168,51 @@ function (x,
   # cross-validation-results
   if (cross > 0)    
     if (type > 2) {
-      ret$MSE <- cret$cresults;
-      ret$tot.MSE <- cret$ctotal1;
-      ret$scorrcoeff <- cret$ctotal2;
+      ret$MSE          <- cret$cresults;
+      ret$tot.MSE      <- cret$ctotal1;
+      ret$scorrcoeff   <- cret$ctotal2;
     } else {
-      ret$accuracies <- cret$cresults;
+      ret$accuracies   <- cret$cresults;
       ret$tot.accuracy <- cret$ctotal1;
     }
 
   class (ret) <- "svm"
+  ret$fitted  <- if (fitted) predict(ret, x) else NA
   ret
 } 
 
 predict.svm <- function (object, newdata, ...) {
-  if (is.vector (newdata))
-    newdata <- t(t(newdata))
+  sparse <- FALSE
+  if (missing(newdata))
+    return(fitted(object))
+  cols  <- 0
+  ncols <- ncol(object$SV)
+  nrows <- nrow(object$SV)
+  oldco <- ncols
+  
+  if (inherits(object,"svm.formula"))
+    newdata <- model.matrix(delete.response(terms(object)), newdata, na.action = na.omit)
   else
-    newdata <- as.matrix(newdata)
+    newdata  <- if (is.vector (newdata)) t(t(newdata)) else as.matrix(newdata)
+  
+  newcols  <- 0
+  newnrows <- nrow(newdata)
+  newncols <- ncol(newdata)
+  newco    <- newncols
     
-  if (ncol(newdata) != ncol(object$SV)) stop ("test vector does not match model !")
+  if (oldco != newco) stop ("test vector does not match model !")
 
   ret <- .C ("svmpredict",
              #model
              as.double  (t(object$SV)),
-             as.integer (nrow(object$SV)), as.integer(ncol(object$SV)),
+             as.integer (nrows), as.integer(ncols), as.integer (cols),
              as.double  (as.vector (object$coefs)),
              as.double  (object$rho),
              as.integer (object$nclasses),
              as.integer (object$tot.nSV),
              as.integer (object$labels),
              as.integer (object$nSV),
+             as.integer (object$sparse),
              
              #parameter
              as.integer (object$type),
@@ -191,15 +222,19 @@ predict.svm <- function (object, newdata, ...) {
              as.double  (object$coef0),
 
              #test matrix
-             as.double (t(newdata)), as.integer (nrow(newdata)),
+             as.double  (t(newdata)),
+             as.integer (newnrows),
+             as.integer (newncols),
+             as.integer (newcols),
+             as.integer (sparse),
              
              #decision-values
-             ret = double  (nrow(newdata))
+             ret = double  (newnrows)
             )$ret
 
-  if (!is.null(object$levels))
+  if (is.character(object$levels))
     #classification: return factors
-    as.factor (object$levels[ret])
+    factor (object$levels[ret], levels=object$levels)
   else
     if (object$type == 2)
       #one-class-classification: return TRUE/FALSE
@@ -221,19 +256,25 @@ print.svm <- function (x, ...) {
                          "polynomial",
                          "radial",
                          "sigmoid")[x$kernel+1],"\n")
-  cat ("       cost: ",x$cost,"\n")
-  cat ("     degree: ",x$degree,"\n")
+  if (x$type==0 || x$type==3 || x$type==4)
+    cat ("       cost: ",x$cost,"\n")
+  if (x$kernel==1)
+    cat ("     degree: ",x$degree,"\n")
   cat ("      gamma: ",x$gamma,"\n")
-  cat ("     coef.0: ",x$coef0,"\n")
-  cat ("         nu: ",x$nu,"\n")
-  cat ("    epsilon: ",x$epsilon,"\n")
-  cat ("       cost: ",x$cost,"\n\n")
+  if (x$kernel==1 || x$kernel==3)
+    cat ("     coef.0: ",x$coef0,"\n")
+  if (x$type==1 || x$type==2 || x$type==4)
+    cat ("         nu: ",x$nu,"\n")
+  if (x$type==3)
+    cat ("    epsilon: ",x$epsilon,"\n\n")
   
-  cat ("\nNumber of Support Vectors: ",x$tot.nSV," (",x$nSV,")\n\n")
+  cat ("\nNumber of Support Vectors: ",x$tot.nSV)
   if (x$type<2) {
+    cat (" (",x$nSV,")\n\n")
     cat ("\nNumber of Classes: ",x$nclasses,"\n\n")
-    cat ("Levels:\n",x$lev,"\n\n")
+    cat ("Levels:", if(is.numeric(x$levels)) "(as integer)","\n",x$levels)
   }
+  cat ("\n\n")
   if (x$type==2) cat ("\nNumber of Classes: 1\n\n\n")
   cat ("Rho:\n",x$rho,"\n\n")
 
@@ -258,4 +299,4 @@ summary.svm <- function (object, ...) {
   print (object$coefs)
   cat ("\n\n")
 }
-  
+

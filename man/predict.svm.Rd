@@ -56,6 +56,8 @@ summary (model)
 
 # test with train data
 pred <- predict (model, x)
+# (same as:)
+pred <- predict (model)
 
 # Check accuracy:
 table (pred,y)
@@ -82,17 +84,18 @@ X <- data.frame (a=rnorm (1000), b=rnorm (1000))
 attach (X)
 
 # traditional way:
-m <- svm (X)
+m <- svm (X, gamma=0.1)
 
 # formula interface:
-m <- svm (~a+b)
+m <- svm (~., data=X, gamma=0.1)
 # or:
-m <- svm (~., data=X)
+m <- svm (~a+b, gamma=0.1)
 
-# visualization:
-plot (X)
-points (X[m$index,], col=2)
+# test:
+newdata <- data.frame(a=c(0,4), b=c(0,4))
+predict (m, newdata)
 }
 \keyword{neural}
 \keyword{nonlinear}
 \keyword{classif}
+

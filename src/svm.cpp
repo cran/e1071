@@ -22,7 +22,7 @@ template <class S, class T> inline void clone(T*& dst, S* src, int n)
 }
 #define INF HUGE_VAL
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
-#if 1
+#if 0
 void info(char *fmt,...)
 {
 	va_list ap;

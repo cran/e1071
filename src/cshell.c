@@ -187,10 +187,12 @@ int  subcshell(int *xrows, int *xcols, double *x, int *ncenters,
   
   if (conv<= ((*xrows)*(*xcols)*epsi1)){
        *flag=2;
+       if (*verbose){
        Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,conv);
-  }
+       }}
   else if (conv<= ((*xrows)*(*xcols)*epsi2)){
-      Rprintf("Iteration: %3d    Epsi2:   %13.10f\n",*iter,conv);
+      if (*verbose){
+	  Rprintf("Iteration: %3d    Epsi2:   %13.10f\n",*iter,conv);}
       
       if (*flag==3)
 	  *flag=4;

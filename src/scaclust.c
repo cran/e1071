@@ -296,7 +296,8 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
     }
     *ermin=*ermin/(*xrows));*/
     if (conv<= ((*xrows)*(*xcols)*epsi1)){
-	Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));
+	if (*verbose){
+	Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));}
 	*iter=*itermax;}
     else
 	if (*verbose){

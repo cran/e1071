@@ -10,7 +10,7 @@ fclustIndex <- function ( y, x, index= "all" )
     {
       xrows <- dim(clres$me)[1]
       xcols <- dim(clres$ce)[2]
-      ncenters <- clres$learning$nce
+      ncenters <- dim(clres$centers)[2]
       scatter <- array(0.0, c(xcols, xcols, ncenters))   
       scatternew <- array(0.0, c(xcols, xcols, ncenters))
       fhv <-as.double(0)
@@ -57,8 +57,8 @@ fclustIndex <- function ( y, x, index= "all" )
   xie.beni <- function(clres){#for all m
     xrows <- dim(clres$me)[1]
     minimum<--1
-    error <- clres$withinsd
-    ncenters <- clres$learning$nce
+    error <- clres$within#sd
+    ncenters <- dim(clres$centers)[2] 
     for (i in 1:(ncenters-1)){
       for (j in (i+1):ncenters){
         diff<- clres$ce[i,]-clres$ce[j,]
@@ -74,8 +74,8 @@ fclustIndex <- function ( y, x, index= "all" )
   
   fukuyama.sugeno <- function(clres){#for all m
     xrows <- dim(clres$me)[1]
-    ncenters <- clres$learning$nce
-    error <- clres$withinsd
+    ncenters <-dim(clres$centers)[2]
+    error <- clres$within#sd
     k2<-as.double(0)
     
     meancenters <- apply(clres$ce,2,mean)
@@ -102,7 +102,7 @@ fclustIndex <- function ( y, x, index= "all" )
   
   partition.entropy <- function(clres){ 
     xrows <- dim(clres$me)[1]
-    ncenters <- clres$learning$nce
+    ncenters <- dim(clres$centers)[2]
     partitionentropy_0.0
     for (i in 1:xrows){
       for (k in 1:ncenters){
@@ -118,7 +118,7 @@ fclustIndex <- function ( y, x, index= "all" )
     {
       xrows <- dim(clres$me)[1]
       xcols <- dim(x)[2]
-      ncenters <- clres$learning$nce
+      ncenters <- dim(clres$centers)[2]
       maxcluster <- double(ncenters)
       minimum <- -1.0
       ##hardpartition <- matrix(0,xrows,ncenters)
@@ -149,7 +149,7 @@ fclustIndex <- function ( y, x, index= "all" )
 
   proportion.exponent <- function(clres)
     {
-      k <- clres$learning$nce
+      k <- dim(clres$centers)[2]
       xrows <- dim(clres$me)[1]
       
       bexp <- as.integer(1)
@@ -209,7 +209,7 @@ fclustIndex <- function ( y, x, index= "all" )
                           "pre", "si")
   
 
-  if (index < 16)
+  if (index < 8)
     vecallindex <- vecallindex[index]
   
   return(vecallindex)

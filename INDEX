@@ -1,5 +1,7 @@
 Discrete                 Discrete Distribution
-Mvnorm                   The Multivariate Normal Distribution
+RTangle                  R Driver for Stangle
+RWeaveLatex              R/LaTeX Driver for Sweave
+Sweave                   Automatic Generation of Reports Using Noweb
 bclust                   Bagged Clustering
 bincombinations          Binary Combinations
 bootstrap.lca            Bootstrap Samples of LCA Results
@@ -35,6 +37,7 @@ allShortestPaths         Find Shortest Paths Between All Nodes in a
                          Directed Graph
 sigmoid                  The logistic function and derivatives
 skewness                 Skewness
+sparsify                 Sparce Matrices Support
 stft                     Computes the Short Time Fourier Transform of a
                          Vector
 svm                      Support Vector Machines

@@ -47,7 +47,7 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
         }
 
         for(m in 1:20){
-            cat("(",m,")",sep="")
+            if(verbose) cat("(",m,")",sep="")
             options(show.error.messages = FALSE)
             tryres <- try(CLUSFUN(x1, centers = base.centers, ...))
             if(!inherits(tryres, "try-error")) break

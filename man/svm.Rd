@@ -2,6 +2,7 @@
 \alias{svm}
 \alias{svm.default}
 \alias{svm.formula}
+%%\alias{svm.sparse.svm.data}
 \alias{summary.svm}
 \alias{print.svm}
 %- Also NEED an `\alias' for EACH other topic documented here.
@@ -12,10 +13,12 @@ out general regression and classification (of nu and epsilon-type), as
 well as density-estimation. A formula interface is provided.
 }
 \usage{
-\method{svm}{formula}(formula, data = NULL, ...)
-\method{svm}{default}(x, y=NULL, type=NULL, kernel="radial", degree=3, gamma=1/dim(x)[2],
+%%\method{svm}{sparse.svm.data}(x, ...)
+\method{svm}{formula}(formula, data = list(), subset, na.action=na.fail,
+...)
+\method{svm}{default}(x, y=NULL, subset, na.action=na.fail, type=NULL, kernel="radial", degree=3, gamma=1/dim(x)[2],
 coef0=0, cost=1, nu=0.5, class.weights=NULL, cachesize=40, tolerance=0.001, epsilon=0.5,
-shrinking=TRUE, cross=0, ...)
+shrinking=TRUE, cross=0, fitted=TRUE, ...)
 }
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Note, that an
@@ -24,12 +27,15 @@ shrinking=TRUE, cross=0, ...)
   \item{data}{an optional data frame containing the variables in the model.
           By default the variables are taken from the environment which
           `svm' is called from.}
+%%  \item{x}{a data matrix, a vector or a sparse data object
+%%   (\code{sparse.matrix} or \code{sparse.svm.data}, the latter also
+%%    containing the \code{y}-values).}
   \item{x}{a data matrix or a vector.}
   \item{y}{a response vector with one label for each row/component of \code{x}. Can be either
   a factor (for classification tasks) or a numeric vector (for regression).}
   \item{type}{\code{svm} can be used as a classification
     machine, as a regresson machine or a density estimator. Depending of whether \code{y} is
-    a factor or not, the default setting for \code{svm.type} is \code{C-classification} or \code{eps-regression}, respectively, but may be overwritten by setting an explicit value.\cr
+    a factor or not, the default setting for \code{type} is \code{C-classification} or \code{eps-regression}, respectively, but may be overwritten by setting an explicit value.\cr
     Valid options are:
     \itemize{
       \item \code{C-classification}
@@ -54,37 +60,64 @@ shrinking=TRUE, cross=0, ...)
     (default: 1/(data dimension))}
   \item{coef0}{parameter needed for kernels of type \code{polynomial}
     and \code{sigmoid} (default: 0)}
-  \item{cost}{cost of constraints violation. (default: 1)}
+  \item{cost}{cost of constraints violation (default: 1)---it is the
+    `C'-constant of the regularization term in the Lagrange formulation.}
   \item{nu}{parameter needed for \code{nu-classification} and \code{one-classification}}
   \item{class.weights}{a named vector of weights for the different
     classes, used for asymetric class sizes. Not all factor levels have
     to be supplied (default weight: 1). All components have to be named.}
-  \item{cachesize}{cache memory in MB. (default 40)}
+  \item{cachesize}{cache memory in MB (default 40)}
   \item{tolerance}{tolerance of termination criterion (default: 0.001)}
   \item{epsilon}{epsilon in the insensitive-loss function (default: 0.5)}
   \item{shrinking}{option whether to use the shrinking-heuristics
-    (default: TRUE)}
+    (default: \code{TRUE})}
   \item{cross}{if a integer value k>0 is specified, a k-fold cross
     validation on the training data is performed to assess the quality
     of the model: the accuracy rate for classification and the Mean
     Sqared Error for regression}
+  \item{fitted}{indicates whether the fitted values should be computed
+    and included in the model or not (default: \code{TRUE})}
   \item{\dots}{additional parameters for the low level fitting function
-    \code{svm.default}.}
+    \code{svm.default}}
+  \item{subset}{An index vector specifying the cases to be used in the
+          training sample.  (NOTE: If given, this argument must be
+          named.)}
+  \item{na.action}{A function to specify the action to be taken if `NA's are
+          found. The default action is for the procedure to fail.  An
+          alternative is `na.omit', which leads to rejection of cases
+          with missing values on any required variable.  (NOTE: If
+          given, this argument must be named.)}	
 }
 
 \value{
-  An object of class \code{"svm"} containing the fitted model, especially:
+  An object of class \code{"svm"} containing the fitted model, including:
   \item{sv}{the resulting support vectors}
   \item{index}{the index of the resulting support vectors in the data matrix}
-  \item{coefs}{the corresponding coefficiants}
+  \item{coefs}{the corresponding coefficiants times the training labels}
+  \item{rho}{the negative intercept}
   (Use \code{summary} and \code{print} to get some output).
 }
+\details{For multiclass-classification with k levels, k>2, \code{libsvm} uses the
+  `one-against-one'-approach, in which k(k-1)/2 binary classifiers are
+  trained; the appropriate class is found by a voting scheme.\cr
+%%\code{libsvm} internally uses a sparse data representation, which is 
+%%also high-level supported in an experimental stade (see
+%%\code{sparsify()}).\cr
+If the predictor variables include factors, the formula interface must be used to get a
+correct model matrix.}
 \references{
   \itemize{
     \item
       Chang, Chih-Chung and Lin, Chih-Jen:\cr
-      \emph{LIBSVM 2.0: Solving Different Support Vector Formulations.}\cr
-      \url{http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm2.ps.gz}
+      \emph{LIBSVM: a library for Support Vector Machines}\cr
+      \url{http://www.csie.ntu.edu.tw/~cjlin/libsvm}
+
+     \item
+      Exact formulations of models, algorithms, etc. can be found in the
+      document:\cr
+      Chang, Chih-Chung and Lin, Chih-Jen:\cr
+      \emph{LIBSVM: a library for Support Vector Machines}\cr
+      \url{http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.ps.gz}
     
     \item 
       Chang, Chih-Chung and Lin, Chih-Jen:\cr
@@ -99,6 +132,7 @@ shrinking=TRUE, cross=0, ...)
 }
 \seealso{
   \code{\link{predict.svm}}
+%%  \code{\link{sparsify}}
 }
 \examples{
 data(iris)
@@ -144,20 +178,20 @@ X <- data.frame (a=rnorm (1000), b=rnorm (1000))
 attach (X)
 
 # traditional way:
-m <- svm (X)
+m <- svm (X, gamma=0.1)
 
 # formula interface:
-m <- svm (~a+b)
+m <- svm (~., data=X, gamma=0.1)
 # or:
-m <- svm (~., data=X)
+m <- svm (~a+b, gamma=0.1)
 
 # test:
-predict (m, t(c(0,0)))
-predict (m, t(c(4,4)))
+newdata <- data.frame(a=c(0,4), b=c(0,4))
+predict (m, newdata)
 
 # visualization:
-plot (X)
-points (X[m$index,], col=2)
+plot (as.matrix(X))
+points (as.matrix(m$SV), col=2)
 }
 \keyword{neural}
 \keyword{nonlinear}

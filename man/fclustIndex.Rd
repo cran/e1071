@@ -147,8 +147,8 @@
 x<-rbind(matrix(rnorm(100,sd=0.3),ncol=2),
          matrix(rnorm(100,mean=1,sd=0.3),ncol=2))
 cl<-cmeans(x,2,20,verbose=TRUE,method="cmeans")
-#resultindexes <- fclustIndex(cl,x, index="all")
-#resultindexes   
+resultindexes <- fclustIndex(cl,x, index="all")
+resultindexes   
 }
 \keyword{cluster}
 

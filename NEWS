@@ -1,3 +1,13 @@
+Changes in Version 1.3-1:
+
+  o Functions rmvnorm and dmvnorm for multivariate normal
+    distributions have been moved to package mvtnorm.
+
+  o Bug fixes in print.fclust and fclustIndex.
+
+  o fixed floyd.c (ANSI C pedantic warnings)
+
+  
 Changes in Version 1.2-1:
 
   o Bug fixes in cmeans.c, cshell.c and scaclust.c (R header files
@@ -10,6 +20,7 @@ Changes in Version 1.2-1:
     kmeans gives an error when a cluster becomes empty (which can
     happen for almost every data set from time to time).
 
+    
 Changes in Version 1.2-0:
 
   o Added functions for bagged clustering, see help(bclust).
