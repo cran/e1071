@@ -18,6 +18,7 @@ lca                      Latent Class Analysis (LCA)
 matchClasses             Find similar classes in two-way contingency
                          tables
 moment                   Statistical Moment
+validity.measures        Validity Measures
 permutations             All permutations of integers 1:n
 plot.fclust              Plot Clustered Data
 plot.stft                Plots an Object of Type stft.
@@ -29,10 +30,10 @@ read.octave              Read Octave Data File
 rectangle.window         Computes the Coefficients of a Rectangle Window.
 rwiener                  Simulation of Wiener Process
 scaclust                 Fuzzy Clustering using Scatter Matrices
+allShortestPaths         Find Shortest Paths Between All Nodes in a
+                         Directed Graph
 sigmoid                  The logistic function and derivatives
 skewness                 Skewness
 stft                     Computes the Short Time Fourier Transform of a
                          Vector
 svm                      Support Vector Machines
-validity.measures	 Computes validity measures for comparing and
-			 evaluating fuzzy partitions 

@@ -9,11 +9,11 @@
 }
 \usage{
 allShortestPaths(x)
-extractPath(object, i, j)
+extractPath(obj, start, end)
 }
 \arguments{
   \item{x}{matrix or distance object}
-  \item{object}{return value of \code{allShortestPaths}}
+  \item{obj}{return value of \code{allShortestPaths}}
   \item{start}{integer, starting point of path}
   \item{end}{integer, end point of path}
 }
