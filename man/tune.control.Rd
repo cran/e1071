@@ -1,6 +1,5 @@
 \name{tune.control}
 \alias{tune.control}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{control parameters for the tune function}
 \description{
   Creates an object of class \code{tune.control} to be used with
@@ -12,7 +11,6 @@ sampling = c("cross", "fix", "bootstrap"), sampling.aggregate = mean,
 cross = 10, fix = 2/3, nboot = 10, boot.size = 9/10, best.model = TRUE,
 performances = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{random}{if an integer value is specified, \code{random}
     parameter vectors are drawn from the parameter space.}
@@ -49,4 +47,4 @@ performances = TRUE)
   \email{david.meyer@ci.tuwien.ac.at}
 }
 \seealso{\code{\link{tune}}}
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}

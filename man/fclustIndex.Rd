@@ -136,7 +136,7 @@
   Intelligence, vol. \bold{11}, n. 7, p. 773-781, 1989.\cr
   Y. Fukuyama and M. Sugeno, \emph{A new method of choosing the
     number of clusters for the fuzzy $c$-means method}, Proc. 5th Fuzzy
-  Syst. Symp., p. 247-250, 1989 (in japanese).}}
+  Syst. Symp., p. 247-250, 1989 (in japanese).}
 
 \author{Evgenia Dimitriadou}
 

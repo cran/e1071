@@ -1,6 +1,5 @@
 \name{predict.naiveBayes}
 \alias{predict.naiveBayes}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Naive Bayes Classifier}
 \description{
   Computes the conditional a-posterior probabilities of a categorical
@@ -10,7 +9,6 @@
 \usage{
 predict.naiveBayes(object, newdata, type = c("class", "raw"), threshold = 0.001, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{An object of class \code{"naiveBayes"}.}
   \item{newdata}{A dataframe with new predictors.}
@@ -56,5 +54,5 @@ m <- naiveBayes(iris[,-5], iris[,5])
 m
 table(predict(m, iris[,-5]), iris[,5])
 }
-\keyword{classif}% at least one, from doc/KEYWORDS
-\keyword{category}% at least one, from doc/KEYWORDS
+\keyword{classif}
+\keyword{category}

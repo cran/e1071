@@ -18,7 +18,7 @@ Now, ``libsvm'' actually returns a_i * y_i as i-th coefficiant and the
 Sum(coef_i * K(x_i, n)) - rho
  i
 
-where the training examples (=training data) are labeled {1,-1}.
+where the training examples (=training data) are labeled {1,-1} (!).
 
 
 A simplified R function for prediction with linear kernel would be:

@@ -98,8 +98,8 @@ y<-rbind(matrix(rnorm(33,sd=0.3),ncol=3),
          matrix(rnorm(33,mean=1,sd=0.3),ncol=3),
          matrix(rnorm(3,mean=2,sd=0.3),ncol=3))
 #         ycl<-predict(cl, y, type="both")
-        }
 }
+
 \keyword{cluster}
 
 

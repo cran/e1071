@@ -18,6 +18,8 @@ struct svm_model
 			           (sv_coef[n-1][l]) */
     double *rho;		/* constants in decision functions
 				   (rho[n*(n-1)/2]) */
+    double *probA;              // pairwise probability information
+    double *probB;
     
     /* for classification only */
 
@@ -234,6 +236,7 @@ void svmtrain (double *x, int *r, int *c,
 	       int    *shrinking,
 	       int    *cross,
 	       int    *sparse,
+	       int    *probability,
 	       
 	       int    *nclasses,
 	       int    *nr,
@@ -242,6 +245,9 @@ void svmtrain (double *x, int *r, int *c,
 	       int    *nSV,
 	       double *rho,
 	       double *coefs,
+	       double *sigma,
+	       double *probA,
+	       double *probB,
 
 	       double *cresults,
 	       double *ctotal1,
@@ -267,12 +273,13 @@ void svmtrain (double *x, int *r, int *c,
     par.nr_weight   = *nweights;
     if (par.nr_weight > 0) {
 	par.weight      = (double *) malloc (sizeof(double) * par.nr_weight);
-	memcpy (par.weight, weights, par.nr_weight * sizeof(double));
+	memcpy(par.weight, weights, par.nr_weight * sizeof(double));
 	par.weight_label = (int *) malloc (sizeof(int) * par.nr_weight);
-	memcpy (par.weight_label, weightlabels, par.nr_weight * sizeof(int));
+	memcpy(par.weight_label, weightlabels, par.nr_weight * sizeof(int));
     }
     par.p           = *epsilon;
     par.shrinking   = *shrinking;
+    par.probability = *probability;
 
     /* set problem */
     prob.l = *r;
@@ -299,6 +306,18 @@ void svmtrain (double *x, int *r, int *c,
 	*nr  = model->l;
 	*nclasses = model->nr_class;
 	memcpy (rho, model->rho, *nclasses * (*nclasses - 1)/2 * sizeof(double));
+
+	if (*probability && par.svm_type != ONE_CLASS) {
+	  if (par.svm_type == EPSILON_SVR || par.svm_type == NU_SVR)
+	    probA = model->probA;
+	  else {
+	    memcpy(probA, model->probA, 
+		    *nclasses * (*nclasses - 1)/2 * sizeof(double));
+	    memcpy(probB, model->probB, 
+		    *nclasses * (*nclasses - 1)/2 * sizeof(double));
+	  }
+	}
+
 	for (i = 0; i < *nclasses-1; i++)
 	    memcpy (coefs + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
 	
@@ -311,9 +330,13 @@ void svmtrain (double *x, int *r, int *c,
 	if (*cross > 0)
 	    do_cross_validation (&prob, &par, *cross, cresults,
 				 ctotal1, ctotal2);
+
+	/* compute sigma (for regression models + probability) */
+	if (svm_check_probability_model(model))
+	  *sigma = svm_get_svr_probability(model);
 	
 	/* clean up memory */
-	svm_destroy_model (model);
+	svm_destroy_model(model);
     }
     
     /* clean up memory */
@@ -327,11 +350,16 @@ void svmtrain (double *x, int *r, int *c,
 }
 	     
 void svmpredict  (int    *decisionvalues,
+		  int    *probability,
+
 		  double *v, int *r, int *c,
 		  int    *rowindex,
 		  int    *colindex,
 		  double *coefs,
 		  double *rho,
+		  int    *compprob,
+		  double *probA,
+		  double *probB,
 		  int    *nclasses,
 		  int    *totnSV,
 		  int    *labels,
@@ -350,7 +378,8 @@ void svmpredict  (int    *decisionvalues,
 		  int    *sparsex,
 		  
 		  double *ret,
-		  double *dec)
+		  double *dec,
+		  double *prob)
 {
     struct svm_model m;
     struct svm_node ** train;
@@ -371,6 +400,8 @@ void svmpredict  (int    *decisionvalues,
 	m.SV   = sparsify(v, *r, *c);
     
     m.rho      = rho;
+    m.probA    = probA;
+    m.probB    = probB;
     m.label    = labels;
     m.nSV      = nSV;
 
@@ -380,6 +411,7 @@ void svmpredict  (int    *decisionvalues,
     m.param.degree      = *degree;
     m.param.gamma       = *gamma;
     m.param.coef0       = *coef0;
+    m.param.probability = *compprob;      
 
     m.free_sv           = 1;
 
@@ -389,9 +421,15 @@ void svmpredict  (int    *decisionvalues,
     else
 	train = sparsify(x, *xr, *c);
 
-    /* call svm-predict-function for each x-row */
-    for (i = 0; i < *xr; i++)
+    /* call svm-predict-function for each x-row, possibly using probability 
+       estimator, if requested */
+    if (*probability && svm_check_probability_model(&m)) {
+      for (i = 0; i < *xr; i++)
+	ret[i] = svm_predict_probability(&m, train[i], prob + i * *nclasses);
+    } else {
+      for (i = 0; i < *xr; i++)
 	ret[i] = svm_predict(&m, train[i]);
+    }
 
     /* optionally, compute decision values */
     if (*decisionvalues)
@@ -417,6 +455,8 @@ void svmwrite (double *v, int *r, int *c,
 		  int    *colindex,
 		  double *coefs,
 		  double *rho,
+	          double *probA,
+	          double *probB,
 		  int    *nclasses,
 		  int    *totnSV,
 		  int    *labels,
@@ -453,6 +493,8 @@ void svmwrite (double *v, int *r, int *c,
     m.rho      = rho;
     m.label    = labels;
     m.nSV      = nSV;
+    m.probA    = probA;
+    m.probB    = probB;
 
     /* set up parameter */
     m.param.svm_type    = *svm_type;

@@ -5,7 +5,6 @@
 \alias{summary.svm}
 \alias{print.summary.svm}
 \alias{print.svm}
-%- Also NEED an `\alias' for EACH other topic documented here.
 \title{Support Vector Machines}
 \description{
 \code{svm} is used to train a support vector machine. It can be used to carry
@@ -18,7 +17,8 @@ na.omit, scale = TRUE)
 \method{svm}{default}(x, y = NULL, scale = TRUE, type = NULL, kernel =
 "radial", degree = 3, gamma = 1 / ncol(as.matrix(x)), coef0 = 0, cost = 1, nu = 0.5,
 class.weights = NULL, cachesize = 40, tolerance = 0.001, epsilon = 0.1,
-shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
+shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE, 
+..., subset, na.action = na.omit)
 }
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Note, that an
@@ -26,9 +26,9 @@ shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
           not.}
   \item{data}{an optional data frame containing the variables in the model.
           By default the variables are taken from the environment which
-          `svm' is called from.}
+          \sQuote{svm} is called from.}
   \item{x}{a data matrix, a vector, or a sparse matrix (object of class
-    \code{\link[SparseM]{matrix.csr}} as provided by the package \code{SparseM}).}
+    \code{\link[SparseM]{matrix.csr}} as provided by the package \pkg{SparseM}).}
   \item{y}{a response vector with one label for each row/component of \code{x}. Can be either
     a factor (for classification tasks) or a numeric vector (for
     regression).}
@@ -67,7 +67,7 @@ shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
   \item{coef0}{parameter needed for kernels of type \code{polynomial}
     and \code{sigmoid} (default: 0)}
   \item{cost}{cost of constraints violation (default: 1)---it is the
-    `C'-constant of the regularization term in the Lagrange formulation.}
+    \sQuote{C}-constant of the regularization term in the Lagrange formulation.}
   \item{nu}{parameter needed for \code{nu-classification} and \code{one-classification}}
   \item{class.weights}{a named vector of weights for the different
     classes, used for asymetric class sizes. Not all factor levels have
@@ -81,8 +81,10 @@ shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
     validation on the training data is performed to assess the quality
     of the model: the accuracy rate for classification and the Mean
     Sqared Error for regression}
-  \item{fitted}{indicates whether the fitted values should be computed
+  \item{fitted}{logical indicating whether the fitted values should be computed
     and included in the model or not (default: \code{TRUE})}
+  \item{probability}{logical indicating whether the model should
+    allow for probability predictions.}
   \item{\dots}{additional parameters for the low level fitting function
     \code{svm.default}}
   \item{subset}{An index vector specifying the cases to be used in the
@@ -103,15 +105,27 @@ shrinking = TRUE, cross = 0, fitted = TRUE, ..., subset, na.action = na.omit)
     the possible effect of \code{na.omit} and \code{subset})}
   \item{coefs}{The corresponding coefficients times the training labels.}
   \item{rho}{The negative intercept.}
+  \item{sigma}{In case of a probabilistic regression model, the scale
+    parameter of the hypothesized (zero-mean) laplace distribution estimated by
+    maximum likelihood.}
+  \item{probA, probB}{numeric vectors of length k(k-1)/2, k number of
+    classes, containing the parameters of the logistic distributions fitted to
+    the decision values of the binary classifers (1 / (1 + exp(a x + b))).}
 }
 \details{For multiclass-classification with k levels, k>2, \code{libsvm} uses the
-  `one-against-one'-approach, in which k(k-1)/2 binary classifiers are
+  \sQuote{one-against-one}-approach, in which k(k-1)/2 binary classifiers are
   trained; the appropriate class is found by a voting scheme.\cr
 \code{libsvm} internally uses a sparse data representation, which is 
-also high-level supported by the package \code{SparseM}.\cr
+also high-level supported by the package \pkg{SparseM}.\cr
 If the predictor variables include factors, the formula interface must be used to get a
 correct model matrix. \code{plot.svm} allows a simple graphical
-visualization of classification models.}
+visualization of classification models.\cr
+The probability model for classification fits a logistic distribution
+using maximum likelihood to the decision values of all binary
+classifiers, and computes the a-posteriori class probabilities for the
+multi-class problem using quadratic optimization. The probabilistic
+regression model assumes (zero-mean) laplace-distributed errors for the
+predictions, and estimates the scale parameter using maximum likelihood.}
 \note{Data are scaled internally, usually yielding better results.}
 \references{
   \itemize{
@@ -141,7 +155,7 @@ visualization of classification models.}
 \seealso{
   \code{\link{predict.svm}}
   \code{\link{plot.svm}}
-  \code{\link[SparseM]{matrix.csr}} (in package `SparseM')
+  \code{\link[SparseM]{matrix.csr}} (in package \pkg{SparseM})
 }
 \examples{
 data(iris)
@@ -167,9 +181,14 @@ pred <- fitted(model)
 # Check accuracy:
 table(pred, y)
 
-# compute decision values:
+# compute decision values and probabilities:
 pred <- predict(model, x, decision.values = TRUE)
 attr(pred, "decision.values")[1:4,]
+
+# visualize (classes by color, SV by crosses):
+plot(cmdscale(dist(iris[,-5])),
+     col = as.integer(iris[,5]),
+     pch = c("o","+")[1:150 \%in\% model$index + 1])
 
 ## try regression mode on two dimensions
 
@@ -203,6 +222,18 @@ m <- svm(~ a + b, gamma = 0.1)
 # test:
 newdata <- data.frame(a = c(0, 4), b = c(0, 4))
 predict (m, newdata)
+
+# visualize:
+plot(X, col = 1:1000 \%in\% m$index + 1, xlim = c(-5,5), ylim=c(-5,5))
+points(newdata, pch = "+", col = 2, cex = 5)
+
+# weights: (example not particularly sensible)
+i2 <- iris
+levels(i2$Species)[3] <- "versicolor"
+summary(i2$Species)
+wts <- 100 / table(i2$Species)
+wts
+m <- svm(Species ~ ., data = i2, class.weights = wts)
 }
 \keyword{neural}
 \keyword{nonlinear}

@@ -22,7 +22,7 @@ matchControls(formula, data = list(), subset, contlabel = "con",
 	once.}
 }
 \description{
-    Finds controls matching the cases as good as possible. }
+    Finds controls matching the cases as good as possible.
 }
 \details{
     The left hand side of the \code{formula} must be a factor

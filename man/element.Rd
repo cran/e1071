@@ -6,7 +6,7 @@ element(x, i)
 \alias{element}
 \arguments{
  \item{x}{Array of arbitrary dimensionality.}
- \item{i}{Vector of the same length as \code{x} has dimension}.}
+ \item{i}{Vector of the same length as \code{x} has dimension.}
 }
 \description{
   Returns the element of \code{x} specified by \code{i}.

@@ -4,7 +4,6 @@
 \alias{print.tune}
 \alias{summary.tune}
 \alias{print.summary.tune}
-%- Also NEED an `\alias' for EACH other topic documented here.
 \title{Parameter tuning of fuctions using grid search}
 \description{
   This generic function tunes hyperparameters of statistical methods
@@ -16,7 +15,6 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
      tunecontrol = tune.control(), ...)
 best.tune(...)
 }
-%- maybe also `usage' for other objects documented here.
 \arguments{
   \item{method}{function to be tuned.}
   \item{train.x}{either a formula or a matrix of predictors.}
@@ -98,5 +96,5 @@ best.tune(...)
   ## simple error estimation for lm using 10-fold cross validation
   tune(lm, mpg~., data = mtcars)
 }
-\keyword{models}% at least one, from doc/KEYWORDS
+\keyword{models}
 

@@ -301,9 +301,10 @@ tune.svm <- function(x, y = NULL, data = NULL, degree = NULL, gamma = NULL,
   modeltmp
 }
   
-best.svm <- function(x, ...) {
+best.svm <- function(x, tunecontrol = tune.control(), ...) {
   call <- match.call()
-  modeltmp <- tune.svm(x, ..., tunecontrol = tune.control(best.model = TRUE))$best.model
+  tunecontrol$best.model = TRUE
+  modeltmp <- tune.svm(x, ..., tunecontrol = tunecontrol)$best.model
   modeltmp$call <- call
   modeltmp
 }
@@ -336,9 +337,10 @@ tune.nnet <- function(x, y = NULL, data = NULL,
   modeltmp
 }
 
-best.nnet <- function(x, ...) {
+best.nnet <- function(x, tunecontrol = tune.control(nrepeat = 5), ...) {
   call <- match.call()
-  modeltmp <- tune.nnet(x, ..., tunecontrol = tune.control(best.model = TRUE))$best.model
+  tunecontrol$best.model = TRUE
+  modeltmp <- tune.nnet(x, ..., tunecontrol = tunecontrol)$best.model
   modeltmp$call <- call
   modeltmp
 }
@@ -360,9 +362,10 @@ tune.randomForest <- function(x, y = NULL, data = NULL, nodesize = NULL, mtry = 
   modeltmp
 }
   
-best.randomForest <- function(x, ...) {
+best.randomForest <- function(x, tunecontrol = tune.control(), ...) {
   call <- match.call()
-  modeltmp <- tune.randomForest(x, ..., tunecontrol = tune.control(best.model = TRUE))$best.model
+  tunecontrol$best.model = TRUE
+  modeltmp <- tune.randomForest(x, ..., tunecontrol = tunecontrol)$best.model
   modeltmp$call <- call
   modeltmp
 }
@@ -420,9 +423,10 @@ tune.rpart <- function(formula, data, na.action = na.omit,
   modeltmp
 }
   
-best.rpart <- function(formula, ...) {
+best.rpart <- function(formula, tunecontrol = tune.control(), ...) {
   call <- match.call()
-  modeltmp <- tune.rpart(formula, ..., tunecontrol = tune.control(best.model = TRUE))$best.model
+  tunecontrol$best.model = TRUE
+  modeltmp <- tune.rpart(formula, ..., tunecontrol = tunecontrol)$best.model
   modeltmp$call <- call
   modeltmp
 }

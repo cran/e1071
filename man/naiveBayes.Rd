@@ -3,7 +3,6 @@
 \alias{naiveBayes.default}
 \alias{naiveBayes.formula}
 \alias{print.naiveBayes}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Naive Bayes Classifier}
 \description{
   Computes the conditional a-posterior probabilities of a categorical
@@ -14,7 +13,6 @@
 \method{naiveBayes}{formula}(formula, data, ..., subset, na.action = na.pass)
 \method{naiveBayes}{default}(x, y, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{A numeric matrix, or a data frame of categorical and/or
     numeric variables.}
@@ -77,6 +75,6 @@ m <- naiveBayes(iris[,-5], iris[,5])
 m
 table(predict(m, iris[,-5]), iris[,5])
 }
-\keyword{classif}% at least one, from doc/KEYWORDS
-\keyword{category}% at least one, from doc/KEYWORDS
+\keyword{classif}
+\keyword{category}
 

@@ -5,7 +5,8 @@
   This function predicts values based upon a model trained by \code{svm}.
 }
 \usage{
-\method{predict}{svm}(object, newdata, decision.values = FALSE, ..., na.action = na.omit)
+\method{predict}{svm}(object, newdata, decision.values = FALSE,
+probability = FALSE, ..., na.action = na.omit)
 }
 
 \arguments{
@@ -13,8 +14,12 @@
   \item{newdata}{A matrix containing the new input data. A vector will
     be transformed to a n x 1 matrix.}
   \item{decision.values}{Logical controlling whether the decision values
-    of all binary classifiers computed in multiclass classification shall be computed and returned.}
-  \item{na.action}{A function to specify the action to be taken if `NA's are
+    of all binary classifiers computed in multiclass classification
+    shall be computed and returned.}
+  \item{probability}{Logical indicating whether class probabilities
+    should be computed and returned. Only possible if the model was
+    fitted with the \code{probability} option enabled.}
+  \item{na.action}{A function to specify the action to be taken if \sQuote{NA}s are
     found. The default action is \code{na.omit}, which leads to rejection of cases
     with missing values on any required variable. An alternative
     is \code{na.fail}, which causes an error if \code{NA} cases
@@ -25,9 +30,13 @@
   A vector of predicted values (for classification: a vector of labels, for density
   estimation: a logical vector). If \code{decision.value} is
   \code{TRUE}, the vector gets a \code{"decision.values"} attribute
+  containing a n x c matrix (n number of predicted values, c number of
+  classifiers) of all c binary classifiers' decision values. There are k
+  * (k - 1) / 2 classifiers (k number of classes). The colnames of
+  the matrix indicate the labels of the two classes. If \code{probability} is
+  \code{TRUE}, the vector gets a \code{"probabilities"} attribute
   containing a n x k matrix (n number of predicted values, k number of
-  classes) of all k binary classifiers' decision values. The colnames of
-  the matrix indicate the labels of the two classes.
+  classes) of the class probabilities.
 }
 \note{
   If the training set was scaled by \code{svm} (done by default), the
@@ -66,7 +75,7 @@ model <- svm(Species ~ ., data = iris)
 # alternatively the traditional interface:
 x <- subset(iris, select = -Species)
 y <- Species
-model <- svm(x, y) 
+model <- svm(x, y, probability = TRUE) 
 
 print(model)
 summary(model)
@@ -76,12 +85,10 @@ pred <- predict(model, x)
 # (same as:)
 pred <- fitted(model)
 
-# Check accuracy:
-table(pred, y)
-
-# compute decision values:
-pred <- predict(model, x, decision.values = TRUE)
+# compute decision values and probabilites
+pred <- predict(model, x, decision.values = TRUE, probability = TRUE)
 attr(pred, "decision.values")[1:4,]
+attr(pred, "probabilities")[1:4,]
 
 ## try regression mode on two dimensions
 
@@ -115,6 +122,10 @@ m <- svm(~ a + b, gamma = 0.1)
 # test:
 newdata <- data.frame(a = c(0, 4), b = c(0, 4))
 predict (m, newdata)
+
+# visualize:
+plot(X, col = 1:1000 \%in\% m$index + 1, xlim = c(-5,5), ylim=c(-5,5))
+points(newdata, pch = "+", col = 2, cex = 5)
 }
 \keyword{neural}
 \keyword{nonlinear}

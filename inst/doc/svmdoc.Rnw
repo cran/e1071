@@ -1,5 +1,5 @@
 \documentclass[a4paper]{article}
-\usepackage{hyperref, hyperlatex, graphicx, color, alltt}
+\usepackage{hyperref, graphicx, color, alltt}
 \usepackage{Sweave}
 \usepackage[round]{natbib}
 \definecolor{Red}{rgb}{0.7,0,0}
