@@ -33,15 +33,18 @@ write.matrix.csr(x, file = "out.dat", y = NULL)
 \seealso{\code{\link{matrix.csr}}}
 
 \examples{
-if (require(SparseM)) {
-  data(iris)
-  x <- as.matrix(iris[,1:4])
-  y <- iris[,5]
-  xs <- as.matrix.csr(x)
-  write.matrix.csr(xs, y = y, file="iris.dat")
-  xs2 <- read.matrix.csr("iris.dat")$x
-  if (!all(as.matrix(xs) == as.matrix(xs2)))
-    stop("Error: objects are not equal!")
+\dontrun{
+  library(methods)
+  if (require(SparseM)) {
+    data(iris)
+    x <- as.matrix(iris[,1:4])
+    y <- iris[,5]
+    xs <- as.matrix.csr(x)
+    write.matrix.csr(xs, y = y, file="iris.dat")
+    xs2 <- read.matrix.csr("iris.dat")$x
+    if (!all(as.matrix(xs) == as.matrix(xs2)))
+      stop("Error: objects are not equal!")
+  }
 }
 }
 \keyword{IO}% at least one, from doc/KEYWORDS

@@ -3,11 +3,11 @@ bclust                  Bagged Clustering
 bincombinations         Binary Combinations
 bootstrap.lca           Bootstrap Samples of LCA Results
 boxplot.bclust          Boxplot of cluster profiles
-classAgreement          Coefficients comparing classification
-                        agreement
+classAgreement          Coefficients comparing classification agreement
 cmeans                  Fuzzy C-Means Clustering
 countpattern            Count Binary Patterns
 cshell                  Fuzzy C-Shell Clustering
+e1071-internal          Internal e1071 functions
 element                 Extract Elements of an Array
 fclustIndex             Fuzzy Cluster Indexes (Validity/Performance
                         Measures)

@@ -18,10 +18,7 @@
 ddiscrete(x, probs, values = 1:length(probs))
 pdiscrete(q, probs, values = 1:length(probs))
 qdiscrete(p, probs, values = 1:length(probs))
-rdiscrete(n, probs, values = 1:length(probs),
-          method = "inverse", aliasmatrix = NULL)
-aliasmat(p)
-aliasmat2prob(aliasmatrix)
+rdiscrete(n, probs, values = 1:length(probs), ...)
 }
 \arguments{
   \item{x,q}{vector or array of quantiles.}
@@ -29,19 +26,11 @@ aliasmat2prob(aliasmatrix)
   \item{n}{number of observations.}
   \item{probs}{probabilities of the distribution.}
   \item{values}{values of the distribution.}
-  \item{method}{generation method, can be \code{"inverse"} or
-    \code{"alias"}.}
-  \item{aliasmatrix}{matrix needed by alias method.}
+  \item{...}{ignored (only there for backwards compatibility)}
 }
 \details{
-  For the generation of the random deviates, one can choose between the
-  method \code{"inverse"} which basically makes a lookup in the vector
-  of the probabilities and the method \code{"alias"}.  The latter method
-  computes an aliasmatrix by the function \code{aliasmat} which allows a
-  faster data generation once this matrix is computed.  If such a matrix
-  has already been computed, it can be passed as further argument to
-  \code{rdiscrete}. \code{aliasmat2prob} computed probabilities from a
-  given \code{aliasmatrix}.
+  The random number generator is sinply a wrapper for
+  \code{\link{sample}} and provided for backwards compatibility only.
 }
 \author{Andreas Weingessel and Friedrich Leisch}
 \examples{

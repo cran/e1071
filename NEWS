@@ -1,7 +1,10 @@
-Changes in Version 1.3-8:
+Changes in Version 1.3-9:
+
+  o rdiscrete() is now simply a wrapper for sample() and provided for backwards     compatibility only. 
 
   o Minor bug fixes in `svm' and `tune' (mostly interface issues). New
-    plot function for objects of class `svm' working for the 2d-classification case.
+    plot function for objects of class `svm' working for the 2d-classification 
+    case. 
 	
 Changes in Version 1.3-7:
 
@@ -14,6 +17,7 @@ Changes in Version 1.3-7:
   o A new generic `tune' function allows parameter tuning of arbitrary
     functions using, e.g., boot strapping, or cross validation.
     Several convenience wrappers (e.g., for svm, nnet, and rpart) do exist.
+
 	
 Changes in Version 1.3-3:
 
@@ -23,6 +27,7 @@ Changes in Version 1.3-3:
     A call with invalid parameters now no longer causes R to be
     terminated, and the C(++) code became completely silent.
   o Bugs fixed in fclustIndex function and print.fclust.  
+
     
 Changes in Version 1.3-1:
 
