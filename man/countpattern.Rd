@@ -1,11 +1,9 @@
 \name{countpattern}
 \alias{countpattern}
-%- Also NEED an `\alias' for EACH other topic documented here.
 \title{Count Binary Patterns}
 \usage{
 countpattern(x, matching=FALSE)
 }
-%- maybe also `usage' for other objects documented here.
 \arguments{
  \item{x}{A matrix of binary observations}
  \item{matching}{If TRUE an additional vector is returned which stores

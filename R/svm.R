@@ -13,6 +13,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
   m$... <- NULL
   m$scale <- NULL
   m[[1]] <- as.name("model.frame")
+  m$na.action <- na.action
   m <- eval(m, parent.frame())
   Terms <- attr(m, "terms")
   attr(Terms, "intercept") <- 0
@@ -482,7 +483,7 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
   }
 }
 
-write.svm <- function (object, file="Rdata.svm") {
+write.svm <- function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale") {
 
   ret <- .C ("svmwrite",
              # model
@@ -506,8 +507,12 @@ write.svm <- function (object, file="Rdata.svm") {
              as.double  (object$coef0),
 
              # filename
-             as.character(file),
+             as.character(svm.file),
 
              PACKAGE = "e1071"
             )$ret
+
+   write.table(data.frame(center = object$x.scale$"scaled:center",
+                          scale  = object$x.scale$"scaled:scale"),
+               file=scale.file, col.names=FALSE, row.names=FALSE)
 }

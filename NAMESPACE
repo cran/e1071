@@ -1,0 +1,55 @@
+useDynLib(e1071)
+
+import(graphics)
+import(stats)
+
+importFrom(class, knn, knn1)
+
+export(ddiscrete, pdiscrete, qdiscrete, rdiscrete, bclust,
+       hclust.bclust, centers.bclust, clusters.bclust, bincombinations,
+       bootstrap.lca, classAgreement, cmeans, countpattern, cshell, element,
+       fclustIndex, hamming.distance, hamming.window, hanning.window, ica,
+       impute, interpolate, kurtosis, lca, matchClasses, compareMatchedClasses,
+       moment, naiveBayes, permutations, rbridge, read.matrix.csr,
+       write.matrix.csr, read.octave, rectangle.window, rwiener,
+       allShortestPaths, extractPath, sigmoid, dsigmoid, d2sigmoid, skewness,
+       stft, svm, tune, tune.control, rpart.wrapper, knn.wrapper, write.svm)
+
+exportPattern("tune\\..+", "best\\..+")
+
+
+S3method(boxplot, bclust)
+
+S3method(naiveBayes, default)
+S3method(naiveBayes, formula)
+
+S3method(summary, lca)
+S3method(summary, svm)
+S3method(summary, tune)
+
+S3method(plot, bclust)
+S3method(plot, ica)
+S3method(plot, stft)
+S3method(plot, svm)
+S3method(plot, tune)
+
+S3method(predict, lca)         
+S3method(predict, naiveBayes)         
+S3method(predict, svm)
+
+S3method(print, bootstrap.lca)
+S3method(print, ica)
+S3method(print, lca)
+S3method(print, summary.lca)
+S3method(print, naiveBayes)
+S3method(print, svm)
+S3method(print, summary.svm)
+S3method(print, tune)
+S3method(print, summary.tune)
+
+S3method(svm, default)
+S3method(svm, formula)
+
+       
+
+ 

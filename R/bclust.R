@@ -5,10 +5,6 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
           verbose = TRUE, final.kmeans = FALSE, docmdscale=FALSE,
           resample=TRUE, weights=NULL, maxcluster=base.centers, ...) 
 {
-    if (!require("mva")) stop("Could not load required package mva")
-    if (!require("class"))
-        stop("Could not load required package class from bundle VR")
-
     x <- as.matrix(x)
     xr <- nrow(x)
     xc <- ncol(x)
@@ -104,8 +100,6 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
               hclust.method = object$hclust.method, final.kmeans = FALSE,
               docmdscale = FALSE, maxcluster=object$maxcluster) 
 {
-    if (!require("mva")) stop("Could not load required package mva")
-
     d <- dist(object$allcenters, method = dist.method)
     if(hclust.method=="diana"){
         if (!require("cluster")) stop("Could not load required package cluster")        
@@ -135,8 +129,6 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
     function (x, maxcluster=x$maxcluster,
               main = deparse(substitute(x)), ...) 
 {
-    if (!require("mva")) stop("Could not load required package mva")
-
     opar <- par(c("mar", "oma"))
     on.exit(par(opar))
 
@@ -165,7 +157,6 @@ function (x, n = nrow(x$centers), bycluster = TRUE,
           main = deparse(substitute(x)), oneplot=TRUE,
           which=1:n, ...) 
 {
-    if (!require("mva")) stop("Could not load required package mva")
     N <- length(which)
 
     opar <- par(c("mfrow", "oma", "mgp","xpd"))

@@ -1,6 +1,5 @@
 \name{classAgreement}
 \alias{classAgreement}
-%- Also NEED an `\alias' for EACH other topic documented here.
 \title{Coefficients comparing classification agreement}
 \description{
   \code{classAgreement()} computes several coefficents of agreement
@@ -9,7 +8,6 @@
 \usage{
 classAgreement(tab, match.names=FALSE)
 }
-%- maybe also `usage' for other objects documented here.
 \arguments{
   \item{tab}{A 2-dimensional contingency table.}
   \item{match.names}{Flag whether row and columns should be matched by name.}

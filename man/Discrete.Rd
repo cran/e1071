@@ -3,8 +3,6 @@
 \alias{pdiscrete}
 \alias{qdiscrete}
 \alias{rdiscrete}
-\alias{aliasmat}
-\alias{aliasmat2prob}
 \title{Discrete Distribution}
 \description{
   These functions provide information about the discrete distribution
