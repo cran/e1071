@@ -1,8 +1,8 @@
 allShortestPaths <- function(x){
     
     x <- as.matrix(x)
-    x[is.na(x)] <- Machine()$double.xmax
-    x[is.infinite(x) & x>0] <- Machine()$double.xmax
+    x[is.na(x)] <- .Machine$double.xmax
+    x[is.infinite(x) & x>0] <- .Machine$double.xmax
     if(ncol(x) != nrow(x))
         stop("x is not a square matrix")
     n <- ncol(x)
@@ -14,7 +14,7 @@ allShortestPaths <- function(x){
             integer(n^2))
     z <- list(length = matrix(z[[2]], n),
               middlePoints = matrix(z[[4]]+1, n))
-    z$length[z$length==Machine()$double.xmax] <- NA
+    z$length[z$length == .Machine$double.xmax] <- NA
     z
 }
                        

@@ -332,7 +332,7 @@ double Kernel::k_function(const svm_node *x, const svm_node *y,
 	}
 	// This error condition should never occur because checked before by svn_check_parameters
 	//	fprintf(stderr,"unknown kernel function.\n");
-	//	exit(1);
+	return 0;
 }
 
 // Generalized SMO+SVMlight algorithm
