@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "R.h"
+
 
 int  subcmeans(int *xrows, int *xcols, double *x, int *ncenters,
 	       double *centers, int *itermax, int *iter,

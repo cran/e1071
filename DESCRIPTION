@@ -1,6 +1,6 @@
 Package: e1071
-Version: 1.2-0
-Date: 2001/10/04
+Version: 1.2-1
+Date: 2001/10/24
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
 Depends: R (>= 1.2)
 Author: Evgenia Dimitriadou, Kurt Hornik, Friedrich Leisch,

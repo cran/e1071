@@ -30,6 +30,10 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
 
     class(object) <- "bclust"
 
+    optSEM <- getOption("show.error.messages")
+    if(is.null(optSEM)) optSEM <- TRUE
+    on.exit(options(show.error.messages = optSEM))
+
     if (verbose) cat("Committee Member:")
     for (n in 1:iter.base) {
         if (verbose){
@@ -41,8 +45,19 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
         else{
             x1 <- x
         }
+
+        for(m in 1:20){
+            cat("(",m,")",sep="")
+            options(show.error.messages = FALSE)
+            tryres <- try(CLUSFUN(x1, centers = base.centers, ...))
+            if(!inherits(tryres, "try-error")) break
+        }
+        options(show.error.messages = optSEM)
+        if(m==20)
+            stop("Could not find valid cluster solution in 20 replications\n")
+        
         object$allcenters[((n - 1) * base.centers + 1):(n * base.centers),] <-
-            CLUSFUN(x1, centers = base.centers, ...)$centers
+            tryres$centers
     }
     object$allcenters <- object$allcenters[complete.cases(object$allcenters),]
     object$allcluster <- knn1(object$allcenters, x,

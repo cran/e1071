@@ -20,8 +20,10 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include <R_ext/Linpack.h>
-#include <S.h>
+#include "R_ext/Linpack.h"
+#include "R.h"
+#include "S.h"
+
 extern int (dpodi)(double*, int*, int*, double*, int*);
 extern int (dpofa)(double* , int *, int *, int *);
 

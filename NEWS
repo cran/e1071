@@ -1,3 +1,15 @@
+Changes in Version 1.2-1:
+
+  o Bug fixes in cmeans.c, cshell.c and scaclust.c (R header files
+    included and unused variables removed)
+  
+  o Bug fixes in Rsvm.c and svm.R (incomplete list of returned Support 
+    Vectors).
+
+  o Encapsulate kmeans call in bclust() in a try construct, because
+    kmeans gives an error when a cluster becomes empty (which can
+    happen for almost every data set from time to time).
+
 Changes in Version 1.2-0:
 
   o Added functions for bagged clustering, see help(bclust).

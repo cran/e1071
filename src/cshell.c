@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 #include <math.h>
-
+#include "R.h"
 
 int  subcshell(int *xrows, int *xcols, double *x, int *ncenters,
 	       double *centers, int *itermax, int *iter,
@@ -294,9 +294,9 @@ int  cshell_assign(int *xrows, int *xcols, double *x, int *ncenters,
 		   double *centers, int *dist, double *U, double *f,
 		   double *radius)
 {
-  int k, col, i, m, n ;
+  int k, col, i;
 
-  double temp,tempu, tempu1, tempu2;
+  double tempu, tempu1, tempu2;
   int j;
   double suma;
   double exponente;

@@ -257,14 +257,9 @@ void svmtrain (double *x, int *r, int *c,
     model = svm_train (&prob, &par);
     
     /* 4. set up return values */
-    for (i = ii = 0;
-	(i < *r) && (ii < model->l);
-	i++)
-	if (prob.x[i] == model->SV[ii]) {
-	    /* set index = true */
-	    index [i] = 1;
-	    ii++;
-	}
+    for (ii = 0; ii < model->l; ii++)
+	for (i = 0; i < *r;	i++)
+	    if (prob.x[i] == model->SV[ii]) index[ii] = i+1;
     
     *nr  = model->l;
     *nclasses = model->nr_class;
@@ -306,7 +301,7 @@ void svmpredict  (double *v, int *r, int *c,
 {
     struct svm_model m;
     struct svm_node ** train;
-    int i,j;
+    int i;
     
     /* set up model */
     m.l        = *totnSV;

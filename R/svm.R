@@ -138,8 +138,8 @@ function (x,
                tot.nSV  = cret$nr,                  #total number of sv
                nSV      = cret$nSV[1:cret$nclasses],#number of SV in diff. classes
                labels   = cret$label[1:cret$nclasses],#labels of the SVs.
-               SV       = t(t(x[cret$index==1,])),  #copy of sv
-               index    = which (cret$index==1),    #indexes of sv in x
+               SV       = t(t(x[cret$index,])),  #copy of sv
+               index    = cret$index,            #indexes of sv in x
                #constants in decision functions
                rho      = cret$rho[1:(cret$nclasses*(cret$nclasses-1)/2)],
                #coefficiants of sv
