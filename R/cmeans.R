@@ -42,23 +42,37 @@ cmeans <- function (x, centers, iter.max = 100, verbose = FALSE,
   iter <- integer(1)
   
   if (method == 1) {
-    retval <- .C("cmeans", xrows = as.integer(xrows),
+    retval <- .C("cmeans",
+                 xrows = as.integer(xrows),
                  xcols = as.integer(xcols), 
-                 x = as.double(x), ncenters = as.integer(ncenters), 
+                 x = as.double(x),
+                 ncenters = as.integer(ncenters), 
                  centers = as.double(centers), 
-                 iter.max = as.integer(iter.max), iter = as.integer(iter), 
-                 verbose = as.integer(verbose), dist = as.integer(dist-1), 
-                 U=double(xrows*ncenters), m=as.double(m), ermin=double(1))
+                 iter.max = as.integer(iter.max),
+                 iter = as.integer(iter), 
+                 verbose = as.integer(verbose),
+                 dist = as.integer(dist-1), 
+                 U = double(xrows*ncenters),
+                 m = as.double(m),
+                 ermin = double(1),
+                 PACKAGE = "e1071")
   }
   else if (method == 2) {
-    retval <- .C("ufcl", xrows = as.integer(xrows),
+    retval <- .C("ufcl",
+                 xrows = as.integer(xrows),
                  xcols = as.integer(xcols), 
-                 x = as.double(x), ncenters = as.integer(ncenters), 
+                 x = as.double(x),
+                 ncenters = as.integer(ncenters), 
                  centers = as.double(centers), 
-                 iter.max = as.integer(iter.max), iter = as.integer(iter), 
-                 verbose = as.integer(verbose), dist = as.integer(dist-1), 
-                 U=double(xrows*ncenters), m=as.double(m),
-                 rate.par = as.double(rate.par), ermin=double(1))
+                 iter.max = as.integer(iter.max),
+                 iter = as.integer(iter), 
+                 verbose = as.integer(verbose),
+                 dist = as.integer(dist-1), 
+                 U = double(xrows*ncenters),
+                 m = as.double(m),
+                 rate.par = as.double(rate.par),
+                 ermin = double(1),
+                 PACKAGE = "e1071")
   }
   
   centers <- matrix(retval$centers, ncol = xcols, dimnames = dimnames(initcenters))

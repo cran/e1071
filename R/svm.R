@@ -139,8 +139,9 @@ function (x,
               cresults = double  (cross),
               ctotal1  = double  (1),
               ctotal2  = double  (1),
-              error    = character(1)
-             )
+              error    = character(1),
+
+              PACKAGE = "e1071")
 
   if (nchar(cret$error))
     stop(paste(cret$error, "!", sep=""))
@@ -237,7 +238,9 @@ predict.svm <- function (object, newdata, ...) {
              as.integer (sparse),
              
              #decision-values
-             ret = double  (newnrows)
+             ret = double  (newnrows),
+
+             PACKAGE = "e1071"
             )$ret
 
   if (is.character(object$levels))

@@ -44,15 +44,23 @@ cshell <- function (x, centers, iter.max = 100, verbose = FALSE,
   flag <- integer(1)
 
   
-  retval <- .C("cshell", xrows = as.integer(xrows),
+  retval <- .C("cshell",
+               xrows = as.integer(xrows),
                xcols = as.integer(xcols), 
-               x = as.double(x), ncenters = as.integer(ncenters), 
+               x = as.double(x),
+               ncenters = as.integer(ncenters), 
                centers = as.double(centers), 
-               iter.max = as.integer(iter.max), iter = as.integer(iter), 
-               verbose = as.integer(verbose), dist = as.integer(dist-1), 
-               U=double(xrows*ncenters), UANT=double(xrows*ncenters),
-               m=as.double(m), ermin=double(1), radius=as.double(radius),
-               flag=as.integer(flag))
+               iter.max = as.integer(iter.max),
+               iter = as.integer(iter), 
+               verbose = as.integer(verbose),
+               dist = as.integer(dist-1), 
+               U = double(xrows*ncenters),
+               UANT = double(xrows*ncenters),
+               m = as.double(m),
+               ermin = double(1),
+               radius = as.double(radius),
+               flag = as.integer(flag),
+               PACKAGE = "e1071")
 
   centers <- matrix(retval$centers, ncol = xcols, dimnames = dimnames(initcenters))
   
@@ -110,15 +118,23 @@ cshell <- function (x, centers, iter.max = 100, verbose = FALSE,
     }
     
     
-    retval <- .C("cshell", xrows = as.integer(xrows),
+    retval <- .C("cshell",
+                 xrows = as.integer(xrows),
                  xcols = as.integer(xcols), 
-                 x = as.double(x), ncenters = as.integer(ncenters), 
+                 x = as.double(x),
+                 ncenters = as.integer(ncenters), 
                  centers = as.double(centers), 
-                 iter.max = as.integer(iter.max), iter = as.integer(iter-1), 
-                 verbose = as.integer(verbose), dist = as.integer(dist-1), 
-                 U=as.double(U), UANT=as.double(UANT),
-                 m=as.double(m), ermin=double(1), radius=as.double(radius),
-                 flag=as.integer(flag))
+                 iter.max = as.integer(iter.max),
+                 iter = as.integer(iter-1), 
+                 verbose = as.integer(verbose),
+                 dist = as.integer(dist-1), 
+                 U = as.double(U),
+                 UANT = as.double(UANT),
+                 m = as.double(m),
+                 ermin = double(1),
+                 radius = as.double(radius),
+                 flag = as.integer(flag),
+                 PACKAGE = "e1071")
     
     flag<-retval$flag
     if (retval$flag!=2)

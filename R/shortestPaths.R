@@ -11,7 +11,8 @@ allShortestPaths <- function(x){
             as.integer(n),
             double(n^2),
             as.double(x),
-            integer(n^2))
+            integer(n^2),
+            PACKAGE = "e1071")
     z <- list(length = matrix(z[[2]], n),
               middlePoints = matrix(z[[4]]+1, n))
     z$length[z$length == .Machine$double.xmax] <- NA
