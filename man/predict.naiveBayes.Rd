@@ -28,7 +28,7 @@ maximal probability else.
   For attributes with missing values, the
   corresponding table entries are omitted for prediction.
 }
-\author{David Meyer \email{david.meyer@ci.tuwien.ac.at}}
+\author{David Meyer \email{David.Meyer@R-project.org}}
 \seealso{\code{\link{naiveBayes}}}
 \examples{
 ## Categorical data only:

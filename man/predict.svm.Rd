@@ -43,23 +43,9 @@ probability = FALSE, ..., na.action = na.omit)
   new data is scaled accordingly using scale and center of
   the training data.
 }
-\references{
-  \itemize{
-    \item
-      Chang, Chih-Chung and Lin, Chih-Jen:\cr
-      \emph{LIBSVM 2.0: Solving Different Support Vector Formulations.}\cr
-      \url{http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm2.ps.gz}
-    
-    \item 
-      Chang, Chih-Chung and Lin, Chih-Jen:\cr
-      \emph{Libsvm: Introduction and Benchmarks}\cr
-      \url{http://www.csie.ntu.edu.tw/~cjlin/papers/q2.ps.gz}
-    
-  }
-}
 \author{
   David Meyer (based on C++-code by Chih-Chung Chang and Chih-Jen Lin)\cr
-  \email{david.meyer@ci.tuwien.ac.at}
+  \email{David.Meyer@R-project.org}
 }
 \seealso{
   \code{\link{svm}}

@@ -69,7 +69,7 @@ knn.wrapper(x, y, k = 1, l = 0, ...)
 
 \author{
   David Meyer\cr
-  \email{david.meyer@ci.tuwien.ac.at}
+  \email{David.Meyer@R-project.org}
 }
 \seealso{\code{\link{tune}}}
 

@@ -1,3 +1,8 @@
+Changes in Version 1.5-8
+
+  o Update to libsvm 2.8 (uses a faster optimization algorithm)
+
+  
 Changes in Version 1.5-7
 
   o read.matrix.csr() did not work correctly with matrix-only objects.

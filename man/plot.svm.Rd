@@ -32,7 +32,7 @@ symbolPalette = palette(), svSymbol = "x", dataSymbol = "o", ...)
 }
 
 \author{David Meyer\cr
-  \email{david.meyer@ci.tuwien.ac.at}}
+  \email{David.Meyer@R-project.org}}
 \seealso{\code{\link{svm}}}
 
 \examples{

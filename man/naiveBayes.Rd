@@ -49,7 +49,7 @@
   assumes independence of the predictor
   variables, and gaussian distribution (given the target class) of metric predictors.
   }
-\author{David Meyer \email{david.meyer@ci.tuwien.ac.at}}
+\author{David Meyer \email{David.Meyer@R-project.org}}
 \seealso{\code{\link{predict.naiveBayes}}}
 \examples{
 ## Categorical data only:
