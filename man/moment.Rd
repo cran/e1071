@@ -33,3 +33,4 @@ moment(x, order=2, center=TRUE)
 # Compute the 3rd absolute centered moment
 moment(x, order=3, center=TRUE, absolute=TRUE)
 }
+\keyword{univar}

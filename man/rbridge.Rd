@@ -1,4 +1,5 @@
 \name{rbridge}
+\alias{rbridge}
 \title{Simulation of Brownian Bridge}
 \usage{
 rbridge(end = 1, frequency = 1000)
@@ -21,3 +22,4 @@ rwiener
 x <- rbridge()
 plot(x,type="l")
 }
+\keyword{distribution}

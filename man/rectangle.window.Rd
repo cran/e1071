@@ -27,3 +27,5 @@ The purpose of this function is just to have a name for the R command
 y<-stft(x, wtype="rectangle.window")
 plot(y)
 }
+
+\keyword{ts}

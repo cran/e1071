@@ -1,6 +1,0 @@
-# @configure_input@
-
-.First.lib <- function(lib, pkg){
-
-    if(@HAVEPNM@) library.dynam("pnm", pkg, lib)
-}

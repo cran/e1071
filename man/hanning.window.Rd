@@ -1,4 +1,5 @@
 \name{hanning.window}
+
 \title{Computes the Coefficients of a Hanning Window.}
 
 \usage{hanning.window(n)}
@@ -33,3 +34,5 @@ x<-rnorm(500)
 y<-stft(x, wtype="hanning.window")
 plot(y)
 }
+
+\keyword{ts}

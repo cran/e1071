@@ -1,4 +1,5 @@
 \name{read.octave}
+\alias{read.octave}
 \title{Read Octave Data File}
 \usage{
 read.octave (file, quiet=FALSE)
@@ -20,3 +21,5 @@ the first object found in the file and ignores the rest.
 scan
 read.table
 }
+\keyword{interface}
+

@@ -27,3 +27,5 @@ values at the particular time/frequency location.}
 y<-stft(x)
 plot(y)
 }
+
+\keyword{ts}

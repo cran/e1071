@@ -1,4 +1,5 @@
 \name{hamming.window}
+
 \title{Computes the Coefficients of a Hamming Window.}
 
 \usage{hamming.window(n)}
@@ -33,3 +34,5 @@ x<-rnorm(500)
 y<-stft(x, wtype="hamming.window")
 plot(y)
 }
+
+\keyword{ts}

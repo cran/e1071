@@ -46,4 +46,5 @@ y<-stft(x)
 plot(y)
 }
 
+\keyword{ts}
 

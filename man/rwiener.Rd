@@ -1,4 +1,5 @@
 \name{rwiener}
+\alias{rwiener}
 \title{Simulation of Wiener Process}
 \usage{
 rwiener(end = 1, frequency = 1000)
@@ -17,3 +18,4 @@ of the Wiener process on the interval [0,\code{end}]
 x <- rwiener()
 plot(x,type="l")
 }
+\keyword{distribution}

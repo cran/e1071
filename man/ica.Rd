@@ -4,6 +4,8 @@
 ica(X, lrate, epochs=100, ncomp=dim(X)[2], fun="negative")
 }
 \alias{ica}
+\alias{print.ica}
+\alias{plot.ica}
 \arguments{
  \item{X}{The matrix for which the ICA is to be computed}
  \item{lrate}{learning rate}

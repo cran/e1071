@@ -1,4 +1,5 @@
 \name{hamming.distance}
+\alias{hamming.distance}
 \title{Hamming Distances of Vectors}
 \usage{ hamming.distance(x, y)
 }
@@ -20,3 +21,4 @@ z <- rbind(x,y)
 rownames(z) <- c("Fred", "Tom")
 hamming.distance(z)
 }
+\keyword{multivariate}

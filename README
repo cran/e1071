@@ -1,4 +1,4 @@
-Copyright (C) 1997,1998  Friedrich Leisch
+Copyright (C) 1997-2000  Friedrich Leisch
 	
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,13 +22,9 @@ place (i.e., a special package) where to put them.
 
 Authors: Kurt.Hornik@ci.tuwien.ac.at
          Friedrich.Leisch@ci.tuwien.ac.at
+	 Evgenia.Dimitriadou@ci.tuwien.ac.at	
+	 David.Meyer@ci.tuwien.ac.at
          Andreas.Weingessel@ci.tuwien.ac.at
-
-The latest version of this package can always be downloaded from any
-CRAN mirror. The CRAN master site can be found at
-
-	http://www.ci.tuwien.ac.at/R
-	ftp://ftp.ci.tuwien.ac.at/pub/R
 
 Please do not hesitate to send any comments or bug reports to one of
 the authors.
@@ -36,11 +32,10 @@ the authors.
 
 =====================================================================
                          Friedrich  Leisch                             
- Institut für Statistik                      Tel: (+43 1) 58801 4541
- Technische Universität Wien                 Fax: (+43 1)  504 14 98
- Wiedner Hauptstraße 8-10/1071      Friedrich.Leisch@ci.tuwien.ac.at
+ Institut f. Statistik                      Tel: (+43 1) 58801 10715
+ Technische Universitaet Wien               Fax: (+43 1) 58801 10798
+ Wiedner Hauptstrasse 8-10/101      Friedrich.Leisch@ci.tuwien.ac.at
  A-1040 Wien, Austria             http://www.ci.tuwien.ac.at/~leisch
-      PGP public key http://www.ci.tuwien.ac.at/~leisch/pgp.key
 =====================================================================
 
 

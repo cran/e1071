@@ -5,12 +5,15 @@ ddiscrete(x, probs, values=1:length(probs))
 pdiscrete(q, probs, values=1:length(probs))
 qdiscrete(p, probs, values=1:length(probs))
 rdiscrete(n, probs, values=1:length(probs), method="inverse", aliasmatrix=NULL)
+aliasmat(p)
 }
 \alias{ddiscrete}
 \alias{pdiscrete}
 \alias{qdiscrete}
 \alias{rdiscrete}
+\alias{rdiscrete.alias}
 \alias{aliasmat}
+\alias{aliasmat2prob}
 \arguments{
   \item{x,q}{vector or array of quantiles.}
   \item{p}{vector or array of probabilites.}
@@ -23,7 +26,7 @@ rdiscrete(n, probs, values=1:length(probs), method="inverse", aliasmatrix=NULL)
 \description{
   These functions provide information about the discrete distribution
   where the probability of the elements of \code{values} is proportional
-  to the values given in \code{probs}, which are normalized tp sum up to
+  to the values given in \code{probs}, which are normalized to sum up to
   1. \code{ddiscrete} gives the density, \code{pdiscrete} gives the
   distribution function, \code{qdiscrete} gives the quantile function and
   \code{rdiscrete} generates random deviates.
@@ -37,7 +40,6 @@ rdiscrete(n, probs, values=1:length(probs), method="inverse", aliasmatrix=NULL)
 
 }
 \author{Andreas Weingessel and Friedrich Leisch}
-
 \examples{
 # a vector of length 30 whose elements are 1 with probability 0.2 and 2
 # with probability 0.8.

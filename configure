@@ -838,14 +838,11 @@ else :
 fi
 fi
 	
-EXTRALIBS=${LIBS}
+PKG_LIBS=${LIBS}
 
 if test "${HAVEPNM}" = "TRUE"; then
-  PNMOBJS=pnm.o
-  PNMSO=pnm.so
+   cp src/pnm.c.in src/pnm.c
 fi
-
-
 
 
 
@@ -962,7 +959,7 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "R/pnm.R R/zzz.R src/Makefile" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "R/pnm.R src/Makevars" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -995,9 +992,7 @@ s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
 s%@HAVEPNM@%$HAVEPNM%g
-s%@PNMOBJS@%$PNMOBJS%g
-s%@PNMSO@%$PNMSO%g
-s%@EXTRALIBS@%$EXTRALIBS%g
+s%@PKG_LIBS@%$PKG_LIBS%g
 
 CEOF
 EOF
@@ -1039,7 +1034,7 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"R/pnm.R R/zzz.R src/Makefile"}
+CONFIG_FILES=\${CONFIG_FILES-"R/pnm.R src/Makevars"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

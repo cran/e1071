@@ -31,7 +31,7 @@ dmvnorm <- function(x, mu, sigma){
     sigma <- diag(ncol(x))
   }
 
-  if(length(x) != ncol(sigma)){
+  if(ncol(x) != ncol(sigma)){
     stop("x and sigma have non-conforming size")
   }
   

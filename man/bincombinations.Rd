@@ -15,4 +15,4 @@ bincombinations(p)
 bincombinations(2)
 bincombinations(3)
 }
-
+\keyword{utilities}

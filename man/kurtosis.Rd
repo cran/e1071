@@ -1,4 +1,5 @@
 \name{kurtosis}
+\alias{kurtosis}
 \title{Kurtosis}
 \usage{
 kurtosis(x, na.rm=FALSE)
@@ -22,3 +23,4 @@ Returns the kurtosis of x.
 x<-rnorm(100)
 kurtosis(x)
 }
+\keyword{univar}
