@@ -18,7 +18,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <R_ext/Linpack.h>
@@ -29,8 +28,8 @@ extern int (dpofa)(double* , int *, int *, int *);
 
 int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
 	       double *centers, int *itermax, int *iter,
-	       int *verbose,  double *U, double *UANT, double
-	       *beta, double *taf, double *theta, double *ermin)
+	       int *verbose,  double *U, double *UANT, 
+	       double *beta, double *taf, double *theta, double *ermin)
 {
     
     typedef enum {FALSE,TRUE} bool;
@@ -77,12 +76,13 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
     for(i=0;i<*ncenters;i++)
 	for(k=0;k<*xrows;k++)   
 	    t[k+(*xrows)*i]=0;
-    
+
+    if (*iter!=0) {/*not predict*/
     /*update UANT*/
     for(i=0;i<*ncenters;i++){
 	for(k=0;k<*xrows;k++){
 	    UANT[k+(*xrows)*i]=U[k+(*xrows)*i];
-	    /*  printf("UANT: k: %5.2d, i:%5.2d,U:%5.2f\n",i,k,U[k+(*xrows)*i]);*/
+	    /*  Rprintf("UANT: k: %5.2d, i:%5.2d,U:%5.2f\n",i,k,U[k+(*xrows)*i]);*/
 	}}
     
 
@@ -109,6 +109,7 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
 	    centers[i+(*ncenters)*col]/=sum2;
 	
     }
+    }/*not predict*/
     
     /*initialize*/
     for(i=0;i<*ncenters;i++){
@@ -238,12 +239,12 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
 		if (t[k+(*xrows)*i]>=0)
 		    U[k+(*xrows)*i]=((1/b[k+(*xrows)*i])/summeb)-(1/b[k+(*xrows)*i])*((summeab/summeb)-a[i]);
 /*		    U[k+(*xrows)*i]=1/(b[k+(*xrows)*i]*summeb);*/
-		/*printf("UANT2: k: %5.2d, i:%5.2d, U:%5.2f,t:%5d\n",i,k,U[k+(*xrows)*i],t[k+(*xrows)*i]);*/
+		/*Rprintf("UANT2: k: %5.2d, i:%5.2d, U:%5.2f,t:%5d\n",i,k,U[k+(*xrows)*i],t[k+(*xrows)*i]);*/
 		
 		if ( U[k+(*xrows)*i] < 0.0 ){
 		    U[k+(*xrows)*i]=0.0;
 		    t[k+(*xrows)*i]=-1;
-		    /*printf("NEGATIV\n");*/
+		    /*Rprintf("NEGATIV\n");*/
 		    control=FALSE;}
 	    }
 	}
@@ -251,7 +252,7 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
 
 /*    for(i=0;i<*ncenters;i++){
       for(col=0;col<*xcols;col++)
-      printf("ce: %5.2f\n",centers[i+(*ncenters)*col]);}*/
+      Rprintf("ce: %5.2f\n",centers[i+(*ncenters)*col]);}*/
     
 
     /*ERROR MINIMIZATION*/
@@ -293,11 +294,11 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
     }
     *ermin=*ermin/(*xrows));*/
     if (conv<= ((*xrows)*(*xcols)*epsi1)){
-	printf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));
+	Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));
 	*iter=*itermax;}
     else
 	if (*verbose){
-	    printf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
+	    Rprintf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
 	}
    
   return 0;
@@ -305,8 +306,8 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
     
 int common(int *xrows, int *xcols, double *x, int *ncenters,
 	   double *centers, int *itermax, int *iter, 
-	   int *verbose,  double *U, double *UANT, double
-	   *beta, double *taf, double *theta, double *ermin)
+	   int *verbose,  double *U, double *beta, double *taf,
+	   double *theta, double *ermin)
     
 {
     int k;
@@ -314,7 +315,8 @@ int common(int *xrows, int *xcols, double *x, int *ncenters,
     
     int i,j,col;
     double suma,tempu,exponente,tempu1,tempu2,f;
-
+    double *UANT;
+    UANT = (double *) R_alloc((*xrows)*(*ncenters), sizeof(double));
 
     *iter=0;
     f=2.0;

@@ -1,22 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "svm.h"
+#define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 /*
  * svm_model
  */
 struct svm_model
 {
-	int n;			 /* number of SVs */
-	double *sv_coef;	 /* sv_coef[i] is the coefficient of SV[i] */
-	struct svm_node ** SV;	 /* SVs */
-	double rho;		 /* the constant in the decision function */
+	struct svm_parameter param;	// parameter
+	int nr_class;		// number of classes, = 2 in regression/one class svm
+	int l;			// total #SV
+	struct svm_node **SV;	// SVs (SV[l])
+	double **sv_coef;	// coefficients for SVs in decision functions (sv_coef[n-1][l])
+	double *rho;		// constants in decision functions (rho[n*(n-1)/2])
 
-	struct svm_parameter param;	 /* parameter */
+	// for classification only
 
-	int free_sv;		 /* XXX: 1 if svm_model is created by svm_load_model */
-				      /* 0 if svm_model is created by svm_train */
+	int *label;		// label of each class (label[n])
+	int *nSV;		// number of SVs for each class (nSV[n])
+				// nSV[0] + nSV[1] + ... + nSV[n-1] = l
+	// XXX
+	int free_sv;		// 1 if svm_model is created by svm_load_model
+				// 0 if svm_model is created by svm_train
 };
+
+/*
+ * results from cross-validation
+ */
+
+struct crossresults
+{
+    double* results;
+    double  total1;
+    double  total2;
+};
+
+//struct svm_model
+//{
+//	int n;			 /* number of SVs */
+//	double *sv_coef;	 /* sv_coef[i] is the coefficient of SV[i] */
+//	struct svm_node ** SV;	 /* SVs */
+//	double rho;		 /* the constant in the decision function */
+
+//	struct svm_parameter param;	 /* parameter */
+
+//	int free_sv;		 /* XXX: 1 if svm_model is created by svm_load_model */
+				      /* 0 if svm_model is created by svm_train */
+//};
 
 struct svm_node ** sparsify (double *x, int r, int c)
 {
@@ -47,6 +78,120 @@ struct svm_node ** sparsify (double *x, int r, int c)
     return sparse;
 }
 
+// Cross-Validation-routine from svm-train
+void do_cross_validation(struct svm_problem *prob,
+			 struct svm_parameter *param,
+			 int nr_fold,
+			 double* cresults,
+			 double* ctotal1,
+			 double* ctotal2)
+{
+	int i;
+	int total_correct = 0;
+	double total_error = 0;
+	double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
+
+	// random shuffle
+	for(i=0;i<prob->l;i++)
+	{
+		int j = rand()%(prob->l-i);
+		struct svm_node *tx;
+		double ty;
+			
+		tx = prob->x[i];
+		prob->x[i] = prob->x[j];
+		prob->x[j] = tx;
+
+		ty = prob->y[i];
+		prob->y[i] = prob->y[j];
+		prob->y[j] = ty;
+	}
+
+	for(i=0;i<nr_fold;i++)
+	{
+		int begin = i*prob->l/nr_fold;
+		int end = (i+1)*prob->l/nr_fold;
+		int j,k;
+		struct svm_problem subprob;
+
+		subprob.l = prob->l-(end-begin);
+		subprob.x = Malloc(struct svm_node*,subprob.l);
+		subprob.y = Malloc(double,subprob.l);
+			
+		k=0;
+		for(j=0;j<begin;j++)
+		{
+			subprob.x[k] = prob->x[j];
+			subprob.y[k] = prob->y[j];
+			++k;
+		}
+		for(j=end;j<prob->l;j++)
+		{
+			subprob.x[k] = prob->x[j];
+			subprob.y[k] = prob->y[j];
+			++k;
+		}
+
+		if(param->svm_type == EPSILON_SVR ||
+		   param->svm_type == NU_SVR)
+		{
+			struct svm_model *submodel = svm_train(&subprob,param);
+			double error = 0;
+			for(j=begin;j<end;j++)
+			{
+				double v = svm_predict(submodel,prob->x[j]);
+				double y = prob->y[j];
+				error += (v-y)*(v-y);
+				sumv += v;
+				sumy += y;
+				sumvv += v*v;
+				sumyy += y*y;
+				sumvy += v*y;
+			}
+			svm_destroy_model(submodel);
+			// printf("Mean squared error = %g\n", error/(end-begin));
+			cresults[i] = error/(end-begin);
+			total_error += error;			
+		}
+		else
+		{
+			struct svm_model *submodel = svm_train(&subprob,param);
+			int correct = 0;
+			for(j=begin;j<end;j++)
+			{
+				double v = svm_predict(submodel,prob->x[j]);
+				if(v == prob->y[j])
+					++correct;
+			}
+			svm_destroy_model(submodel);
+			// printf("Accuracy = %g%% (%d/%d)\n",
+			// 100.0*correct/(end-begin),correct,(end-begin));
+			cresults[i] = 100.0*correct/(end-begin);
+			total_correct += correct;
+		}
+
+		free(subprob.x);
+		free(subprob.y);
+	}
+	
+	if(param->svm_type == EPSILON_SVR || param->svm_type == NU_SVR)
+	{
+	    // printf("Cross Validation Mean squared error = %g\n",total_error/prob.l);
+	    // printf("Cross Validation Squared correlation coefficient = %g\n",
+	    //	((prob.l*sumvy-sumv*sumy)*(prob.l*sumvy-sumv*sumy))/
+	    //	((prob.l*sumvv-sumv*sumv)*(prob.l*sumyy-sumy*sumy))
+	    //	);
+	    *ctotal1 = total_error/prob->l;
+	    *ctotal2 = ((prob->l*sumvy-sumv*sumy)*(prob->l*sumvy-sumv*sumy))/
+		((prob->l*sumvv-sumv*sumv)*(prob->l*sumyy-sumy*sumy));
+	}
+	else
+	    // printf("Cross Validation Accuracy =
+	    // %g%%\n",100.0*total_correct/prob.l);
+	    *ctotal1 = 100.0*total_correct/prob->l;
+}
+
+
 void svmtrain (double *x, int *r, int *c,
 	       double *y,
 	       int    *svm_type,
@@ -56,14 +201,26 @@ void svmtrain (double *x, int *r, int *c,
 	       double *coef0,
 	       double *cost,
 	       double *nu,
+	       int    *weightlabels,
+	       double *weights,
+	       int    *nweights,
 	       double *cache,
 	       double *tolerance,
 	       double *epsilon,
 	       int    *shrinking,
+	       int    *cross,
+	       
+	       int    *nclasses,
 	       int    *nr,
 	       int    *index,
+	       int    *labels,
+	       int    *nSV,
+	       double *rho,
 	       double *coefs,
-	       double *rho)
+
+	       double *cresults,
+	       double *ctotal1,
+	       double *ctotal2)
 {
     struct svm_parameter par;
     struct svm_problem   prob;
@@ -80,9 +237,16 @@ void svmtrain (double *x, int *r, int *c,
     par.eps         = *tolerance;
     par.C           = *cost;
     par.nu          = *nu;
+    par.nr_weight   = *nweights;
+    if (par.nr_weight > 0) {
+	par.weight      = (double *) malloc (sizeof(double) * par.nr_weight);
+	memcpy (par.weight, weights, par.nr_weight * sizeof(double));
+	par.weight_label = (int *) malloc (sizeof(int) * par.nr_weight);
+	memcpy (par.weight_label, weightlabels, par.nr_weight * sizeof(int));
+    }
     par.p           = *epsilon;
     par.shrinking   = *shrinking;
-    
+
     /* 2. set problem */
     prob.l = *r;
     prob.y = y;
@@ -94,30 +258,42 @@ void svmtrain (double *x, int *r, int *c,
     
     /* 4. set up return values */
     for (i = ii = 0;
-	(i < *r) && (ii < model->n);
+	(i < *r) && (ii < model->l);
 	i++)
 	if (prob.x[i] == model->SV[ii]) {
-	    /* copy coef. */
-	    coefs [i] = model->sv_coef[ii];
-
 	    /* set index = true */
 	    index [i] = 1;
-
 	    ii++;
 	}
     
-    *rho = model->rho;
-    *nr  = model->n;
+    *nr  = model->l;
+    *nclasses = model->nr_class;
+    memcpy (rho, model->rho, *nclasses * sizeof(double));
+    for (i = 0; i < *nclasses-1; i++)
+      memcpy (coefs + i * *nr, model->sv_coef[i],  *nr * sizeof (double));
+    
+    if (*svm_type < 2) {
+	memcpy (labels, model->label, *nclasses * sizeof(int));
+	memcpy (nSV, model->nSV, *nclasses * sizeof(int));
+    }
 
-    /* 5. clean up memory */
+    /* 5. Perform cross-validation, if requested */
+    if (*cross > 0)
+      do_cross_validation (&prob, &par, *cross, cresults, ctotal1, ctotal2);
+
+    /* 6. clean up memory */
     svm_destroy_model (model);
     for (i = 0; i < *r; i++) free (prob.x[i]);
     free (prob.x);
 }
 	     
-void svmclassify (double *v, int *r, int *c,
+void svmpredict  (double *v, int *r, int *c,
 		  double *coefs,
 		  double *rho,
+		  int    *nclasses,
+		  int    *totnSV,
+		  int    *labels,
+		  int    *nSV,
 
 		  int    *svm_type,
 		  int    *kernel_type,
@@ -130,13 +306,20 @@ void svmclassify (double *v, int *r, int *c,
 {
     struct svm_model m;
     struct svm_node ** train;
-    int i;
+    int i,j;
     
     /* set up model */
-    m.n       = *r;
-    m.sv_coef = coefs;
-    m.SV      = sparsify (v, *r, *c);
-    m.rho     = *rho;
+    m.l        = *totnSV;
+    m.nr_class = *nclasses;
+    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double));
+    for (i = 0; i < m.nr_class - 1; i++) {
+      m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
+      memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
+    }
+    m.SV       = sparsify (v, *r, *c);
+    m.rho      = rho;
+    m.label    = labels;
+    m.nSV      = nSV;
 
     /* set up parameter */
     m.param.svm_type    = *svm_type;
@@ -152,7 +335,7 @@ void svmclassify (double *v, int *r, int *c,
 
     /* call svm-function for each x-row */
     for (i = 0; i < *xr; i++)
-	ret[i] = svm_classify (&m, train[i]);
+	ret[i] = svm_predict (&m, train[i]);
 
     /* clean up memory */
     for (i = 0; i < *xr; i++)
@@ -165,5 +348,6 @@ void svmclassify (double *v, int *r, int *c,
     
 }	     
 		
+
 
 

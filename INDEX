@@ -1,12 +1,17 @@
 Discrete                 Discrete Distribution
 Mvnorm                   The Multivariate Normal Distribution
+bclust                   Bagged Clustering
 bincombinations          Binary Combinations
 bootstrap.lca            Bootstrap Samples of LCA Results
+boxplot.bclust           Boxplot of cluster profiles
 classAgreement           Coefficients comparing classification agreement
-cmeanscl                 Fuzzy C-Means Clustering
+cmeans                   Fuzzy C-Means Clustering
 countpattern             Count Binary Patterns
 cshell                   Fuzzy C-Shell Clustering
+e1071-internal           Internal e1071 functions
 element                  Extract Elements of an Array
+fclustIndex              Fuzzy Cluster Indexes (Validity/Performance
+                         Measures)
 hamming.distance         Hamming Distances of Vectors
 hamming.window           Computes the Coefficients of a Hamming Window.
 hanning.window           Computes the Coefficients of a Hanning Window.
@@ -18,13 +23,9 @@ lca                      Latent Class Analysis (LCA)
 matchClasses             Find similar classes in two-way contingency
                          tables
 moment                   Statistical Moment
-validity.measures        Validity Measures
 permutations             All permutations of integers 1:n
-plot.fclust              Plot Clustered Data
-plot.stft                Plots an Object of Type stft.
-pnm                      Portable Anymap Images
+plot.stft                Plot Short Time Fourier Transforms
 predict.svm              Predict method for Support Vector Machines
-print.fclust             Print Number and Sizes of Clusters
 rbridge                  Simulation of Brownian Bridge
 read.octave              Read Octave Data File
 rectangle.window         Computes the Coefficients of a Rectangle Window.

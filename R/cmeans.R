@@ -1,4 +1,4 @@
-cmeanscl <- function (x, centers, iter.max = 100, verbose = FALSE,
+cmeans <- function (x, centers, iter.max = 100, verbose = FALSE,
                     dist = "euclidean", method = "cmeans",
                     m=2, rate.par = NULL) 
 {
@@ -48,8 +48,7 @@ cmeanscl <- function (x, centers, iter.max = 100, verbose = FALSE,
                  centers = as.double(centers), 
                  iter.max = as.integer(iter.max), iter = as.integer(iter), 
                  verbose = as.integer(verbose), dist = as.integer(dist-1), 
-                 U=double(xrows*ncenters), UANT=double(xrows*ncenters),
-                 m=as.double(m), ermin=double(1))
+                 U=double(xrows*ncenters), m=as.double(m), ermin=double(1))
   }
   else if (method == 2) {
     retval <- .C("ufcl", xrows = as.integer(xrows),
@@ -73,12 +72,9 @@ cmeanscl <- function (x, centers, iter.max = 100, verbose = FALSE,
   
   clustersize <- as.integer(table(clusterU))
   
-  retval <- list(centers = centers, cluster = clusterU,
-                 size = clustersize, dist = dist,
-                 m=retval$m, member=U, withinsd = retval$ermin,
-                 learning = list(ncenters = ncenters,
-                   initcenters = initcenters, iter = retval$iter - 1,
-                   rate.par = rate.par), call = match.call())
+  retval <- list(centers = centers, size = clustersize, cluster = clusterU,
+                 iter= retval$iter - 1 , membership=U,
+                 withinerror = retval$ermin, call = match.call())
   
   class(retval) <- c("fclust")
   return(retval)
@@ -86,5 +82,43 @@ cmeanscl <- function (x, centers, iter.max = 100, verbose = FALSE,
 
 
 
+#predict.fsegmentation <- function(clobj, x){
 
+#  xrows<-dim(x)[1]
+#  xcols<-dim(x)[2]
+#  ncenters <- clobj$ncenters
+#  cluster <- integer(xrows)
+#  clustersize <- integer(ncenters)
+#  f <- clobj$m
+  
 
+#  if(dim(clobj$centers)[2] != xcols){
+#    stop("Number of variables in cluster object and x are not the same!")
+#  }
+
+  
+#  retval <- .C("fuzzy_assign",
+#               xrows = as.integer(xrows),
+#               xcols = as.integer(xcols),
+#               x = as.double(x),
+#               ncenters = as.integer(ncenters),
+#               centers = as.double(clobj$centers),
+#               dist = as.integer(clobj$dist-1),
+ #              U = double(xrows*ncenters),
+#               f = as.double(f))
+
+  
+
+#  U <- retval$U
+#  U <- matrix(U, ncol=ncenters)
+#  clusterU <- apply(U,1,which.max)
+#  clustersize <- as.integer(table(clusterU))
+     
+
+#   clobj$iter <- NULL
+#  clobj$cluster <- clusterU
+#  clobj$size <- retval$clustersize
+#  clobj$membership <- U
+  
+#  return(clobj)
+#}

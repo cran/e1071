@@ -102,63 +102,63 @@ lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
 }
 
 
-print.lca <- function(l)
+print.lca <- function(x, ...)
 {
     cat("LCA-Result\n")
     cat("----------\n\n")
 
-    cat("Datapoints:", l$n, "\n")
-    cat("Classes:   ", length(l$classprob), "\n")
+    cat("Datapoints:", x$n, "\n")
+    cat("Classes:   ", length(x$classprob), "\n")
     cat("Probability of classes\n")
-    print(round(l$classprob,3))
+    print(round(x$classprob,3))
 
     cat("Itemprobabilities\n")
-    print(round(l$p,2))
+    print(round(x$p,2))
 }
 
-summary.lca <- function(l)
+summary.lca <- function(object, ...)
 {
-    nvar <- ncol(l$p)
-    l$npsat <- 2^nvar-1
-    l$df <- 2^nvar-1-l$np
-    l$pvallhquot <- 1-pchisq(l$lhquot,l$df)
-    l$pvalchisq <- 1-pchisq(l$chisq,l$df)
-    l$k <- length(l$classprob)
+    nvar <- ncol(object$p)
+    object$npsat <- 2^nvar-1
+    object$df <- 2^nvar-1-object$np
+    object$pvallhquot <- 1-pchisq(object$lhquot,object$df)
+    object$pvalchisq <- 1-pchisq(object$chisq,object$df)
+    object$k <- length(object$classprob)
 
     ## remove unnecessary list elements
-    l$classprob <- NULL
-    l$p <- NULL
-    l$matching <- NULL
+    object$classprob <- NULL
+    object$p <- NULL
+    object$matching <- NULL
     
-    class(l) <- "summary.lca"
-    return(l)
+    class(object) <- "summary.lca"
+    return(object)
 }
 
 
-print.summary.lca <- function(l)
+print.summary.lca <- function(x, ...)
 {
     cat("LCA-Result\n")
     cat("----------\n\n")
 
-    cat("Datapoints:", l$n, "\n")
-    cat("Classes:   ", l$k, "\n")
+    cat("Datapoints:", x$n, "\n")
+    cat("Classes:   ", x$k, "\n")
 
     cat("\nGoodness of fit statistics:\n\n")
-    cat("Number of parameters, estimated model:", l$np, "\n")
-    cat("Number of parameters, saturated model:", l$npsat, "\n")
-    cat("Log-Likelihood, estimated model:      ", l$logl, "\n")
-    cat("Log-Likelihood, saturated model:      ", l$loglsat, "\n")
+    cat("Number of parameters, estimated model:", x$np, "\n")
+    cat("Number of parameters, saturated model:", x$npsat, "\n")
+    cat("Log-Likelihood, estimated model:      ", x$logl, "\n")
+    cat("Log-Likelihood, saturated model:      ", x$loglsat, "\n")
 
     cat("\nInformation Criteria:\n\n")
-    cat("BIC, estimated model:", l$bic, "\n")
-    cat("BIC, saturated model:", l$bicsat, "\n")
+    cat("BIC, estimated model:", x$bic, "\n")
+    cat("BIC, saturated model:", x$bicsat, "\n")
 
     cat("\nTestStatistics:\n\n")
-    cat("Likelihood ratio:  ", l$lhquot,
-        "  p-val:", l$pvallhquot, "\n")
-    cat("Pearson Chi^2:     ", l$chisq,
-        "  p-val:", l$pvalchisq, "\n")
-    cat("Degress of freedom:", l$df, "\n")
+    cat("Likelihood ratio:  ", x$lhquot,
+        "  p-val:", x$pvallhquot, "\n")
+    cat("Pearson Chi^2:     ", x$chisq,
+        "  p-val:", x$pvalchisq, "\n")
+    cat("Degress of freedom:", x$df, "\n")
 }
 
 
@@ -226,38 +226,38 @@ bootstrap.lca <- function(l, nsamples=10, lcaiter=30, verbose=FALSE)
     return(lcaboot)
 }
 
-print.bootstrap.lca <- function(bl)
+print.bootstrap.lca <- function(x, ...)
 {
     cat("Bootstrap of LCA\n")
     cat("----------------\n\n")
 
-    cat ("Number of Bootstrap Samples:    ", bl$nsamples, "\n")
-    cat ("Number of LCA Iterations/Sample:", bl$lcaiter, "\n")
+    cat ("Number of Bootstrap Samples:    ", x$nsamples, "\n")
+    cat ("Number of LCA Iterations/Sample:", x$lcaiter, "\n")
     
     cat("Likelihood Ratio\n\n")
-    cat("Mean:", bl$lratiomean, "\n")
-    cat("SDev:", bl$lratiosd, "\n")
-    cat("Value in Data Set:", bl$lratioorg, "\n")
-    cat("Z-Statistics:     ", bl$zratio, "\n")
-    cat("P(Z>X):           ", bl$pvalzratio, "\n")
-    cat("P-Val:            ", bl$pvalratio, "\n\n")
+    cat("Mean:", x$lratiomean, "\n")
+    cat("SDev:", x$lratiosd, "\n")
+    cat("Value in Data Set:", x$lratioorg, "\n")
+    cat("Z-Statistics:     ", x$zratio, "\n")
+    cat("P(Z>X):           ", x$pvalzratio, "\n")
+    cat("P-Val:            ", x$pvalratio, "\n\n")
 
     cat("Pearson's Chisquare\n\n")
-    cat("Mean:", bl$chisqmean, "\n")
-    cat("SDev:", bl$chisqsd, "\n")
-    cat("Value in Data Set:", bl$chisqorg, "\n")
-    cat("Z-Statistics:     ", bl$zchisq, "\n")
-    cat("P(Z>X):           ", bl$pvalzchisq, "\n")
-    cat("P-Val:            ", bl$pvalchisq, "\n\n")
+    cat("Mean:", x$chisqmean, "\n")
+    cat("SDev:", x$chisqsd, "\n")
+    cat("Value in Data Set:", x$chisqorg, "\n")
+    cat("Z-Statistics:     ", x$zchisq, "\n")
+    cat("P(Z>X):           ", x$pvalzchisq, "\n")
+    cat("P-Val:            ", x$pvalchisq, "\n\n")
 }
 
-predict.lca <- function(lcares, x)
+predict.lca <- function(object, x, ...)
 {
-    if (lcares$matchdata)
+    if (object$matchdata)
         stop("predict.lca: only possible, if lca has been called with matchdata=FALSE")
     else
     {
         x <- countpattern(x, matching=TRUE)
-        return(lcares$matching[x$matching])
+        return(object$matching[x$matching])
     }
 }

@@ -1,0 +1,26 @@
+Changes in Version 1.2-0:
+
+  o Added functions for bagged clustering, see help(bclust).
+
+  o read.pnm() and write.pgm() have been removed from e1071, much
+    improved versions can now be found in the new package pixmap. 
+
+  o Lots of documentation updates and bugfixes.
+
+  o Support Vector Machine interface now upgraded to libsvm V. 2.31
+    featuring:
+    - Multi-Class Classification
+    - weighting of classes for C-classification (for asymmetric sample sizes)
+    - nu-regression
+    - Formula Interface
+    - k-fold cross-validation
+    In addition, an introductory article is provided in directory
+    `docs/' (svmdoc.pdf).
+
+  o classAgreement now features an option to match factor levels
+
+  o updated API design for the fuzzy clustering functions
+    (cmeans, cshell, scaclust). Documentation updates and function
+    name changes (cmeanscl -> cmeans, validity.measures -> fclustIndex)
+
+    

@@ -1,4 +1,0 @@
-#!/bin/bash
-
-rm -f config.* R/pnm.R src/Makevars src/*o src/pnm.c
-

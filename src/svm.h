@@ -1,3 +1,6 @@
+#ifndef _LIBSVM_H
+#define _LIBSVM_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,7 +18,7 @@ struct svm_problem
 	struct svm_node **x;
 };
 
-enum { C_SVC, NU_SVC, ONE_CLASS, C_SVR };	/* svm_type */
+enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */
 enum { LINEAR, POLY, RBF, SIGMOID };	/* kernel_type */
 
 struct svm_parameter
@@ -29,13 +32,14 @@ struct svm_parameter
 	// these are for training only
 	double cache_size; // in MB
 	double eps;	// stopping criteria
-	double C;	// for C_SVC and C_SVR
-	double nu;	// for NU_SVC and ONE_CLASS
-	double p;	// for C_SVR
+	double C;	// for C_SVC, EPSILON_SVR and NU_SVR
+	int nr_weight;		// for C_SVC
+	int *weight_label;	// for C_SVC
+	double* weight;		// for C_SVC
+	double nu;	// for NU_SVC, ONE_CLASS, and NU_SVR
+	double p;	// for EPSILON_SVR
 	int shrinking;	// use the shrinking heuristics
 };
-
-struct svm_model;
 
 struct svm_model *svm_train(const struct svm_problem *prob,
 			    const struct svm_parameter *param);
@@ -44,10 +48,12 @@ int svm_save_model(const char *model_file_name, const struct svm_model *model);
 
 struct svm_model *svm_load_model(const char *model_file_name);
 
-double svm_classify(const struct svm_model *model, const struct svm_node *x);
+double svm_predict(const struct svm_model *model, const struct svm_node *x);
 
 void svm_destroy_model(struct svm_model *model);
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* _LIBSVM_H */

@@ -20,7 +20,7 @@ rmvnorm(n, mu, sigma)
  \item{sigma}{Covariance matrix, default is \code{diag(ncol(x))}.}
 }
 \author{Friedrich Leisch}
-\seealso{\link{Normal}}
+\seealso{\link{rnorm}}
 \examples{
 dmvnorm(x=c(0,0))
 dmvnorm(x=c(0,0), mu=c(1,1))

@@ -1,30 +1,28 @@
-\name{validity.measures}
-\title{Validity Measures}
-\usage{validity.measures( clres, x, index = "all" )}
-\alias{validity.measures}
+\name{fclustIndex}
+\title{Fuzzy Cluster Indexes (Validity/Performance Measures)}
+\usage{fclustIndex(y, x, index = "all")}
+\alias{fclustIndex}
 \arguments{
-\item{clres}{An object of a fuzzy clustering result}
-\item{x}{Data matrix}
-\item{index}{The validity measures used: "gath.geva", "xie.beni",
-  "fukuyama.sugeno", "partition.coefficient", "partition.entropy",
-  "proportion.exponent", "separation.index" and "all" for all the
-  indexes.} 
-}
+  \item{y}{An object of a fuzzy clustering result of class \code{"fclust"}}
+  \item{x}{Data matrix}
+  \item{index}{The validity measures used: \code{"gath.geva"}, \code{"xie.beni"},
+    \code{"fukuyama.sugeno"}, \code{"partition.coefficient"},
+    \code{"partition.entropy"}, \code{"proportion.exponent"},
+    \code{"separation.index"} and \code{"all"} for all the indexes.}}
 
+    
 \description{
-    \code{clres} is the result of a clustering algorithm of class such
-    as "fclust".
-    This function is calculating the values of several validity
-    measures. The values of the indexes can be independenly used in order
-    to evaluate and compare clustering partitions or even to determine
-    the number of clusters existing in a data set.}
+  Calculates the values of several fuzzy validity measures. The values
+  of the indexes can be independently used in order to evaluate and compare
+  clustering partitions or even to determine the number of clusters
+  existing in a data set.}
 
 \details{
   The validity measures and a short description of them follows, where
   \eqn{N} is the number of data points, \eqn{u_{ij}} the values of the
   membership matrix, \eqn{v_j} the centers of the clusters and \eqn{k}
   te number of clusters.
-  \itemize{
+  \describe{
     \item \bold{gath.geva}:
     Gath and Geva introduced 2 main criteria for comparing and finding
     optimal partitions based on the heuristics that a better clustering
@@ -81,7 +79,7 @@
     matrix without also considering the data itself. The minimum values
     imply a good partition in the meaning of a more crisp partition.
     \eqn{H(U;k)=\sum_{i=1}^{N} h(u_i)/N}, where
-    \eqn{h(u)=-\sum_{j=1}^{k} u_j\,\log _a (u_j)} the Shannons' entropy.
+    \eqn{h(u)=-\sum_{j=1}^{k} u_j\,\log _a (u_j)} the Shannon's entropy.
     \itemize{
       \item \eqn{H(U;k)} shows the uncertainty of a fuzzy partition and
       depends also on \eqn{kN} elements. Specifically, \eqn{h(u_i)} is
@@ -125,32 +123,32 @@
 
 
 \value{
-    Returns an vector with the validity measures values.
+  Returns a vector with the validity measures values.
 }
 \references{
-  \itemize{
-    \item James C. Bezdek, Pattern Recognition with Fuzzy Objective
-    Function Algorithms, Plenum Press, 1981, NY.\cr
-    \item L. X. Xie and G. Beni, Validity measure for fuzzy clustering, IEEE
-    Transactions on Pattern Analysis and Machine Intelligence, vol. 3,
-    n. 8, p. 841-847, 1991.\cr
-    \item I. Gath and A. B. Geva, Unsupervised Optimal Fuzzy Clustering, IEEE
-    Transactions on Pattern Analysis and Machine Intelligence, vol. 11,
-    n. 7, p. 773-781, 1989.\cr
-    \item Y. Fukuyama and M. Sugeno, A new method of choosing the number of
-    clusters for the fuzzy $c$-means method, Proc. 5th Fuzzy Syst. Symp.,
-    p. 247-250, 1989 (in japanese).}}
+  James C. Bezdek, \emph{Pattern Recognition with Fuzzy Objective
+    Function Algorithms}, Plenum Press, 1981, NY.\cr
+  L. X. Xie and G. Beni, \emph{Validity measure for fuzzy
+    clustering}, IEEE Transactions on Pattern Analysis and Machine
+  Intelligence, vol. \bold{3}, n. 8, p. 841-847, 1991.\cr
+  I. Gath and A. B. Geva, \emph{Unsupervised Optimal Fuzzy
+    Clustering}, IEEE Transactions on Pattern Analysis and Machine
+  Intelligence, vol. \bold{11}, n. 7, p. 773-781, 1989.\cr
+  Y. Fukuyama and M. Sugeno, \emph{A new method of choosing the
+    number of clusters for the fuzzy $c$-means method}, Proc. 5th Fuzzy
+  Syst. Symp., p. 247-250, 1989 (in japanese).}}
 
 \author{Evgenia Dimitriadou}
 
-\seealso{\code{\link{cmeanscl}}}
+\seealso{\code{\link{cmeans}}}
 
 \examples{
 # a 2-dimensional example
 x<-rbind(matrix(rnorm(100,sd=0.3),ncol=2),
          matrix(rnorm(100,mean=1,sd=0.3),ncol=2))
-cl<-cmeanscl(x,2,20,verbose=TRUE,method="cmeans")
-resultindexes <- validity.measures(cl,x, index="all")
-resultindexes   
+cl<-cmeans(x,2,20,verbose=TRUE,method="cmeans")
+#resultindexes <- fclustIndex(cl,x, index="all")
+#resultindexes   
 }
 \keyword{cluster}
+

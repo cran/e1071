@@ -1,24 +1,29 @@
-classAgreement <- function(tab){
-
+classAgreement <-
+function (tab, match.names=FALSE) 
+{
     n <- sum(tab)
-    ni <- apply(tab, 1, sum)  # row sums
-    nj <- apply(tab, 2, sum)  # column sums
+    ni <- apply(tab, 1, sum)
+    nj <- apply(tab, 2, sum)
 
-    m <- min(length(ni), length(nj))
-    p0 <-  sum(diag(tab[1:m,1:m]))/n
-    pc <- sum(ni[1:m]*nj[1:m])/n^2
-    
-    n2 <- choose(n,2)
-    rand <- 1 + ( sum(tab^2) - (sum(ni^2)+sum(nj^2))/2 )/n2
-
-    nis2 <- sum(choose(ni[ni>1],2))
-    njs2 <- sum(choose(nj[nj>1],2))
-    crand <- (sum(choose(tab[tab>1],2)) - (nis2*njs2)/n2)/
-        ((nis2+njs2)/2 - (nis2*njs2)/n2)
-    
-    list(diag = p0, kappa = (p0-pc)/(1-pc), rand=rand, crand=crand)
+    ## patch for matching factors
+    if (match.names && !is.null(dimnames(tab))) {
+      lev <- intersect (colnames (tab), rownames(tab))
+      p0 <- sum(diag(tab[lev,lev]))/n
+      pc <- sum(ni[lev] * nj[lev])/n^2
+    } else { # cutoff larger dimension
+      m <- min(length(ni), length(nj))
+      p0 <- sum(diag(tab[1:m, 1:m]))/n
+      pc <- sum(ni[1:m] * nj[1:m])/n^2
+    }
+    n2 <- choose(n, 2)
+    rand <- 1 + (sum(tab^2) - (sum(ni^2) + sum(nj^2))/2)/n2
+    nis2 <- sum(choose(ni[ni > 1], 2))
+    njs2 <- sum(choose(nj[nj > 1], 2))
+    crand <- (sum(choose(tab[tab > 1], 2)) - (nis2 * njs2)/n2)/((nis2 + 
+        njs2)/2 - (nis2 * njs2)/n2)
+    list(diag = p0, kappa = (p0 - pc)/(1 - pc), rand = rand, 
+        crand = crand)
 }
-
 
 matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
                          verbose=TRUE){

@@ -18,15 +18,13 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
 
 int  subcmeans(int *xrows, int *xcols, double *x, int *ncenters,
 	       double *centers, int *itermax, int *iter,
 	       int *verbose, int *dist, double *U, double *UANT, double
-	       *f, double *ermin)
+	       *f, double *ermin, int *converge)
 {
   int k, col, i, m, n ;
 
@@ -143,11 +141,12 @@ int  subcmeans(int *xrows, int *xcols, double *x, int *ncenters,
   /* *ermin=*ermin/(*xrows));*/
 
   if (conv<= ((*xrows)*(*xcols)*epsi1)){
-      printf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));
-      *iter=*itermax;}
+      Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));
+      /**iter=*itermax;}*/
+      *converge=0;}
   else
       if (*verbose){
-	  printf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
+	  Rprintf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
       }
   
   return 0;
@@ -155,15 +154,23 @@ int  subcmeans(int *xrows, int *xcols, double *x, int *ncenters,
     
 int cmeans(int *xrows, int *xcols, double *x, int *ncenters,
 	   double *centers, int *itermax, int *iter, 
-	   int *verbose, int *dist, double *U, double *UANT, double
-	   *f, double *ermin)
+	   int *verbose, int *dist, double *U, double *f, double *ermin)
     
 {
+
+/*typedef enum {FALSE,TRUE} bool;
+  bool converge;*/
+
     int k;
-    
-    
     int i,j,col;
     double suma,tempu,exponente,tempu1,tempu2;
+
+    int *converge;
+    double *UANT;
+    
+    converge = (int *) R_alloc((1), sizeof(int));
+    UANT = (double *) R_alloc((*xrows)*(*ncenters), sizeof(double));
+
     
     *iter=0;
     
@@ -217,13 +224,15 @@ int cmeans(int *xrows, int *xcols, double *x, int *ncenters,
 	
     }
     
-    
-    while(((*iter)++ < *itermax)) {
+    *converge=1;
 
+    
+    while(*converge && ((*iter)++ < *itermax)) {
+	
 	*ermin=0.0;
 	
 	subcmeans(xrows, xcols, x, ncenters, centers, itermax,
-		  iter, verbose, dist, U, UANT, f, ermin);
+		  iter, verbose, dist, U, UANT, f, ermin, converge);
     }
     
     return 0;
@@ -257,8 +266,8 @@ int cmeans(int *xrows, int *xcols, double *x, int *ncenters,
 
 int  subufcl(int *xrows, int *xcols, double *x, int *ncenters,
 	     double *centers, int *itermax, int *iter,
-	     int *verbose, int *dist, double *U, double
-	     *f, double *par, double *ermin)
+	     int *verbose, int *dist, double *U, double *UANT, double
+	     *f, double *par, double *ermin, int *converge)
 {
   int k, col, i, m, n ;
 
@@ -271,9 +280,18 @@ int  subufcl(int *xrows, int *xcols, double *x, int *ncenters,
   double exponente, lrate;
 
 /*  *ermin=0.0;*/
+  double epsi1, conv;
+  epsi1=0.002;
   serror=0.0;
+  conv=0.0;
   
   
+  /*update UANT*/
+    for(i=0;i<*ncenters;i++){
+      for(k=0;k<*xrows;k++){
+	  UANT[k+(*xrows)*i]=U[k+(*xrows)*i];
+      }}
+
   
   /*Membership Matrix Computation*/
   
@@ -324,6 +342,7 @@ int  subufcl(int *xrows, int *xcols, double *x, int *ncenters,
   for (m=0;m<*ncenters;m++){
       for (k=0;k<*xrows;k++){
 	  serror=0.0;
+	  conv += fabs(U[k+(*xrows)*m]-UANT[k+(*xrows)*m]);
 	  for(n=0;n<*xcols;n++){
 		  
 	      if(*dist == 0){
@@ -339,10 +358,15 @@ int  subufcl(int *xrows, int *xcols, double *x, int *ncenters,
       }
   }
   /* *ermin=*ermin/(*xrows));*/
-      
-  if (*verbose){
-      printf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
-  }
+
+  if (conv<= ((*xrows)*(*xcols)*epsi1)){
+      Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,*ermin/(*xrows));
+      /**iter=*itermax;}*/
+      *converge=0;}
+  else
+      if (*verbose){
+	  Rprintf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
+      }
   
   return 0;
 }
@@ -353,30 +377,88 @@ int ufcl(int *xrows, int *xcols, double *x, int *ncenters,
 	 *f, double *par, double *ermin)
     
 {
-    *iter=0;
-        
+    int i, k;
+    int *converge;
+    double *UANT;
     
-    while(((*iter)++ < *itermax)) {
+    converge = (int *) R_alloc((1), sizeof(int));
+    UANT = (double *) R_alloc((*xrows)*(*ncenters), sizeof(double));
+    
+    *iter=0;
+
+    /*initialize UANT*/
+    for(i=0;i<*ncenters;i++){
+	for(k=0;k<*xrows;k++){
+	    UANT[k+(*xrows)*i]=0.0;
+	}}
+    
+    *converge=1;
+
+    while(*converge && ((*iter)++ < *itermax)) {
 
 	*ermin=0.0;
 	
 	subufcl(xrows, xcols, x, ncenters, centers, itermax,
-		iter, verbose, dist, U, f, par, ermin);
+		iter, verbose, dist, U, UANT, f, par, ermin, converge);
     }
     
     return 0;
 }
 
 
+/*************************************************************/
+/******only for prediction************************************/
+/*************************************************************/
 
-
-
-
-
-
-
-
-
+int fuzzy_assign(int *xrows, int *xcols, double *x, int *ncenters,
+		double *centers, int *dist, double *U,	double *f)
+{
+    int k, col, i;
+    double tempu, tempu1, tempu2;
+    int j;
+    double suma;
+    double exponente;
+    
+    
+    /*Membership Matrix Computation*/
+    
+    exponente=2.0/(*f-1.0);
+    
+    for(k=0;k<*xrows;k++)
+    {
+	for(i=0;i<*ncenters;i++)
+	{
+	    suma=0;
+	    for(j=0;j<*ncenters;j++)
+	    {
+		tempu=0;
+		tempu1=0;
+		tempu2=0;
+		for (col=0;col<*xcols;col++)
+		{
+		    if (*dist==0){
+			tempu1+=(x[k+(*xrows)*col]-centers[i+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
+			tempu2+=(x[k+(*xrows)*col]-centers[j+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
+		    }
+		    else if(*dist ==1){
+			tempu1+=fabs(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
+			tempu2+=fabs(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
+		    }					     
+		}
+		if (*dist==0){
+		    tempu=sqrt(tempu1)/sqrt(tempu2);
+		}
+		else if(*dist ==1){
+		    tempu=tempu1/tempu2;
+		}
+		suma=suma+pow(tempu,exponente);
+	    }
+	    U[k+(*xrows)*i]=1.0/suma;
+	    
+	}
+    }
+    return 0;
+}
 
 
 

@@ -28,15 +28,6 @@ Installation
 This package should be installed using the `R INSTALL' mechanism, see
 the R online help or R manuals for details on how to install packages.
 
-The functions for reading and writing PNM images need the netpbm
-libraries and header files (which can be downloaded from
-http://netpbm.sourceforge.net).  If netpbm is not found at INSTALL
-time, support wir reading and writing PNM images is disabled.
-
-Platform-specific hints:
-*) Debian Linux: install debian packages netpbm and netpbm-dev
-
-
 =====================================================================
                          Friedrich  Leisch                             
  Institut f. Statistik                      Tel: (+43 1) 58801 10715

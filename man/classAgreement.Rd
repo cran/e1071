@@ -7,11 +7,12 @@
   between the columns and rows of a 2-way contingency table.
 }
 \usage{
-classAgreement(tab)
+classAgreement(tab, match.names=FALSE)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
   \item{tab}{A 2-dimensional contingency table.}
+  \item{match.names}{Flag whether row and columns should be matched by name.}
 }
 \details{
 Suppose we want to compare two classifications summarized by the
@@ -22,7 +23,9 @@ classifications use the same labels, then obviously the two
 classification agree completely if only elements in the main diagonal
 of the table are non-zero. On the other hand, large off-diagonal
 elements correspond to smaller agreement between the two
-classifications.
+classifications. If \code{match.names} is \code{TRUE}, the class labels
+as given by the row and column names are matched, i.e. only columns and
+rows with the same dimnames are used for the computation.
 
 If the two classification do not use the same set of labels, or if
 identical labels can have different meaning (e.g., two outcomes of

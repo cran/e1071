@@ -59,8 +59,8 @@ scaclust <- function (x, centers, iter.max = 100, verbose = FALSE,
                  centers = as.double(centers), 
                  itermax = as.integer(iter.max), iter = as.integer(iter), 
                  verbose = as.integer(verbose), U=double(xrows*ncenters),
-                 UANT=double(xrows*ncenters), beta=as.double(beta),
-                 taf=as.double(taf), theta=as.double(theta),ermin=double(1))
+                 beta=as.double(beta), taf=as.double(taf),
+                 theta=as.double(theta),ermin=double(1))
 
   centers <- matrix(retval$centers, ncol = xcols, dimnames = dimnames(initcenters))
   
@@ -73,11 +73,9 @@ scaclust <- function (x, centers, iter.max = 100, verbose = FALSE,
   
   clustersize <- as.integer(table(clusterU))
   
-  retval <- list(centers = centers, cluster = clusterU,
-                 size = clustersize, member=U, error = retval$ermin,
-                 learning = list(ncenters = ncenters,
-                   initcenters = initcenters, iter = retval$iter - 1,
-                   theta = theta), call = match.call())
+  retval <- list(centers = centers, size = clustersize,
+                 cluster = clusterU, iter = retval$iter - 1, membership=U,
+                 withinerror = retval$ermin, call = match.call())
   
   class(retval) <- c("fclust")
   return(retval)

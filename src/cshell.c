@@ -18,7 +18,6 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -155,7 +154,7 @@ int  subcshell(int *xrows, int *xcols, double *x, int *ncenters,
   /*ERROR MINIMIZATION*/
   
   epsi1=0.002;
-  epsi2=0.2;
+ epsi2=0.2;
   conv=0.0;
 
 
@@ -188,10 +187,10 @@ int  subcshell(int *xrows, int *xcols, double *x, int *ncenters,
   
   if (conv<= ((*xrows)*(*xcols)*epsi1)){
        *flag=2;
-       printf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,conv);
+       Rprintf("Iteration: %3d    converged, Error:   %13.10f\n",*iter,conv);
   }
   else if (conv<= ((*xrows)*(*xcols)*epsi2)){
-      printf("Iteration: %3d    Epsi2:   %13.10f\n",*iter,conv);
+      Rprintf("Iteration: %3d    Epsi2:   %13.10f\n",*iter,conv);
       
       if (*flag==3)
 	  *flag=4;
@@ -203,7 +202,7 @@ int  subcshell(int *xrows, int *xcols, double *x, int *ncenters,
   
   
   if (*verbose){
-      printf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
+      Rprintf("Iteration: %3d    Error:   %13.10f\n",*iter,*ermin/(*xrows));
   }
   
   return 0;
@@ -286,6 +285,64 @@ int cshell(int *xrows, int *xcols, double *x, int *ncenters,
     
     return 0;
 }
+
+/*****************************************************************/
+/*******only for prediction***************************************/
+/*****************************************************************/
+
+int  cshell_assign(int *xrows, int *xcols, double *x, int *ncenters,
+		   double *centers, int *dist, double *U, double *f,
+		   double *radius)
+{
+  int k, col, i, m, n ;
+
+  double temp,tempu, tempu1, tempu2;
+  int j;
+  double suma;
+  double exponente;
+
+  
+ exponente=2.0/(*f-1.0);
+  
+  for(i=0;i<*ncenters;i++)
+  {
+      
+      for(k=0;k<*xrows;k++)
+      {
+	  suma=0;
+	  for(j=0;j<*ncenters;j++)
+	  {
+	      tempu=0;
+	      tempu1=0;
+	      tempu2=0;
+	      for (col=0;col<*xcols;col++)
+	      {
+		  if (*dist==0){
+		      tempu1+=(x[k+(*xrows)*col]-centers[i+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
+		      tempu2+=(x[k+(*xrows)*col]-centers[j+(*ncenters)*col])*(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
+		  }
+		  else if(*dist ==1){
+		      tempu1+=fabs(x[k+(*xrows)*col]-centers[i+(*ncenters)*col]);
+		      tempu2+=fabs(x[k+(*xrows)*col]-centers[j+(*ncenters)*col]);
+		  }					     
+	      }
+	      if (*dist==0){
+		  tempu=fabs(sqrt(tempu1)-radius[i])/fabs(sqrt(tempu2)-radius[j]);
+	      }
+	      else if(*dist ==1){
+		  tempu=fabs((tempu1-radius[i])/(tempu2-radius[j]));
+	      }
+	      suma=suma+pow(tempu,exponente);
+	  }
+	  U[k+(*xrows)*i]=1.0/suma;
+	  
+      }
+      
+  }
+  
+  return 0;
+}
+  
 
 
 

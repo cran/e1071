@@ -5,21 +5,17 @@
   This function predicts values based upon a model trained by \code{svm}.
 }
 \usage{
-predict.svm(model, x, type="class")
+\method{predict}{svm}(object, newdata, ...)
 }
 
 \arguments{
-  \item{model}{object of class \code{svm}, created by \code{svm}.}
-  \item{x}{A matrix containing the input data.}
-  \item{type}{If \code{raw} is supplied, the estimated values are returned. 
-    With \code{class}, \code{predict} returns the first level of the
-    training response for negative (non-zero) values, and  the second
-    level otherwise. If \code{class} is used on numerical data, a factor
-    with labels "-1" and  "1" is created.}
-  
+  \item{object}{object of class \code{"svm"}, created by \code{svm}.}
+  \item{newdata}{a matrix containing the new input data.}
+  \item{\dots}{currently not used.}
 }
 \value{
-  The predicted value.
+  The predicted value (for classification: the label, for density
+  estimation: \code{TRUE} or \code{FALSE}).
 }
 \references{
   \itemize{
@@ -44,41 +40,58 @@ predict.svm(model, x, type="class")
 }
 \examples{
 data(iris)
-# amputate data to two factors
-iris.sub <- subset(iris, Species != "virginica")
+attach(iris)
 
-# get independent vars
-x <- subset (iris.sub, select = -Species)
+## classification mode
+# default with factor response:
+model <- svm (Species~., data=iris)
 
-# get responses
-y <- iris.sub[,"Species"]
+# alternatively the traditional interface:
+x <- subset (iris, select = -Species)
+y <- Species
+model <- svm (x, y) 
 
-# coercion needed for correct factor levels
-y <- as.factor(as.character(y))
-
-# default with factor response: classification mode
-model <- svm (x, y)
 print (model)
 summary (model)
 
 # test with train data
 pred <- predict (model, x)
 
-# should be TRUE:
-all.equal (pred, y)
+# Check accuracy:
+table (pred,y)
 
-# try regression mode on two dimensions in linear mode
-model <- svm (x[,"Petal.Length"], x[,"Petal.Width"],
-svm.type="regression", kernel.type="linear")
-print (model)
+## try regression mode on two dimensions
 
+# create data
+x <- seq (0.1,5,by=0.05)
+y <- log(x) + rnorm (x, sd=0.2)
 
-pred <- predict (model,x[,"Petal.Length"])
+# estimate model and predict input values
+m   <- svm (x,y)
+new <- predict (m,x)
 
-par (mfcol=c(1,2))
-plot(x[,"Petal.Length"],x[,"Petal.Width"])
-plot(x[,"Petal.Length"],pred)
+# visualize
+plot   (x,y)
+points (x, log(x), col=2)
+points (x, new, col=4)
 
+## density-estimation
+
+# create 2-dim. normal with rho=0:
+X <- data.frame (a=rnorm (1000), b=rnorm (1000))
+attach (X)
+
+# traditional way:
+m <- svm (X)
+
+# formula interface:
+m <- svm (~a+b)
+# or:
+m <- svm (~., data=X)
+
+# visualization:
+plot (X)
+points (X[m$index,], col=2)
 }
 \keyword{neural}
 \keyword{nonlinear}
