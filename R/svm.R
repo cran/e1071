@@ -416,7 +416,7 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
       names(lis)[1:2] <- colnames(sub)
       new <- expand.grid(lis)[,labels(terms(x))]
       preds <- predict(x, new)
-      filled.contour(xr, yr, matrix(codes(preds), nr = length(xr), byrow=T),
+      filled.contour(xr, yr, matrix(codes(preds), nr = length(xr), byrow=TRUE),
                      plot.axes = {
                        axis(1)
                        axis(2)

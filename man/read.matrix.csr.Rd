@@ -30,7 +30,7 @@ write.matrix.csr(x, file = "out.dat", y = NULL)
   David Meyer (based on C/C++-code by Chih-Chung Chang and Chih-Jen Lin)\cr
   \email{david.meyer@ci.tuwien.ac.at}
 }
-\seealso{\code{\link{matrix.csr}}}
+\seealso{\code{\link[SparseM]{matrix.csr}}}
 
 \examples{
 \dontrun{

@@ -22,7 +22,7 @@ template <class S, class T> inline void clone(T*& dst, S* src, int n)
 }
 #define INF HUGE_VAL
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
-#if 0
+#if 1
 void info(char *fmt,...)
 {
 	va_list ap;
@@ -329,10 +329,9 @@ double Kernel::k_function(const svm_node *x, const svm_node *y,
 		}
 		case SIGMOID:
 			return tanh(param.gamma*dot(x,y)+param.coef0);
+		default:
+			return 0;	/* Unreachable */
 	}
-	// This error condition should never occur because checked before by svn_check_parameters
-	//	fprintf(stderr,"unknown kernel function.\n");
-	return 0;
 }
 
 // Generalized SMO+SVMlight algorithm
@@ -537,7 +536,7 @@ void Solver::Solve(int l, const Kernel& Q, const double *b_, const schar *y_,
 
 		if(y[i]!=y[j])
 		{
-			double delta = (-G[i]-G[j])/(Q_i[i]+Q_j[j]+2*Q_i[j]);
+			double delta = (-G[i]-G[j])/max(Q_i[i]+Q_j[j]+2*Q_i[j],(Qfloat)0);
 			double diff = alpha[i] - alpha[j];
 			alpha[i] += delta;
 			alpha[j] += delta;
@@ -577,7 +576,7 @@ void Solver::Solve(int l, const Kernel& Q, const double *b_, const schar *y_,
 		}
 		else
 		{
-			double delta = (G[i]-G[j])/(Q_i[i]+Q_j[j]-2*Q_i[j]);
+			double delta = (G[i]-G[j])/max(Q_i[i]+Q_j[j]-2*Q_i[j],(Qfloat)0);
 			double sum = alpha[i] + alpha[j];
 			alpha[i] -= delta;
 			alpha[j] += delta;
@@ -1642,10 +1641,9 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 			for(j=0;j<nr_class;j++)
 				if(param->weight_label[i] == label[j])
 					break;
-			//			if(j == nr_class)
-			//				fprintf(stderr,"warning: class label %d specified in weight is not found\n", param->weight_label[i]);
-			//			else
-			if(j < nr_class)
+			if(j == nr_class)
+				fprintf(stderr,"warning: class label %d specified in weight is not found\n", param->weight_label[i]);
+			else
 				weighted_C[j] *= param->weight[i];
 		}
 
@@ -1886,7 +1884,7 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 		fprintf(fp, "\n");
 	}
 	
- 	if(model->label)
+	if(model->label)
 	{
 		fprintf(fp, "label");
 		for(int i=0;i<nr_class;i++)
