@@ -5,7 +5,7 @@
 \description{
   Generates a scatter plot of the input data of a \code{svm} fit for
   classification models by highlighting the classes and support
-  vectorts. Optionally, draws filled contour plot of the class regions.
+  vectors. Optionally, draws a filled contour plot of the class regions.
 }
 \usage{
 plot.svm(x, data, formula, fill = TRUE, grid = 50, slice = list(), ...)

@@ -102,8 +102,8 @@ predict.naiveBayes <- function(object,
   isnumeric <- sapply(newdata, is.numeric)
   L <- sapply(1:nrow(newdata), function(i) {
     ndata <- as.numeric(newdata[i,])
-    L <- object$apriori *
-      apply(sapply(1:nattribs, function(v) {
+    L <- log(object$apriori) + 
+      apply(log(sapply(1:nattribs, function(v) {
         nd <- ndata[v]
         if(is.na(nd))
           rep(1, length(object$apriori))
@@ -116,8 +116,13 @@ predict.naiveBayes <- function(object,
           prob[prob == 0] <- threshold
           prob
         }
-      }), 1, prod)
-    L / sum(L)
+      })), 1, sum)
+    if (type == "class")
+      L
+    else {
+      L <- exp(L)
+      L / sum(L)
+    }
   })
   if (type == "class")
     factor(object$levels[apply(L, 2, which.max)], levels = object$levels)

@@ -1,5 +1,6 @@
 \name{tune}
 \alias{tune}
+\alias{best.tune}
 \alias{print.tune}
 \alias{summary.tune}
 \alias{print.summary.tune}
@@ -12,7 +13,8 @@
 \usage{
 tune(method, train.x, train.y = NULL, data = list(), validation.x =
      NULL, validation.y = NULL, ranges = NULL, predict.func = predict,
-     control = tune.control(), ...)
+     tunecontrol = tune.control(), ...)
+best.tune(...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -31,18 +33,20 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
     space. The vectors will usually be created by \code{seq}.}
   \item{predict.func}{optional predict function, if the standard \code{predict}
     behaviour is inadequate.}
-  \item{control}{object of class \code{"tune.control"}, as created by the
-    function \code{tune.control()}.}
+  \item{tunecontrol}{object of class \code{"tune.control"}, as created by the
+    function \code{tune.control()}. If omitted, \code{tune.control()}
+    gives the defaults.}
   \item{\dots}{Further parameters passed to the training functions.}
 }
 \value{
-  An object of class \code{tune}, including the components:
+  For \code{tune}, an object of class \code{tune}, including the components:
   \item{best.parameters}{a 1 x k data frame, k number of parameters.}
   \item{best.performance}{best achieved performance.}
   \item{performances}{if requested, a data frame of all parameter
     combinations along with the corresponding performance results.}
   \item{if requested, the model trained on the complete training data
     using the best parameter combination.}
+  \code{best.tune} returns the best model detected by \code{tune}.
 }
 \details{
   As performance measure, the classification error is used
@@ -68,7 +72,7 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
   
   obj <- tune(svm, Species~., data = iris, 
               ranges = list(gamma = 2^(-1:1), cost = 2^(2:4)),
-              control = tune.control(sampling = "fix")
+              tunecontrol = tune.control(sampling = "fix")
              )
 
   ## alternatively:
@@ -81,7 +85,7 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
   ## conventional interface and bootstrap sampling:
   x <- iris[,-5]
   y <- iris[,5]
-  obj2 <- tune.knn(x, y, k = 1:5, control = tune.control(sampling = "boot"))
+  obj2 <- tune.knn(x, y, k = 1:5, tunecontrol = tune.control(sampling = "boot"))
   summary(obj2)
   plot(obj2)
 

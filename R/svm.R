@@ -443,7 +443,6 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
     if(is.null(formula)) stop("missing formula.")
     if (fill) {
       sub <- model.frame(formula, data)
-      browser()
       xr <- seq(min(sub[,2]), max(sub[,2]), length = grid)
       yr <- seq(min(sub[,1]), max(sub[,1]), length = grid)
       l <- length(slice)

@@ -57,7 +57,8 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
         object$allcenters[((n - 1) * base.centers + 1):(n * base.centers),] <-
             tryres$centers
     }
-    object$allcenters <- object$allcenters[complete.cases(object$allcenters),]
+    object$allcenters <-
+        object$allcenters[complete.cases(object$allcenters),,drop=FALSE]
     object$allcluster <- knn1(object$allcenters, x,
                              factor(1:nrow(object$allcenters)))
 

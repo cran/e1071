@@ -1,6 +1,6 @@
 Package: e1071
-Version: 1.4-0
-Date: 2004-04-19
+Version: 1.4-1
+Date: 2004-06-15
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
 Depends: R (>= 1.9.0), class
 Suggests: cluster, mlbench, nnet, randomForest, rpart, SparseM, xtable
@@ -13,4 +13,4 @@ Description: Functions for latent class analysis, short time Fourier
 	     classifier, ...
 License: GPL version 2.  See COPYRIGHT.svm.cpp for the
 	copyright of the svm C++ code.
-Packaged: Tue Apr 20 12:50:12 2004; leisch
+Packaged: Tue Jun 15 19:12:57 2004; leisch

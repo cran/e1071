@@ -21,7 +21,8 @@ tune.svm(x, y = NULL, data = NULL, degree = NULL, gamma = NULL, coef0 = NULL, co
          nu = NULL, ...)
 best.svm(x, ...)
  
-tune.nnet(x, y = NULL, data = NULL, size = NULL, decay = NULL, trace = FALSE, nrepeat = 5, 
+tune.nnet(x, y = NULL, data = NULL, size = NULL, decay = NULL, trace =
+FALSE, tunecontrol = tune.control(nrepeat = 5), 
           ...)
 best.nnet(x, ...)
 
@@ -53,7 +54,7 @@ knn.wrapper(x, y, k = 1, l = 0, ...)
     parameters.}
   \item{k, l}{\code{knn} parameters.}
   \item{mtry, nodesize, ntree}{\code{randomForest} parameters.}
-  \item{size, decay, nrepeat, trace}{\code{nnet} parameters.}
+  \item{size, decay, tunecontrol, trace}{parameters passed to \code{nnet}.}
   \item{\dots}{Further parameters passed to \code{tune}.}
 }
 
