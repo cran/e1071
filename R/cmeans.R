@@ -76,13 +76,16 @@ cmeans <- function (x, centers, iter.max = 100, verbose = FALSE,
                  PACKAGE = "e1071")
   }
   
-  centers <- matrix(retval$centers, ncol = xcols, dimnames = dimnames(initcenters))
-  
+  centers <-
+      matrix(retval$centers, ncol = xcols,
+             dimnames = list(1 : ncenters, colnames(initcenters)))
+
   U <- retval$U
-  U <- matrix(U, ncol=ncenters)
+  U <- matrix(U, ncol = ncenters,
+              dimnames = list(rownames(x), 1 : ncenters))
 #  clusterU <- max.col(U)
-   clusterU <- apply(U,1,which.max)
-  clusterU <- clusterU[order(perm)]
+  clusterU <- apply(U,1,which.max)
+  clusterU <- as.integer(clusterU[order(perm)]) # No names here ...
   U <- U[order(perm),]
   
   clustersize <- as.integer(table(clusterU))

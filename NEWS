@@ -1,4 +1,10 @@
-Changes in Version 1.5-1
+Changes in Version 1.5-3
+
+  o New arguments in plot.svm for customizing plot symbols and colors
+
+  o Fix of broken code in plot.svm for the `fill=FALSE' (non-default) case
+
+Changes in Version 1.5-2
 
   o Fixed memory leak in svm
 

@@ -21,9 +21,7 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
 ..., subset, na.action = na.omit)
 }
 \arguments{
-  \item{formula}{a symbolic description of the model to be fit. Note, that an
-          intercept is always included, whether given in the formula or
-          not.}
+  \item{formula}{a symbolic description of the model to be fit.}
   \item{data}{an optional data frame containing the variables in the model.
           By default the variables are taken from the environment which
           \sQuote{svm} is called from.}
@@ -118,7 +116,8 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
 \code{libsvm} internally uses a sparse data representation, which is 
 also high-level supported by the package \pkg{SparseM}.\cr
 If the predictor variables include factors, the formula interface must be used to get a
-correct model matrix. \code{plot.svm} allows a simple graphical
+correct model matrix.\cr
+\code{plot.svm} allows a simple graphical
 visualization of classification models.\cr
 The probability model for classification fits a logistic distribution
 using maximum likelihood to the decision values of all binary

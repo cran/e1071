@@ -8,7 +8,8 @@
   vectors. Optionally, draws a filled contour plot of the class regions.
 }
 \usage{
-plot.svm(x, data, formula, fill = TRUE, grid = 50, slice = list(), ...)
+plot.svm(x, data, formula, fill = TRUE, grid = 50, slice = list(),
+symbolPalette = palette(), svSymbol = "x", dataSymbol = "o", ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -22,6 +23,10 @@ plot.svm(x, data, formula, fill = TRUE, grid = 50, slice = list(), ...)
   \item{slice}{a list of named numeric values for the dimensions held
     constant (only needed if more than two variables are
     used). Dimensions not specified are fixed at 0.}
+  \item{symbolPalette}{Color palette used for the class the data points and support
+    vectors belong to.}
+  \item{svSymbol}{Symbol used for support vectors.}
+  \item{dataSymbol}{Symbol used for data points (other than support vectors).}
   \item{\dots}{additional graphics parameters passed to
     \code{filled.contour} and \code{plot}.}
 }
@@ -42,6 +47,12 @@ data(iris)
 m2 <- svm(Species~., data = iris)
 plot(m2, iris, Petal.Width ~ Petal.Length,
      slice = list(Sepal.Width = 3, Sepal.Length = 4))
+
+## plot with custom symbols and colors
+plot(m, cats, svSymbol = 1, dataSymbol = 2, symbolPalette = rainbow(4),
+color.palette = terrain.colors)
+
+
 }
 \keyword{neural}% at least one, from doc/KEYWORDS
 \keyword{classif}% __ONLY ONE__ keyword per line

@@ -180,12 +180,12 @@ A cross-tabulation of the true versus the predicted values yields:
 \begin{Soutput}
     true
 pred  1  2  3  5  6  7
-   1 17  2  2  0  1  0
-   2  7 15  3  1  5  4
-   3  2  1  1  0  0  0
-   5  0  0  0  1  0  0
-   6  0  0  0  0  0  0
-   7  0  0  0  0  0  9
+   1 13  6  3  0  1  0
+   2  7 19  5  6  3  1
+   3  1  0  0  0  0  0
+   5  0  0  0  0  0  0
+   6  0  0  0  0  1  0
+   7  0  0  0  0  0  5
 \end{Soutput}
 \begin{Sinput}
 > table(pred = rpart.pred, true = testset[, 10])
@@ -193,29 +193,29 @@ pred  1  2  3  5  6  7
 \begin{Soutput}
     true
 pred  1  2  3  5  6  7
-   1 16  1  3  0  0  1
-   2 10 15  0  1  4  0
-   3  0  0  3  0  0  0
-   5  0  1  0  1  2  0
+   1 13  8  3  0  0  0
+   2  7 16  5  6  5  0
+   3  0  0  0  0  0  0
+   5  0  0  0  0  0  0
    6  0  0  0  0  0  0
-   7  0  1  0  0  0 12
+   7  1  1  0  0  0  6
 \end{Soutput}
 \end{Schunk}
 
 %% results table
 
 % latex table generated in R 2.1.0 by xtable 1.2-4 package
-% Thu Dec  2 14:22:07 2004
+% Fri Dec 17 17:04:21 2004
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rlllllll}
 \hline
  & method & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
 \hline
-Accuracy &   svm & 0.48 &  0.6 & 0.63 & 0.62 & 0.65 &  0.7 \\
- & rpart & 0.29 & 0.41 & 0.48 & 0.45 & 0.49 & 0.54 \\
-Kappa &   svm & 0.62 & 0.64 & 0.69 & 0.67 & 0.69 &  0.7 \\
-  & rpart & 0.46 &  0.5 & 0.57 & 0.54 & 0.58 & 0.61 \\
+Accuracy &   svm & 0.55 &  0.6 & 0.61 & 0.62 & 0.66 & 0.66 \\
+ & rpart & 0.37 & 0.41 & 0.46 & 0.46 &  0.5 & 0.54 \\
+Kappa &   svm & 0.63 & 0.65 & 0.69 & 0.68 &  0.7 & 0.73 \\
+  & rpart & 0.51 & 0.52 & 0.58 & 0.57 & 0.59 & 0.63 \\
 \hline
 \end{tabular}
 \caption{Performance of \texttt{svm()} and
@@ -248,7 +248,7 @@ into a train and test set.
 \end{Sinput}
 \begin{Soutput}
          [,1]
-[1,] 11.87725
+[1,] 11.41567
 \end{Soutput}
 \begin{Sinput}
 > rpart.model <- rpart(V4 ~ ., data = trainset)
@@ -257,20 +257,20 @@ into a train and test set.
 \end{Sinput}
 \begin{Soutput}
          [,1]
-[1,] 21.10808
+[1,] 15.51681
 \end{Soutput}
 \end{Schunk}
 
 % latex table generated in R 2.1.0 by xtable 1.2-4 package
-% Thu Dec  2 14:22:08 2004
+% Fri Dec 17 17:04:22 2004
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrrrr}
 \hline
  & Min. & 1st Qu. & Median & Mean & 3rd Qu. & Max. \\
 \hline
-svm & 8.07 & 9.14 & 10.83 & 10.67 & 11.50 & 13.42 \\
-rpart & 13.97 & 16.87 & 18.54 & 19.72 & 22.93 & 25.70 \\
+svm & 8.39 & 10.22 & 11.15 & 11.01 & 11.68 & 13.96 \\
+rpart & 16.88 & 18.33 & 19.48 & 20.14 & 21.23 & 27.71 \\
 \hline
 \end{tabular}
 \caption{Performance of \texttt{svm()} and

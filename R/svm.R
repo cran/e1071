@@ -471,7 +471,8 @@ scale.data.frame <- function(x, center = TRUE, scale = TRUE) {
 }
 
 plot.svm <- function(x, data, formula = NULL, fill = TRUE,
-                     grid = 50, slice = list(), ...) {
+                     grid = 50, slice = list(), symbolPalette = palette(),
+                     svSymbol = "x", dataSymbol = "o", ...) {
   if (x$type < 3) {
     if (is.null(formula) && ncol(data) == 3) {
       formula <- formula(delete.response(terms(x)))
@@ -497,9 +498,11 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                      plot.axes = {
                        axis(1)
                        axis(2)
-                       colors <- as.numeric(model.response(model.frame(x, data)))
-                       points(formula, data = data[-x$index,], col = colors[-x$index])
-                       points(formula, data = data[x$index,], pch = "x", col = colors[x$index])
+                       colind <- as.numeric(model.response(model.frame(x, data)))
+                       points(formula, data = data[-x$index,], pch = dataSymbol,
+                              col = symbolPalette[colind[-x$index]])
+                       points(formula, data = data[x$index,], pch = svSymbol,
+                              col = symbolPalette[colind[x$index]])
                      },
                      levels = 1:(length(unique(as.numeric(preds)))+1),
                      key.axes = axis(4,
@@ -512,9 +515,12 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                      )
     } else {
       plot(formula, data = data, type = "n", ...)
-      colors <- as.numeric(model.response(model.frame(m, data)))
-      points(formula, data = data[-x$index,], col = colors[-x$index])
-      points(formula, data = data[x$index,], pch = "x", col = colors[x$index])
+      colind <- as.numeric(model.response(model.frame(x, data)))
+      points(formula, data = data[-x$index,], pch = dataSymbol,
+             col = symbolPalette[colind[-x$index]])
+      points(formula, data = data[x$index,], pch = svSymbol,
+             col = symbolPalette[colind[x$index]])
+      invisible()
     }
   }
 }
