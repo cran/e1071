@@ -71,19 +71,20 @@ struct svm_node ** sparsify (double *x, int r, int c)
     return sparse;
 }
 
-struct svm_node ** transsparse (double *x, int r, int *c, int *cols)
+struct svm_node ** transsparse (double *x, int r, int *rowindex, int *colindex)
 {
     struct svm_node** sparse;
-    int         i, ii, count = 0;
+    int i, ii, count = 0, nnz = 0;
 
     sparse = (struct svm_node **) malloc (r * sizeof(struct svm_node*));
     for (i = 0; i < r; i++) {
 	/* allocate memory for column elements */
-	sparse[i] = (struct svm_node *) malloc ((c[i] + 1) * sizeof(struct svm_node));
-	
+	nnz = rowindex[i+1] - rowindex[i];
+	sparse[i] = (struct svm_node *) malloc ((nnz + 1) * sizeof(struct svm_node));
+
 	/* set column elements */
-	for (ii = 0; ii < c[i]; ii++) {
-	    sparse[i][ii].index = cols[count];
+	for (ii = 0; ii < nnz; ii++) {
+	    sparse[i][ii].index = colindex[count] - 1;
 	    sparse[i][ii].value = x[count];
 	    count++;
 	}
@@ -111,7 +112,7 @@ void do_cross_validation(struct svm_problem *prob,
 	double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
 
 	/* random shuffle */
-	for(i=0;i<prob->l;i++)
+	for(i=0; i<prob->l; i++)
 	{
 		int j = rand()%(prob->l-i);
 		struct svm_node *tx;
@@ -126,7 +127,7 @@ void do_cross_validation(struct svm_problem *prob,
 		prob->y[j] = ty;
 	}
 
-	for(i=0;i<nr_fold;i++)
+	for(i=0; i<nr_fold; i++)
 	{
 		int begin = i*prob->l/nr_fold;
 		int end = (i+1)*prob->l/nr_fold;
@@ -138,13 +139,13 @@ void do_cross_validation(struct svm_problem *prob,
 		subprob.y = Malloc(double,subprob.l);
 			
 		k=0;
-		for(j=0;j<begin;j++)
+		for(j = 0; j < begin; j++)
 		{
 			subprob.x[k] = prob->x[j];
 			subprob.y[k] = prob->y[j];
 			++k;
 		}
-		for(j=end;j<prob->l;j++)
+		for(j = end; j<prob->l; j++)
 		{
 			subprob.x[k] = prob->x[j];
 			subprob.y[k] = prob->y[j];
@@ -202,18 +203,21 @@ void do_cross_validation(struct svm_problem *prob,
 	    	((prob.l*sumvv-sumv*sumv)*(prob.l*sumyy-sumy*sumy))
 	    	); */
 	    *ctotal1 = total_error/prob->l;
-	    *ctotal2 = ((prob->l*sumvy-sumv*sumy)*(prob->l*sumvy-sumv*sumy))/
-		((prob->l*sumvv-sumv*sumv)*(prob->l*sumyy-sumy*sumy));
+	    *ctotal2 = ((prob->l * sumvy - sumv * sumy) *
+			(prob->l * sumvy - sumv*sumy))  /
+		       ((prob->l * sumvv - sumv * sumv) *
+		        (prob->l * sumyy - sumy * sumy));
 	}
 	else
 	    /* printf("Cross Validation Accuracy =
 	       %g%%\n",100.0*total_correct/prob.l); */
-	    *ctotal1 = 100.0*total_correct/prob->l;
+	    *ctotal1 = 100.0 * total_correct / prob->l;
 }
 
 
-void svmtrain (double *x, int *r, int *c, int *cols,
+void svmtrain (double *x, int *r, int *c, 
 	       double *y,
+	       int    *rowindex, int *colindex,
 	       int    *svm_type,
 	       int    *kernel_type,
 	       double *degree,
@@ -275,7 +279,7 @@ void svmtrain (double *x, int *r, int *c, int *cols,
     prob.y = y;
     
     if (*sparse > 0)
-	prob.x = transsparse(x, *r, c, cols);
+	prob.x = transsparse(x, *r, rowindex, colindex);
     else
 	prob.x = sparsify(x, *r, *c);
     
@@ -322,7 +326,9 @@ void svmtrain (double *x, int *r, int *c, int *cols,
     free (prob.x);
 }
 	     
-void svmpredict  (double *v, int *r, int *c, int *cols,
+void svmpredict  (double *v, int *r, int *c,
+		  int    *rowindex,
+		  int    *colindex,
 		  double *coefs,
 		  double *rho,
 		  int    *nclasses,
@@ -337,8 +343,11 @@ void svmpredict  (double *v, int *r, int *c, int *cols,
 		  double *gamma,
 		  double *coef0,
 
-		  double *x, int *xr, int *xc, int *xcols,
+		  double *x, int *xr,
+		  int    *xrowindex,
+		  int    *xcolindex,
 		  int    *sparsex,
+		  
 		  double *ret)
 {
     struct svm_model m;
@@ -353,10 +362,12 @@ void svmpredict  (double *v, int *r, int *c, int *cols,
       m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
       memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
     }
+    
     if (*sparsemodel > 0)
-	m.SV   = transsparse (v, *r, c, cols);
+	m.SV   = transsparse(v, *r, rowindex, colindex);
     else
-	m.SV   = sparsify (v, *r, *c);
+	m.SV   = sparsify(v, *r, *c);
+    
     m.rho      = rho;
     m.label    = labels;
     m.nSV      = nSV;
@@ -372,9 +383,9 @@ void svmpredict  (double *v, int *r, int *c, int *cols,
 
     /* create sparse training matrix */
     if (*sparsex > 0)
-	train = transsparse (x, *xr, xc, xcols);
+	train = transsparse(x, *xr, xrowindex, xcolindex);
     else
-	train = sparsify (x, *xr, *c);
+	train = sparsify(x, *xr, *c);
 
     /* call svm-function for each x-row */
     for (i = 0; i < *xr; i++)

@@ -24,10 +24,6 @@
 #include "R.h"
 #include "S.h"
 
-extern int (dpodi)(double*, int*, int*, double*, int*);
-extern int (dpofa)(double* , int *, int *, int *);
-
-
 int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
 	       double *centers, int *itermax, int *iter,
 	       int *verbose,  double *U, double *UANT, 
@@ -172,12 +168,14 @@ int  subcommon(int *xrows, int *xcols, double *x, int *ncenters,
     for(i=0;i<*ncenters;i++){
 	for(col1=0;col1<*xcols;col1++){
 	    for(col2=0;col2<*xcols;col2++){	
-		scattermatrix[col1+(*xcols)*col2] = scatter[col1+(*xcols)*col2+(*xcols)*(*ncenters)*i];
+		scattermatrix[col1+(*xcols)*col2] =
+			scatter[col1+(*xcols)*col2+(*xcols)*(*ncenters)*i];
 		
-	    }}
+	    }
+	}
 	
-	dpofa_(scattermatrix, xcols, xcols, &info);      
-	dpodi_(scattermatrix, xcols, xcols, det, &job);	
+	F77_NAME(dpofa)(scattermatrix, xcols, xcols, &info);      
+	F77_NAME(dpodi)(scattermatrix, xcols, xcols, det, &job);	
 	
 	
 	for(col1=1;col1<*xcols;col1++){

@@ -1,3 +1,20 @@
+Changes in Version 1.3-8:
+
+  o Minor bug fixes in `svm' and `tune' (mostly interface issues). New
+    plot function for objects of class `svm' working for the 2d-classification case.
+	
+Changes in Version 1.3-7:
+
+  o svm() now supports the `matrix.csr' format, as handled by the
+   `SparseM' package. Predictors and response variable (if numeric) are scaled per
+    default.
+  o A new `plot' function for `svm' objects visualizes classification
+    models by plotting data and support vectors in the data input
+    space, along with the class borders.
+  o A new generic `tune' function allows parameter tuning of arbitrary
+    functions using, e.g., boot strapping, or cross validation.
+    Several convenience wrappers (e.g., for svm, nnet, and rpart) do exist.
+	
 Changes in Version 1.3-3:
 
   o Bug fixes in various bclust routines: stop() if required packages

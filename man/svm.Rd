@@ -2,8 +2,8 @@
 \alias{svm}
 \alias{svm.default}
 \alias{svm.formula}
-%%\alias{svm.sparse.svm.data}
 \alias{summary.svm}
+\alias{print.summary.svm}
 \alias{print.svm}
 %- Also NEED an `\alias' for EACH other topic documented here.
 \title{Support Vector Machines}
@@ -13,12 +13,12 @@ out general regression and classification (of nu and epsilon-type), as
 well as density-estimation. A formula interface is provided.
 }
 \usage{
-%%\method{svm}{sparse.svm.data}(x, ...)
-\method{svm}{formula}(formula, data = list(), subset, na.action=na.fail,
+\method{svm}{formula}(formula, data = list(), subset, na.action = na.fail,
 ...)
-\method{svm}{default}(x, y=NULL, subset, na.action=na.fail, type=NULL, kernel="radial", degree=3, gamma=1/dim(x)[2],
-coef0=0, cost=1, nu=0.5, class.weights=NULL, cachesize=40, tolerance=0.001, epsilon=0.5,
-shrinking=TRUE, cross=0, fitted=TRUE, ...)
+\method{svm}{default}(x, y = NULL, scale = TRUE, subset, na.action =
+na.fail, type = NULL, kernel = "radial", degree = 3, gamma = 1 / dim(x)[2],
+coef0 = 0, cost = 1, nu = 0.5, class.weights = NULL, cachesize = 40,
+tolerance = 0.001, epsilon = 0.5, shrinking = TRUE, cross = 0, fitted = TRUE, ...)
 }
 \arguments{
   \item{formula}{a symbolic description of the model to be fit. Note, that an
@@ -27,12 +27,14 @@ shrinking=TRUE, cross=0, fitted=TRUE, ...)
   \item{data}{an optional data frame containing the variables in the model.
           By default the variables are taken from the environment which
           `svm' is called from.}
-%%  \item{x}{a data matrix, a vector or a sparse data object
-%%   (\code{sparse.matrix} or \code{sparse.svm.data}, the latter also
-%%    containing the \code{y}-values).}
-  \item{x}{a data matrix or a vector.}
+  \item{x}{a data matrix, a vector, or a sparse matrix (object of class
+    \code{\link[SparseM]{matrix.csr}} as provided by the package \code{SparseM}).}
   \item{y}{a response vector with one label for each row/component of \code{x}. Can be either
-  a factor (for classification tasks) or a numeric vector (for regression).}
+    a factor (for classification tasks) or a numeric vector (for
+    regression).}
+  \item{scale}{Per default, data are scaled internally (both \code{x} and \code{y}
+    variables) to zero mean and unit variance. The center and scale
+    values are returned and used for later predictions.}
   \item{type}{\code{svm} can be used as a classification
     machine, as a regresson machine or a density estimator. Depending of whether \code{y} is
     a factor or not, the default setting for \code{type} is \code{C-classification} or \code{eps-regression}, respectively, but may be overwritten by setting an explicit value.\cr
@@ -91,20 +93,21 @@ shrinking=TRUE, cross=0, fitted=TRUE, ...)
 
 \value{
   An object of class \code{"svm"} containing the fitted model, including:
-  \item{sv}{the resulting support vectors}
+  \item{SV}{the resulting support vectors (possibly scaled)}
   \item{index}{the index of the resulting support vectors in the data matrix}
-  \item{coefs}{the corresponding coefficiants times the training labels}
+  \item{coefs}{the corresponding coefficients times the training labels}
   \item{rho}{the negative intercept}
   (Use \code{summary} and \code{print} to get some output).
 }
 \details{For multiclass-classification with k levels, k>2, \code{libsvm} uses the
   `one-against-one'-approach, in which k(k-1)/2 binary classifiers are
   trained; the appropriate class is found by a voting scheme.\cr
-%%\code{libsvm} internally uses a sparse data representation, which is 
-%%also high-level supported in an experimental stade (see
-%%\code{sparsify()}).\cr
+\code{libsvm} internally uses a sparse data representation, which is 
+also high-level supported by the package \code{SparseM}.\cr
 If the predictor variables include factors, the formula interface must be used to get a
-correct model matrix.}
+correct model matrix. \code{plot.svm} allows a simple graphical
+visualization of classification models.}
+\note{Data are scaled internally, usually yielding better results.}
 \references{
   \itemize{
     \item
@@ -132,7 +135,8 @@ correct model matrix.}
 }
 \seealso{
   \code{\link{predict.svm}}
-%%  \code{\link{sparsify}}
+  \code{\link{plot.svm}}
+  \code{\link[SparseM]{matrix.csr}} (in package `SparseM')
 }
 \examples{
 data(iris)
@@ -187,11 +191,12 @@ m <- svm (~a+b, gamma=0.1)
 
 # test:
 newdata <- data.frame(a=c(0,4), b=c(0,4))
+newdata
 predict (m, newdata)
 
 # visualization:
 plot (as.matrix(X))
-points (as.matrix(m$SV), col=2)
+points (as.matrix(X)[m$index,], col=2)
 }
 \keyword{neural}
 \keyword{nonlinear}
