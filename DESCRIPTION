@@ -1,8 +1,8 @@
 Package: e1071
-Version: 1.5-8
-Date: 2005-04-06
+Version: 1.5-9
+Date: 2005-07-25
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
-Depends: R (>= 1.9.0), class
+Depends: class
 Imports: graphics, stats
 Suggests: cluster, mlbench, nnet, randomForest, rpart, SparseM, xtable
 Author: Evgenia Dimitriadou, Kurt Hornik, Friedrich Leisch,
@@ -16,4 +16,4 @@ License: GPL version 2.  See COPYRIGHT.svm.cpp for the
 	copyright of the svm C++ code.
 SaveImage: no
 LazyLoad: yes
-Packaged: Wed Apr  6 17:54:48 2005; leisch
+Packaged: Mon Jul 25 12:48:20 2005; leisch

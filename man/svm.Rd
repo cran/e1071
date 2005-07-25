@@ -111,22 +111,32 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     classes, containing the parameters of the logistic distributions fitted to
     the decision values of the binary classifers (1 / (1 + exp(a x + b))).}
 }
-\details{For multiclass-classification with k levels, k>2, \code{libsvm} uses the
+\details{
+  For multiclass-classification with k levels, k>2, \code{libsvm} uses the
   \sQuote{one-against-one}-approach, in which k(k-1)/2 binary classifiers are
-  trained; the appropriate class is found by a voting scheme.\cr
-\code{libsvm} internally uses a sparse data representation, which is 
-also high-level supported by the package \pkg{SparseM}.\cr
-If the predictor variables include factors, the formula interface must be used to get a
-correct model matrix.\cr
-\code{plot.svm} allows a simple graphical
-visualization of classification models.\cr
-The probability model for classification fits a logistic distribution
-using maximum likelihood to the decision values of all binary
-classifiers, and computes the a-posteriori class probabilities for the
-multi-class problem using quadratic optimization. The probabilistic
-regression model assumes (zero-mean) laplace-distributed errors for the
-predictions, and estimates the scale parameter using maximum likelihood.}
-\note{Data are scaled internally, usually yielding better results.}
+  trained; the appropriate class is found by a voting scheme.
+  
+  \code{libsvm} internally uses a sparse data representation, which is 
+  also high-level supported by the package \pkg{SparseM}.
+  
+  If the predictor variables include factors, the formula interface must be used to get a
+  correct model matrix.
+
+  \code{plot.svm} allows a simple graphical
+  visualization of classification models.
+
+  The probability model for classification fits a logistic distribution
+  using maximum likelihood to the decision values of all binary
+  classifiers, and computes the a-posteriori class probabilities for the
+  multi-class problem using quadratic optimization. The probabilistic
+  regression model assumes (zero-mean) laplace-distributed errors for the
+  predictions, and estimates the scale parameter using maximum likelihood.
+}
+\note{
+Data are scaled internally, usually yielding better results.
+
+Parameters of SVM-models usually \emph{must} be tuned to yield sensible results!
+}
 \references{
   \itemize{
     \item
@@ -156,6 +166,7 @@ predictions, and estimates the scale parameter using maximum likelihood.}
 \seealso{
   \code{\link{predict.svm}}
   \code{\link{plot.svm}}
+  \code{\link{tune.svm}}
   \code{\link[SparseM]{matrix.csr}} (in package \pkg{SparseM})
 }
 \examples{

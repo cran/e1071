@@ -1,3 +1,13 @@
+Changes in Version 1.5-9
+
+  o tune() now returns the split indices into training/validation set.
+    Information added about cross validation.
+
+  o plot.svm(): wrong labeling order in levels fixed.
+
+  o predict.svm now adds row numbers to predictions, and correctly handles 
+    the na.action argument using napredict()
+
 Changes in Version 1.5-8
 
   o Update to libsvm 2.8 (uses a faster optimization algorithm)

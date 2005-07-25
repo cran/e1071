@@ -24,7 +24,7 @@ best.tune(...)
     predictor matrix and response are supplied directly.}
   \item{validation.x}{an optional validation set. Depending on whether a
     formula interface is used or not, the response can be
-    included in \code{validation.x} or separately speciefied using \code{validation.y}.}
+    included in \code{validation.x} or separately specified using \code{validation.y}.}
   \item{validation.y}{if no formula interface is used, the response of
     the (optional) validation set.}
   \item{ranges}{a named list of parameter vectors spanning the sampling
@@ -42,9 +42,12 @@ best.tune(...)
   \item{best.performance}{best achieved performance.}
   \item{performances}{if requested, a data frame of all parameter
     combinations along with the corresponding performance results.}
-  \item{if requested, the model trained on the complete training data
+  \item{train.ind}{list of index vectors used for splits into
+    training and validation sets.}
+  \item{best.model}{if requested, the model trained on the complete training data
     using the best parameter combination.}
-  \code{best.tune} returns the best model detected by \code{tune}.
+  
+  \code{best.tune()} returns the best model detected by \code{tune}.
 }
 \details{
   As performance measure, the classification error is used
@@ -56,6 +59,11 @@ best.tune(...)
   are several \code{tune.foo()} wrappers defined, e.g., for
   \code{nnet()}, \code{randomForest()},
   \code{rpart()}, \code{svm()}, and \code{knn()}.
+
+  Cross-validation randomizes the data set before building the splits
+  which---once created---remain constant during the training
+  process. The splits can be recovered through the \code{train.ind}
+  component of the returned object.
 }
 \author{
   David Meyer\cr
