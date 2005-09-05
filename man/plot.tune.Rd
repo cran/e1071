@@ -1,7 +1,7 @@
 \name{plot.tune}
 \alias{plot.tune}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{Plot tuning object}
+\title{Plot Tuning Object}
 \description{
   Visualizes the results of parameter tuning.
 }

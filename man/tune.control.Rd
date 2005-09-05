@@ -1,6 +1,6 @@
 \name{tune.control}
 \alias{tune.control}
-\title{control parameters for the tune function}
+\title{Control Parameters for the Tune Function}
 \description{
   Creates an object of class \code{tune.control} to be used with
   the \code{tune} function, containing various control parameters.

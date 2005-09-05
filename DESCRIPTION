@@ -1,6 +1,6 @@
 Package: e1071
-Version: 1.5-9
-Date: 2005-07-25
+Version: 1.5-10
+Date: 2005-09-05
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
 Depends: class
 Imports: graphics, stats
@@ -16,4 +16,4 @@ License: GPL version 2.  See COPYRIGHT.svm.cpp for the
 	copyright of the svm C++ code.
 SaveImage: no
 LazyLoad: yes
-Packaged: Mon Jul 25 12:48:20 2005; leisch
+Packaged: Sat Sep  3 15:49:48 2005; meyer

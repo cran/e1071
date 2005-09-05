@@ -1,3 +1,7 @@
+Changes in Version 1.5-10
+
+  o Bug fix: class probability prediction was broken since 1.5-9 
+
 Changes in Version 1.5-9
 
   o tune() now returns the split indices into training/validation set.

@@ -1,6 +1,6 @@
 \name{classAgreement}
 \alias{classAgreement}
-\title{Coefficients comparing classification agreement}
+\title{Coefficients Comparing Classification Agreement}
 \description{
   \code{classAgreement()} computes several coefficents of agreement
   between the columns and rows of a 2-way contingency table.

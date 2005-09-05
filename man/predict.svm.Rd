@@ -1,6 +1,6 @@
 \name{predict.svm}
 \alias{predict.svm}
-\title{Predict method for Support Vector Machines}
+\title{Predict Method for Support Vector Machines}
 \description{
   This function predicts values based upon a model trained by \code{svm}.
 }

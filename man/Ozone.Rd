@@ -1,6 +1,6 @@
 \name{Ozone}
 \alias{Ozone}
-\title{Los Angeles ozone pollution data, 1976}
+\title{Los Angeles Ozone Pollution Data, 1976}
 \usage{data(Ozone)}
 \keyword{datasets}
 \description{A data frame with 366 observations on 13 variables, each

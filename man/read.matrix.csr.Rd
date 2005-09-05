@@ -2,7 +2,7 @@
 \alias{read.matrix.csr}
 \alias{write.matrix.csr}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{read/write sparse data}
+\title{Read/Write Sparse Data}
 \description{
   reads and writes a file in sparse data format.
 }

@@ -1,6 +1,6 @@
 \name{matchControls}
 \alias{matchControls}
-\title{Find matched control group}
+\title{Find Matched Control Group}
 \usage{
 matchControls(formula, data = list(), subset, contlabel = "con",
                caselabel = NULL, dogrep = TRUE, replace = FALSE)

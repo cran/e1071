@@ -1,6 +1,6 @@
 \name{permutations}
 \alias{permutations}
-\title{All permutations of integers 1:n}
+\title{All Permutations of Integers 1:n}
 \description{
   Returns a matrix containing all permutations of the integers
   \code{1:n} (one permutation per row).

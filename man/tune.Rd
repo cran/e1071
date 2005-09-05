@@ -4,7 +4,7 @@
 \alias{print.tune}
 \alias{summary.tune}
 \alias{print.summary.tune}
-\title{Parameter tuning of fuctions using grid search}
+\title{Parameter Tuning of Functions Using Grid Search}
 \description{
   This generic function tunes hyperparameters of statistical methods
   using a grid search over supplied parameter ranges.

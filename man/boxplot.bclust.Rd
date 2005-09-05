@@ -1,6 +1,6 @@
 \name{boxplot.bclust}
 \alias{boxplot.bclust}
-\title{Boxplot of cluster profiles}
+\title{Boxplot of Cluster Profiles}
 \usage{
 \method{boxplot}{bclust}(x, n=nrow(x$centers), bycluster=TRUE,
         main=deparse(substitute(x)), oneplot=TRUE,

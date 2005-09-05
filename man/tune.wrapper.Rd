@@ -11,7 +11,7 @@
 \alias{best.randomForest}
 \alias{tune.knn}
 \alias{knn.wrapper}
-\title{Convenience tuning wrapper functions}
+\title{Convenience Tuning Wrapper Functions}
 \description{
   Convenience tuning wrapper functions, using \code{tune}.
 }

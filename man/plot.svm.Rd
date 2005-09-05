@@ -1,7 +1,7 @@
 \name{plot.svm}
 \alias{plot.svm}
 %- Also NEED an `\alias' for EACH other topic documented here.
-\title{Plot svm objects}
+\title{Plot SVM Objects}
 \description{
   Generates a scatter plot of the input data of a \code{svm} fit for
   classification models by highlighting the classes and support

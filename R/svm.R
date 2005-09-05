@@ -415,19 +415,21 @@ predict.svm <- function (object, newdata,
       for (j in (i + 1):object$nclasses)
         colns <- c(colns, paste(object$levels[object$labels[i]],
                                 "/", object$levels[object$labels[j]], sep = ""))
-    attr(ret2, "decision.values") <- napredict(act,
-                                               matrix(ret$dec, nrow = nrow(newdata), byrow = TRUE,
-                                                      dimnames = list(rowns, colns)
-                                                      )
-                                               )
+    attr(ret2, "decision.values") <-
+      napredict(act,
+                matrix(ret$dec, nrow = nrow(newdata), byrow = TRUE,
+                       dimnames = list(rowns, colns)
+                       )
+                )
   }
 
   if (probability && object$type < 2)
-    attr(ret2, "probabilities") <- napredict(act,
-                                             matrix(ret$prob, nrow = nrow(newdata), byrow = TRUE,
-                                                    dimnames = list(rowns, colns)
-                                                    )
-                                             )
+    attr(ret2, "probabilities") <-
+      napredict(act,
+                matrix(ret$prob, nrow = nrow(newdata), byrow = TRUE,
+                       dimnames = list(rowns, object$levels[object$labels])
+                       )
+                )
 
   ret2
 }

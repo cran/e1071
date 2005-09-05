@@ -1,6 +1,6 @@
 \name{write.svm} 
 \alias{write.svm}
-\title{Write SVM object to file}
+\title{Write SVM Object to File}
 \description{
   This function exports an SVM object (trained by \code{svm}) to two
   specified files. One is in the format that the

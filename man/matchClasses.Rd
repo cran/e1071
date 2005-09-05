@@ -1,7 +1,7 @@
 \name{matchClasses}
 \alias{matchClasses}
 \alias{compareMatchedClasses}
-\title{Find similar classes in two-way contingency tables}
+\title{Find Similar Classes in Two-way Contingency Tables}
 \usage{
 matchClasses(tab, method="rowmax", iter=1, maxexact=9, verbose=TRUE)
 compareMatchedClasses(x, y, method="rowmax", iter=1,

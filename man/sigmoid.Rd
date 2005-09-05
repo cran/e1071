@@ -2,7 +2,7 @@
 \alias{sigmoid}
 \alias{dsigmoid}
 \alias{d2sigmoid}
-\title{The logistic function and derivatives}
+\title{The Logistic Function and Derivatives}
 \description{
   Sigmoid \eqn{1/(1 + \exp(-x))}{1/(1 + exp(-x))}, first and second
   derivative.}
