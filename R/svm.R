@@ -18,7 +18,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
   Terms <- attr(m, "terms")
   attr(Terms, "intercept") <- 0
   x <- model.matrix(Terms, m)
-  y <- model.extract(m, response)
+  y <- model.extract(m, "response")
   attr(x, "na.action") <- attr(y, "na.action") <- attr(m, "na.action")
   if (length(scale) == 1)
     scale <- rep(scale, ncol(x))
@@ -63,10 +63,8 @@ function (x,
           na.action = na.omit)
 {
   sparse  <- inherits(x, "matrix.csr")
-  if (sparse) {
-    if (!require(SparseM))
-      stop("Need SparseM package for handling of sparse structures!")
-  }
+  if (sparse)
+    library("SparseM")
 
   ## NULL parameters?
   if(is.null(degree)) stop("`degree' must not be NULL!")
@@ -317,10 +315,8 @@ predict.svm <- function (object, newdata,
     stop("Model is empty!")
   
   sparse <- inherits(newdata, "matrix.csr")
-  if (object$sparse || sparse) {
-    if (!require(SparseM))
-      stop("Need SparseM package for handling of sparse structures!")
-  }
+  if (object$sparse || sparse)
+    library("SparseM")
 
   act <- NULL
   if (is.vector(newdata) || sparse) newdata <- t(t(newdata))

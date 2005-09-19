@@ -1,7 +1,6 @@
 read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 {
-  if (!require(SparseM)) 
-    stop("Need `SparseM' package!")
+  library("SparseM")
   l <- strsplit(readLines(file(file)), "[ ]+")
 
   ## extract y-values, if any
@@ -23,7 +22,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 
   max.ja <- max(ja)
   dimension <- c(length(l), if (is.null(ncol)) max.ja else max(ncol, max.ja))
-  x = new("matrix.csr", ra = as.numeric(rja[,2]), ja = ja,
+  x = methods::new("matrix.csr", ra = as.numeric(rja[,2]), ja = ja,
     ia = as.integer(ia), dimension = as.integer(dimension))
   if (length(y)) 
     list(x = x, y = if (fac) as.factor(y) else as.numeric(y))

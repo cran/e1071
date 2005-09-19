@@ -50,7 +50,8 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   }
   
   ## parameter handling
-  method <- deparse(substitute(method))
+  if (!is.character(method))
+    method <- deparse(substitute(method))
   if (tunecontrol$sampling == "cross")
     validation.x <- validation.y <- NULL
   useFormula <- is.null(train.y)
@@ -106,7 +107,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
         pars <- if (is.null(ranges))
           NULL
         else
-          parameters[para.set,,drop = FALSE]
+          lapply(parameters[para.set,,drop = FALSE], unlist)
         
         model <- if (useFormula) 
           do.call(method, c(list(train.x,
@@ -155,7 +156,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   pars <- if (is.null(ranges))
     NULL
   else
-    parameters[best,,drop = FALSE]
+    lapply(parameters[best,,drop = FALSE], unlist)
   structure(list(best.parameters  = parameters[best,,drop = FALSE],
                  best.performance = model.errors[best],
                  method           = method,
@@ -288,18 +289,18 @@ plot.tune <- function(x,
 #############################################
 
 tune.svm <- function(x, y = NULL, data = NULL, degree = NULL, gamma = NULL,
-    coef0 = NULL, cost = NULL, nu = NULL, ...) {
+    coef0 = NULL, cost = NULL, nu = NULL, class.weights = NULL, ...) {
   call <- match.call()
   call[[1]] <- as.symbol("best.svm")
   ranges <- list(degree = degree, gamma = gamma,
-    coef0 = coef0, cost = cost, nu = nu)
+    coef0 = coef0, cost = cost, nu = nu, class.weights = class.weights)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
     ranges = NULL
   modeltmp <- if (inherits(x, "formula"))
-    tune(svm, train.x = x, data = data, ranges = ranges, ...)
+    tune("svm", train.x = x, data = data, ranges = ranges, ...)
   else
-    tune(svm, train.x = x, train.y = y, ranges = ranges, ...)
+    tune("svm", train.x = x, train.y = y, ranges = ranges, ...)
   if (!is.null(modeltmp$best.model))
     modeltmp$best.model$call <- call
   modeltmp
@@ -319,7 +320,7 @@ tune.nnet <- function(x, y = NULL, data = NULL,
                       ...) {
   call <- match.call()
   call[[1]] <- as.symbol("best.nnet")
-  require(nnet)
+  library("nnet")
   predict.func <- predict
   useFormula <- inherits(x, "formula")
   if (is.factor(y) ||
@@ -331,10 +332,10 @@ tune.nnet <- function(x, y = NULL, data = NULL,
   if (length(ranges) < 1)
     ranges = NULL
   modeltmp <- if (useFormula)
-    tune(nnet, train.x = x, data = data, ranges = ranges, predict.func = predict.func,
+    tune("nnet", train.x = x, data = data, ranges = ranges, predict.func = predict.func,
          tunecontrol = tunecontrol, trace = trace, ...)
   else
-    tune(nnet, train.x = x, train.y = y, ranges = ranges, predict.func = predict.func,
+    tune("nnet", train.x = x, train.y = y, ranges = ranges, predict.func = predict.func,
          tunecontrol = tunecontrol, trace = trace, ...)
   if (!is.null(modeltmp$best.model))
     modeltmp$best.model$call <- call
@@ -352,15 +353,15 @@ best.nnet <- function(x, tunecontrol = tune.control(nrepeat = 5), ...) {
 tune.randomForest <- function(x, y = NULL, data = NULL, nodesize = NULL, mtry = NULL, ntree = NULL, ...) {
   call <- match.call()
   call[[1]] <- as.symbol("best.randomForest")
-  require(randomForest)
+  library("randomForest")
   ranges <- list(nodesize = nodesize, mtry = mtry, ntree = ntree)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
     ranges = NULL
   modeltmp <- if (inherits(x, "formula"))
-    tune(randomForest, train.x = x, data = data, ranges = ranges, ...)
+    tune("randomForest", train.x = x, data = data, ranges = ranges, ...)
   else
-    tune(randomForest, train.x = x, train.y = y, ranges = ranges, ...)
+    tune("randomForest", train.x = x, train.y = y, ranges = ranges, ...)
   if (!is.null(modeltmp$best.model))
     modeltmp$best.model$call <- call
   modeltmp
@@ -378,12 +379,12 @@ knn.wrapper <- function(x, y, k = 1, l = 0, ...)
   list(train = x, cl = y, k = k, l = l, ...)
 
 tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
-  require(class)
+  library("class")
   ranges <- list(k = k, l = l)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
     ranges = NULL
-  tune(knn.wrapper,
+  tune("knn.wrapper",
        train.x = x, train.y = y, ranges = ranges,
        predict.func = function(x, ...) knn(train = x$train, cl = x$cl, k = x$k, l = x$l, ...),
        ...)
@@ -391,7 +392,7 @@ tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
 
 rpart.wrapper <- function(formula, minsplit=20, minbucket=round(minsplit/3), cp=0.01, 
                    maxcompete=4, maxsurrogate=5, usesurrogate=2, xval=10,
-                   surrogatestyle=0, maxdepth=30, ...)
+                   surrogatestyle=0, maxdepth=30, ...) 
   rpart(formula, control = rpart.control(minsplit=minsplit, minbucket=minbucket, cp=cp, 
                  maxcompete=maxcompete, maxsurrogate=maxsurrogate,
                  usesurrogate=usesurrogate, xval=xval,
@@ -407,7 +408,7 @@ tune.rpart <- function(formula, data, na.action = na.omit,
                        ...) {
   call <- match.call()
   call[[1]] <- as.symbol("best.rpart")
-  require(rpart)
+  library("rpart")
   ranges <- list(minsplit=minsplit, minbucket=minbucket, cp=cp, 
                  maxcompete=maxcompete, maxsurrogate=maxsurrogate,
                  usesurrogate=usesurrogate, xval=xval,
@@ -420,7 +421,7 @@ tune.rpart <- function(formula, data, na.action = na.omit,
     function(...) predict(..., type = "class")
   else
     predict
-  modeltmp <- tune(rpart.wrapper, train.x = formula, data = data, ranges = ranges,
+  modeltmp <- tune("rpart.wrapper", train.x = formula, data = data, ranges = ranges,
        predict.func = predict.func, na.action = na.omit, ...)
   if (!is.null(modeltmp$best.model))
     modeltmp$best.model$call <- call

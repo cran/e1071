@@ -1,6 +1,5 @@
 \name{tune.wrapper}
 \alias{tune.wrapper}
-\alias{rpart.wrapper}
 \alias{tune.rpart}
 \alias{best.rpart}
 \alias{tune.svm}
@@ -10,18 +9,17 @@
 \alias{tune.randomForest}
 \alias{best.randomForest}
 \alias{tune.knn}
-\alias{knn.wrapper}
 \title{Convenience Tuning Wrapper Functions}
 \description{
   Convenience tuning wrapper functions, using \code{tune}.
 }
 \usage{
-tune.svm(x, y = NULL, data = NULL, degree = NULL, gamma = NULL, coef0 = NULL, cost = NULL, 
-         nu = NULL, ...)
+tune.svm(x, y = NULL, data = NULL, degree = NULL, gamma = NULL, coef0 = NULL,
+         cost = NULL, nu = NULL, class.weights = NULL, ...)
 best.svm(x, tunecontrol = tune.control(), ...)
  
-tune.nnet(x, y = NULL, data = NULL, size = NULL, decay = NULL, trace =
-FALSE, tunecontrol = tune.control(nrepeat = 5), 
+tune.nnet(x, y = NULL, data = NULL, size = NULL, decay = NULL,
+          trace = FALSE, tunecontrol = tune.control(nrepeat = 5), 
           ...)
 best.nnet(x, tunecontrol = tune.control(nrepeat = 5), ...)
 
@@ -30,15 +28,11 @@ tune.rpart(formula, data, na.action = na.omit, minsplit = NULL,
            usesurrogate = NULL, xval = NULL, surrogatestyle = NULL, maxdepth =
            NULL, predict.func = NULL, ...)
 best.rpart(formula, tunecontrol = tune.control(), ...)
-rpart.wrapper(formula, minsplit=20, minbucket=round(minsplit/3), cp=0.01, 
-              maxcompete=4, maxsurrogate=5, usesurrogate=2, xval=10,
-              surrogatestyle=0, maxdepth=30, ...)
 
 tune.randomForest(x, y = NULL, data = NULL, nodesize = NULL, mtry = NULL, ntree = NULL, ...)
 best.randomForest(x, tunecontrol = tune.control(), ...)
 
 tune.knn(x, y, k = NULL, l = NULL, ...) 
-knn.wrapper(x, y, k = 1, l = 0, ...)
 
 }
 \arguments{
@@ -48,7 +42,7 @@ knn.wrapper(x, y, k = 1, l = 0, ...)
   \item{minsplit, minbucket, cp, maxcompete,
         maxsurrogate, usesurrogate, xval,
         surrogatestyle, maxdepth}{\code{rpart} parameters.}
-  \item{degree, gamma, coef0, cost, nu}{\code{svm}
+  \item{degree, gamma, coef0, cost, nu, class.weights}{\code{svm}
     parameters.}
   \item{k, l}{\code{knn} parameters.}
   \item{mtry, nodesize, ntree}{\code{randomForest} parameters.}

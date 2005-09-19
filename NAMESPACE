@@ -7,18 +7,20 @@ importFrom(class, knn, knn1)
 
 export(ddiscrete, pdiscrete, qdiscrete, rdiscrete, bclust,
        hclust.bclust, centers.bclust, clusters.bclust, bincombinations,
-       bootstrap.lca, classAgreement, cmeans, countpattern, cshell, element,
-       fclustIndex, hamming.distance, hamming.window, hanning.window, ica,
-       impute, interpolate, kurtosis, lca, matchControls,
-       matchClasses, compareMatchedClasses,
-       moment, naiveBayes, permutations, rbridge, read.matrix.csr,
-       write.matrix.csr, read.octave, rectangle.window, rwiener,
-       allShortestPaths, extractPath, sigmoid, dsigmoid, d2sigmoid, skewness,
-       stft, svm, tune, tune.control, rpart.wrapper, knn.wrapper, write.svm)
+       bootstrap.lca, classAgreement, cmeans, countpattern, cshell,
+       element, fclustIndex, hamming.distance, hamming.window,
+       hanning.window, ica, impute, interpolate, kurtosis, lca,
+       matchControls, matchClasses, compareMatchedClasses, moment,
+       naiveBayes, permutations, rbridge, read.matrix.csr,
+       write.matrix.csr, rectangle.window, rwiener, allShortestPaths,
+       extractPath, sigmoid, dsigmoid, d2sigmoid, skewness, stft, svm,
+       tune, tune.control, write.svm, probplot)
 
 exportPattern("tune\\..+", "best\\..+")
 
 S3method(boxplot, bclust)
+
+S3method(lines, probplot)
 
 S3method(naiveBayes, default)
 S3method(naiveBayes, formula)
