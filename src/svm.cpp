@@ -178,6 +178,7 @@ public:
 	virtual Qfloat *get_Q(int column, int len) const = 0;
 	virtual Qfloat *get_QD() const = 0;
 	virtual void swap_index(int i, int j) const = 0;
+	virtual ~QMatrix() {}
 };
 
 class Kernel: public QMatrix {
@@ -728,6 +729,7 @@ int Solver::select_working_set(int &out_i, int &out_j)
 	//    -y_j*grad(f)_j < -y_i*grad(f)_i, j in I_low(\alpha)
 	
 	double Gmax = -INF;
+	double Gmax2 = -INF;
 	int Gmax_idx = -1;
 	int Gmin_idx = -1;
 	double obj_diff_min = INF;
@@ -764,7 +766,9 @@ int Solver::select_working_set(int &out_i, int &out_j)
 			if (!is_lower_bound(j))
 			{
 				double grad_diff=Gmax+G[j];
-				if (grad_diff >= eps)
+				if (G[j] >= Gmax2)
+					Gmax2 = G[j];
+				if (grad_diff > 0)
 				{
 					double obj_diff; 
 					double quad_coef=Q_i[i]+QD[j]-2*y[i]*Q_i[j];
@@ -786,7 +790,9 @@ int Solver::select_working_set(int &out_i, int &out_j)
 			if (!is_upper_bound(j))
 			{
 				double grad_diff= Gmax-G[j];
-				if (grad_diff >= eps)
+				if (-G[j] >= Gmax2)
+					Gmax2 = -G[j];
+				if (grad_diff > 0)
 				{
 					double obj_diff; 
 					double quad_coef=Q_i[i]+QD[j]+2*y[i]*Q_i[j];
@@ -805,8 +811,8 @@ int Solver::select_working_set(int &out_i, int &out_j)
 		}
 	}
 
-	if(Gmin_idx == -1)
- 		return 1;
+	if(Gmax+Gmax2 < eps)
+		return 1;
 
 	out_i = Gmax_idx;
 	out_j = Gmin_idx;
@@ -1012,9 +1018,11 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 	//    -y_j*grad(f)_j < -y_i*grad(f)_i, j in I_low(\alpha)
 
 	double Gmaxp = -INF;
+	double Gmaxp2 = -INF;
 	int Gmaxp_idx = -1;
 
 	double Gmaxn = -INF;
+	double Gmaxn2 = -INF;
 	int Gmaxn_idx = -1;
 
 	int Gmin_idx = -1;
@@ -1056,7 +1064,9 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 			if (!is_lower_bound(j))	
 			{
 				double grad_diff=Gmaxp+G[j];
-				if (grad_diff >= eps)
+				if (G[j] >= Gmaxp2)
+					Gmaxp2 = G[j];
+				if (grad_diff > 0)
 				{
 					double obj_diff; 
 					double quad_coef = Q_ip[ip]+QD[j]-2*Q_ip[j];
@@ -1078,7 +1088,9 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 			if (!is_upper_bound(j))
 			{
 				double grad_diff=Gmaxn-G[j];
-				if (grad_diff >= eps)
+				if (-G[j] >= Gmaxn2)
+					Gmaxn2 = -G[j];
+				if (grad_diff > 0)
 				{
 					double obj_diff; 
 					double quad_coef = Q_in[in]+QD[j]-2*Q_in[j];
@@ -1097,7 +1109,7 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 		}
 	}
 
-	if(Gmin_idx == -1)
+	if(max(Gmaxp+Gmaxp2,Gmaxn+Gmaxn2) < eps)
  		return 1;
 
 	if (y[Gmin_idx] == +1)
@@ -1845,7 +1857,7 @@ double sigmoid_predict(double decision_value, double A, double B)
 void multiclass_probability(int k, double **r, double *p)
 {
 	int t,j;
-	int iter = 0, max_iter=100;
+	int iter = 0, max_iter=max(100,k);
 	double **Q=Malloc(double *,k);
 	double *Qp=Malloc(double,k);
 	double pQp, eps=0.005/k;
@@ -2951,8 +2963,8 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 	if(svm_type == NU_SVC ||
 	   svm_type == ONE_CLASS ||
 	   svm_type == NU_SVR)
-		if(param->nu < 0 || param->nu > 1)
-			return "nu < 0 or nu > 1";
+		if(param->nu <= 0 || param->nu > 1)
+			return "nu <= 0 or nu > 1";
 
 	if(svm_type == EPSILON_SVR)
 		if(param->p < 0)

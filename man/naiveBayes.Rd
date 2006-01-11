@@ -10,8 +10,8 @@
   the Bayes rule.
 }
 \usage{
-\method{naiveBayes}{formula}(formula, data, ..., subset, na.action = na.pass)
-\method{naiveBayes}{default}(x, y, ...)
+\method{naiveBayes}{formula}(formula, data, laplace = 0, ..., subset, na.action = na.pass)
+\method{naiveBayes}{default}(x, y, laplace = 0, ...)
 }
 \arguments{
   \item{x}{A numeric matrix, or a data frame of categorical and/or
@@ -21,6 +21,8 @@
       \dots}. Interactions are not allowed.}
   \item{data}{Either a data frame of predictors (caegorical and/or
     numeric) or a contingency table.}
+  \item{laplace}{positive double controlling Laplace smoothing. The
+    default (0) disables Laplace smoothing.}
   \item{\dots}{Currently not used.}
   \item{subset}{For data given in a data frame, an index vector
     specifying the cases to be used in the
@@ -49,7 +51,8 @@
   assumes independence of the predictor
   variables, and gaussian distribution (given the target class) of metric predictors.
   }
-\author{David Meyer \email{David.Meyer@R-project.org}}
+\author{David Meyer \email{David.Meyer@R-project.org}. Laplace smoothing
+enhancement by Jinghao Xue.}
 \seealso{\code{\link{predict.naiveBayes}}}
 \examples{
 ## Categorical data only:
@@ -60,6 +63,12 @@ predict(model, HouseVotes84[1:10,-1], type = "raw")
 
 pred <- predict(model, HouseVotes84[,-1])
 table(pred, HouseVotes84$Class)
+
+## using laplace smoothing:
+model <- naiveBayes(Class ~ ., data = HouseVotes84, laplace = 3)
+pred <- predict(model, HouseVotes84[,-1])
+table(pred, HouseVotes84$Class)
+
 
 ## Example of using a contingency table:
 data(Titanic)

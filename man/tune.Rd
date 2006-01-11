@@ -16,7 +16,8 @@ tune(method, train.x, train.y = NULL, data = list(), validation.x =
 best.tune(...)
 }
 \arguments{
-  \item{method}{function to be tuned.}
+  \item{method}{either the function to be tuned, or a character string
+    naming such a function.}
   \item{train.x}{either a formula or a matrix of predictors.}
   \item{train.y}{the response variable if \code{train.x} is a predictor
     matrix. Ignored if \code{train.x} is a formula.}

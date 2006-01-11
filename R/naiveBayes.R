@@ -1,7 +1,7 @@
 naiveBayes <- function(x, ...)
   UseMethod("naiveBayes")
 
-naiveBayes.default <- function(x, y, ...) {
+naiveBayes.default <- function(x, y, laplace = 0, ...) {
   call <- match.call()
   Yname <- deparse(substitute(y))
 
@@ -12,7 +12,7 @@ naiveBayes.default <- function(x, y, ...) {
             tapply(var, y, sd, na.rm = TRUE))
     } else {
       tab <- table(y, var)
-      tab / rowSums(tab)
+      (tab + laplace) / (rowSums(tab) + laplace * nlevels(var))
     }
   
   ## create tables
@@ -34,7 +34,8 @@ naiveBayes.default <- function(x, y, ...) {
             )
 }
 
-naiveBayes.formula <- function(formula, data, ..., subset, na.action = na.pass) {
+naiveBayes.formula <- function(formula, data, laplace = 0, ...,
+                               subset, na.action = na.pass) {
   call <- match.call()
   Yname <- as.character(formula[[2]])
 
@@ -42,6 +43,7 @@ naiveBayes.formula <- function(formula, data, ..., subset, na.action = na.pass) 
     ## handle formula
     m <- match.call(expand = FALSE)
     m$... <- NULL
+    m$laplace = NULL
     m$na.action <- na.action
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
@@ -51,7 +53,7 @@ naiveBayes.formula <- function(formula, data, ..., subset, na.action = na.pass) 
     Y <- model.extract(m, "response")
     X <- m[,-attr(Terms, "response")]
 
-    return(naiveBayes(X, Y, ...))
+    return(naiveBayes(X, Y, laplace = laplace, ...))
   } else if (is.array(data)) {
     ## Find Class dimension
     Yind <- which(names(dimnames(data)) == Yname)
@@ -65,7 +67,7 @@ naiveBayes.formula <- function(formula, data, ..., subset, na.action = na.pass) 
     ## create tables
     apriori <- margin.table(data, Yind)
     tables <- lapply(Vind,
-                     function(i) margin.table(data, c(Yind, i)) / as.numeric(apriori))
+                     function(i) (margin.table(data, c(Yind, i)) + laplace) / (as.numeric(apriori) + laplace * dim(data)[i]))
 
     structure(list(apriori = apriori,
                    tables = tables,
