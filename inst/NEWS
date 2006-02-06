@@ -1,3 +1,8 @@
+Changes in Version 1.5-13
+
+  o Bug fix: Handling of sparse matrices in svm() was broken since 1.5-9
+  
+
 Changes in Version 1.5-12
 
   o update to libsvm 2.81

@@ -79,7 +79,7 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
   \item{cross}{if a integer value k>0 is specified, a k-fold cross
     validation on the training data is performed to assess the quality
     of the model: the accuracy rate for classification and the Mean
-    Sqared Error for regression}
+    Squared Error for regression}
   \item{fitted}{logical indicating whether the fitted values should be computed
     and included in the model or not (default: \code{TRUE})}
   \item{probability}{logical indicating whether the model should

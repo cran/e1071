@@ -62,8 +62,7 @@ function (x,
           subset,
           na.action = na.omit)
 {
-  sparse  <- inherits(x, "matrix.csr")
-  if (sparse)
+  if (sparse <- inherits(x, "matrix.csr"))
     library("SparseM")
 
   ## NULL parameters?
@@ -100,6 +99,8 @@ function (x,
 
   if (kernel > 10) stop("wrong kernel specification!")
 
+  nac <- attr(x, "na.action")
+
   ## scaling, subsetting, and NA handling
   if (sparse) {
     scale <- rep(FALSE, ncol(x))
@@ -121,8 +122,6 @@ function (x,
       }
     }
 
-    nac <- attr(x, "na.action")
-    
     ## scaling
     if (length(scale) == 1)
       scale <- rep(scale, ncol(x))
@@ -333,10 +332,11 @@ predict.svm <- function (object, newdata,
       act <- attr(newdata, "na.action")
       newdata <- model.matrix(delete.response(terms(object)),
                               as.data.frame(newdata), na.action = na.action)
-    } else if (!sparse) {
-      newdata <- na.action(as.matrix(newdata))
-      act <- attr(newdata, "na.action")
     }
+  }
+  if (!sparse) {
+    newdata <- na.action(as.matrix(newdata))
+    act <- attr(newdata, "na.action")
   }
 
   if (!is.null(act) && !preprocessed)
@@ -503,54 +503,60 @@ scale.data.frame <- function(x, center = TRUE, scale = TRUE) {
 
 plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                      grid = 50, slice = list(), symbolPalette = palette(),
-                     svSymbol = "x", dataSymbol = "o", ...) {
+                     svSymbol = "x", dataSymbol = "o", ...)
+{
   if (x$type < 3) {
     if (is.null(formula) && ncol(data) == 3) {
       formula <- formula(delete.response(terms(x)))
       formula[2:3] <- formula[[2]][2:3]
     }
-    if(is.null(formula)) stop("missing formula.")
+    if (is.null(formula)) 
+      stop("missing formula.")
     if (fill) {
       sub <- model.frame(formula, data)
-      xr <- seq(min(sub[,2]), max(sub[,2]), length = grid)
-      yr <- seq(min(sub[,1]), max(sub[,1]), length = grid)
+      xr <- seq(min(sub[, 2]), max(sub[, 2]), length = grid)
+      yr <- seq(min(sub[, 1]), max(sub[, 1]), length = grid)
       l <- length(slice)
       if (l < ncol(data) - 3) {
         slnames <- names(slice)
-        slice <- c(slice, rep(list(0), ncol(data) - 3 - l))
+        slice <- c(slice, rep(list(0), ncol(data) - 3 - 
+                              l))
         names <- labels(delete.response(terms(x)))
-        names(slice) <- c(slnames, names[! names %in% c(colnames(sub), slnames)])
+        names(slice) <- c(slnames, names[!names %in% 
+                                         c(colnames(sub), slnames)])
       }
       lis <- c(list(yr), list(xr), slice)
       names(lis)[1:2] <- colnames(sub)
-      new <- expand.grid(lis)[,labels(terms(x))]
+      new <- expand.grid(lis)[, labels(terms(x))]
       preds <- predict(x, new)
-      filled.contour(xr, yr, matrix(as.numeric(preds), nr = length(xr), byrow=TRUE),
-                     plot.axes = {
-                       axis(1)
-                       axis(2)
-                       colind <- as.numeric(model.response(model.frame(x, data)))
-                       points(formula, data = data[-x$index,], pch = dataSymbol,
-                              col = symbolPalette[colind[-x$index]])
-                       points(formula, data = data[x$index,], pch = svSymbol,
-                              col = symbolPalette[colind[x$index]])
-                     },
-                     levels = 1:(length(unique(as.numeric(preds)))+1),
-                     key.axes = axis(4,
-                       1:length(unique(as.numeric(preds)))+0.5,
-                       labels = levels(preds), las = 3
-                       ),
-                     plot.title = title(main = "SVM classification plot",
-                       xlab = names(lis)[2], ylab = names(lis)[1]),
-                     ...
-                     )
-    } else {
+      filled.contour(xr, yr, matrix(as.numeric(preds), 
+                                    nr = length(xr), byrow = TRUE), plot.axes = {
+                                      axis(1)
+                                      axis(2)
+                                      colind <- as.numeric(model.response(model.frame(x, 
+                                                                                      data)))
+                                      dat1 <- data[-x$index,]
+                                      dat2 <- data[x$index,]
+                                      coltmp1 <- symbolPalette[colind[-x$index]]
+                                      coltmp2 <- symbolPalette[colind[x$index]]
+                                      points(formula, data = dat1, pch = dataSymbol, col = coltmp1)
+                                      points(formula, data = dat2, pch = svSymbol, col = coltmp2)
+                                    }, levels = 1:(length(unique(as.numeric(preds))) + 
+                                         1), key.axes = axis(4, 1:length(unique(as.numeric(preds))) + 
+                                               0.5, labels = levels(preds), las = 3), plot.title = title(main = "SVM classification plot", 
+                                                                                        xlab = names(lis)[2], ylab = names(lis)[1]), 
+                     ...)
+    }
+    else {
       plot(formula, data = data, type = "n", ...)
-      colind <- as.numeric(model.response(model.frame(x, data)))
-      points(formula, data = data[-x$index,], pch = dataSymbol,
-             col = symbolPalette[colind[-x$index]])
-      points(formula, data = data[x$index,], pch = svSymbol,
-             col = symbolPalette[colind[x$index]])
+      colind <- as.numeric(model.response(model.frame(x, 
+                                                      data)))
+      dat1 <- data[-x$index,]
+      dat2 <- data[x$index,]
+      coltmp1 <- symbolPalette[colind[-x$index]]
+      coltmp2 <- symbolPalette[colind[x$index]]
+      points(formula, data = dat1, pch = dataSymbol, col = coltmp1)
+      points(formula, data = dat2, pch = svSymbol, col = coltmp2)
       invisible()
     }
   }
