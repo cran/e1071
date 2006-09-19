@@ -3,8 +3,8 @@
 \alias{lines.probplot}
 \title{Probability Plot}
 \description{
-  Generates a probability plot for a ,specified theoretical
-  distributions, i.e., basically a
+  Generates a probability plot for a specified theoretical
+  distribution, i.e., basically a
   \code{\link[graphics]{qqplot}} where the y-axis is labeled with
   probabilities instead
   of quantiles. The function

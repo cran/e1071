@@ -1,7 +1,12 @@
+Changes in Version 1.5-14
+
+  o predict.naiveBayes sped up
+  o Bug fix in plot.svm (error in case of training categories without predictions)
+  o methods now added to `Suggests:', and grDevices to imports
+
 Changes in Version 1.5-13
 
-  o Bug fix: Handling of sparse matrices in svm() was broken since 1.5-9
-  
+  o Bug fix: sparse handling was broken since 1.5-9
 
 Changes in Version 1.5-12
 

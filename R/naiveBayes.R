@@ -102,8 +102,9 @@ predict.naiveBayes <- function(object,
   type <- match.arg(type)
   nattribs <- ncol(newdata)
   isnumeric <- sapply(newdata, is.numeric)
+  newdata <- data.matrix(newdata)
   L <- sapply(1:nrow(newdata), function(i) {
-    ndata <- as.numeric(newdata[i,])
+    ndata <- newdata[i,]
     L <- log(object$apriori) + 
       apply(log(sapply(1:nattribs, function(v) {
         nd <- ndata[v]

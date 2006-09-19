@@ -42,7 +42,7 @@ matchControls <- function(formula, data = list(), subset,
         }
     }
 
-    d <- as.matrix(as.dist(cluster::daisy(m1[,-1,drop=FALSE])))
+    d <- as.matrix(as.dist(cluster:::daisy(m1[,-1,drop=FALSE])))
 
     which.is.min <- function (x) {
         y <- seq(length(x))[(x == min(x, na.rm = TRUE)) & !is.na(x)]

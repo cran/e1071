@@ -2,8 +2,11 @@ useDynLib(e1071)
 
 import(graphics)
 import(stats)
+import(grDevices)
 
 importFrom(class, knn, knn1)
+if(package_version(R.Version()) >= "2.5.0")
+    importFrom(utils, write.table)
 
 export(ddiscrete, pdiscrete, qdiscrete, rdiscrete, bclust,
        hclust.bclust, centers.bclust, clusters.bclust, bincombinations,

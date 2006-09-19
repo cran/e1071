@@ -139,10 +139,12 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
         else
           train.y[-train.ind[[sample]]]
         
-        repeat.errors[reps] <- if (is.factor(true.y)) ## classification error
+        repeat.errors[reps] <- if (is.factor(true.y) && is.factor(pred)) ## classification error
           1 - classAgreement(table(pred, true.y))
-        else ## mean squared error
+        else if (is.numeric(true.y) && is.numeric(pred)) ## mean squared error
           crossprod(pred - true.y) / length(pred)
+        else
+          stop("Dependent variable has wrong type!")
       }
       sampling.errors[sample] <- tunecontrol$repeat.aggregate(repeat.errors)
     }
