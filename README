@@ -1,38 +1,20 @@
 This package contains miscellaneous functions used at the Department
 of Statistics at TU Wien (E1071) for which we don't know a better
-place (i.e., a special package) where to put them.
-
-Authors:
-Evgenia.Dimitriadou@ci.tuwien.ac.at	
-Kurt.Hornik@ci.tuwien.ac.at
-Friedrich.Leisch@ci.tuwien.ac.at	 
-David.Meyer@ci.tuwien.ac.at
-Andreas.Weingessel@ci.tuwien.ac.at
-
-Please do not hesitate to send any comments or bug reports to one of
-the authors.
+place (i.e., a special package) where to put them. Please do not
+hesitate to send any comments or bug reports to one of the authors
+(see help pages of the respective functions).
 
 Copyright
 ---------
 
 All of this software (except the SVM C++ code) is copyrighted by the
-list of authors given above and subject to the GNU GENERAL PUBLIC LICENSE,
-Version 2 or newer, see the file COPYING for details. The SVM C++ code
-is copyright Chih-Chung Chang and Chih-Jen Lin, see the file
-COPYRIGHT.svm.cpp for details.
+list of authors in the DESCRIPTION file of the package and subject to
+the GNU GENERAL PUBLIC LICENSE, Version 2 or newer, see the file
+COPYING for details. The SVM C++ code is copyright Chih-Chung Chang
+and Chih-Jen Lin, see the file COPYRIGHT.svm.cpp for details.
 
 Installation
 ------------
 
 This package should be installed using the `R CMD INSTALL' mechanism, see
 the R online help or R manuals for details on how to install packages.
-
-=====================================================================
-                         Friedrich  Leisch                             
- Institut f. Statistik                      Tel: (+43 1) 58801 10715
- Technische Universitaet Wien               Fax: (+43 1) 58801 10798
- Wiedner Hauptstrasse 8-10/101      Friedrich.Leisch@ci.tuwien.ac.at
- A-1040 Wien, Austria             http://www.ci.tuwien.ac.at/~leisch
-=====================================================================
-
-

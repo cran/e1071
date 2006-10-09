@@ -1,12 +1,30 @@
+Changes in Version 1.5-16
+
+  o write.svm now also stores the scaling information for the dependent 
+    variable
+
+  o data sets Glass, HouseVotes84, and Ozone removed (are in package mlbench)
+
+  o merged help pages for naiveBayes and predict.naiveBayes
+
+
+Changes in Version 1.5-15
+
+  o Bug in NAMESPACE-file fixed (conditional import from utils failed in 
+    R 2.3.1).
+
+
 Changes in Version 1.5-14
 
   o predict.naiveBayes sped up
   o Bug fix in plot.svm (error in case of training categories without predictions)
   o methods now added to `Suggests:', and grDevices to imports
 
+
 Changes in Version 1.5-13
 
   o Bug fix: sparse handling was broken since 1.5-9
+
 
 Changes in Version 1.5-12
 

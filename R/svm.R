@@ -564,7 +564,8 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
   }
 }
 
-write.svm <- function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale") {
+write.svm <- function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale",
+                       yscale.file = "Rdata.yscale") {
 
   ret <- .C ("svmwrite",
              # model
@@ -595,7 +596,12 @@ write.svm <- function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale")
              PACKAGE = "e1071"
             )$ret
 
-   write.table(data.frame(center = object$x.scale$"scaled:center",
-                          scale  = object$x.scale$"scaled:scale"),
-               file=scale.file, col.names=FALSE, row.names=FALSE)
+  write.table(data.frame(center = object$x.scale$"scaled:center",
+                         scale  = object$x.scale$"scaled:scale"),
+              file=scale.file, col.names=FALSE, row.names=FALSE)
+  
+  if (!is.null(object$y.scale))
+    write.table(data.frame(center = object$y.scale$"scaled:center",
+                           scale  = object$y.scale$"scaled:scale"),
+                file=yscale.file, col.names=FALSE, row.names=FALSE)
 }

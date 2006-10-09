@@ -141,7 +141,7 @@ We start by splitting the data into a train and test set:
 <<>>=
 library(e1071)
 library(rpart)
-data(Glass)
+data(Glass, package="mlbench")
 
 ## split data into a train and test set
 index     <- 1:nrow(Glass)
@@ -227,7 +227,7 @@ into a train and test set.
 <<>>=
 library(e1071)
 library(rpart)
-data(Ozone)
+data(Ozone, package="mlbench")
 
 ## split data into a train and test set
 index     <- 1:nrow(Ozone)

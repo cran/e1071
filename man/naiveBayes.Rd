@@ -3,6 +3,7 @@
 \alias{naiveBayes.default}
 \alias{naiveBayes.formula}
 \alias{print.naiveBayes}
+\alias{predict.naiveBayes}
 \title{Naive Bayes Classifier}
 \description{
   Computes the conditional a-posterior probabilities of a categorical
@@ -10,8 +11,13 @@
   the Bayes rule.
 }
 \usage{
-\method{naiveBayes}{formula}(formula, data, laplace = 0, ..., subset, na.action = na.pass)
-\method{naiveBayes}{default}(x, y, laplace = 0, ...)
+\S3method{naiveBayes}{formula}(formula, data, laplace = 0, ..., subset, na.action = na.pass)
+\S3method{naiveBayes}{default}(x, y, laplace = 0, ...)
+
+
+\S3method{predict}{naiveBayes}(object, newdata,
+  type = c("class", "raw"), threshold = 0.001, ...)
+
 }
 \arguments{
   \item{x}{A numeric matrix, or a data frame of categorical and/or
@@ -34,6 +40,12 @@
           alternative is na.omit, which leads to rejection of cases
           with missing values on any required variable.  (NOTE: If
           given, this argument must be named.)}
+  \item{object}{An object of class \code{"naiveBayes"}.}
+  \item{newdata}{A dataframe with new predictors.}
+  \item{type}{If \code{"raw"}, the conditional a-posterior
+    probabilities for each class are returned, and the class with
+    maximal probability else.}
+  \item{threshold}{Value replacing cells with 0 probabilities.}
 }
 \value{
   An object of class \code{"naiveBayes"} including components:
@@ -49,14 +61,16 @@
 \details{
   The standard naive Bayes classifier (at least this implementation)
   assumes independence of the predictor
-  variables, and gaussian distribution (given the target class) of metric predictors.
+  variables, and Gaussian distribution (given the target class) of
+  metric predictors.
+  For attributes with missing values, the
+  corresponding table entries are omitted for prediction.
   }
 \author{David Meyer \email{David.Meyer@R-project.org}. Laplace smoothing
 enhancement by Jinghao Xue.}
-\seealso{\code{\link{predict.naiveBayes}}}
 \examples{
 ## Categorical data only:
-data(HouseVotes84)
+data(HouseVotes84, package="mlbench")
 model <- naiveBayes(Class ~ ., data = HouseVotes84)
 predict(model, HouseVotes84[1:10,-1])
 predict(model, HouseVotes84[1:10,-1], type = "raw")
