@@ -1,3 +1,10 @@
+Changes in Version 1.5-17
+
+  o tune() now also returns a dispersion measure of all training samples. 
+    Bootstrap is done *with* replacement.
+
+  o tune.svm now also accepts the epsilon-parameter
+
 Changes in Version 1.5-16
 
   o write.svm now also stores the scaling information for the dependent 

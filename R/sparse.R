@@ -82,8 +82,9 @@ write.matrix.csr <- function (x, file="out.dat", y=NULL) {
   sink(file)
   for (i in 1:nrow(x)) {
     if (!is.null(y)) cat (y[i],"")
-    for (j in x@ia[i]:(x@ia[i+1] - 1))
-      cat(x@ja[j], ":", x@ra[j], " ", sep="")
+    if (x@ia[i] <= nrow(x)) 
+      for (j in x@ia[i]:(x@ia[i+1] - 1))
+        cat(x@ja[j], ":", x@ra[j], " ", sep="")
     cat("\n")
   }
 }

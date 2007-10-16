@@ -5,7 +5,7 @@ svm.formula <-
 function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
 {
   call <- match.call()
-  if (!inherits(formula, "formula")) 
+  if (!inherits(formula, "formula"))
     stop("method is only for formula objects")
   m <- match.call(expand.dots = FALSE)
   if (identical(class(eval.parent(m$data)), "matrix"))
@@ -33,7 +33,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
   ret$call <- call
   ret$call[[1]] <- as.name("svm")
   ret$terms <- Terms
-  if (!is.null(attr(m, "na.action"))) 
+  if (!is.null(attr(m, "na.action")))
     ret$na.action <- attr(m, "na.action")
   class(ret) <- c("svm.formula", class(ret))
   return (ret)
@@ -73,11 +73,11 @@ function (x,
   if(is.null(nu)) stop("`nu' must not be NULL!")
   if(is.null(epsilon)) stop("`epsilon' must not be NULL!")
   if(is.null(tolerance)) stop("`tolerance' must not be NULL!")
-  
+
   xhold   <- if (fitted) x else NA
   x.scale <- y.scale <- NULL
   formula <- inherits(x, "svm.formula")
-  
+
   ## determine model type
   if (is.null(type)) type <-
     if (is.null(y)) "one-classification"
@@ -91,7 +91,7 @@ function (x,
                          "nu-regression"), 99) - 1
 
   if (type > 10) stop("wrong type specification!")
-  
+
   kernel <- pmatch(kernel, c("linear",
                              "polynomial",
                              "radial",
@@ -105,7 +105,7 @@ function (x,
   if (sparse) {
     scale <- rep(FALSE, ncol(x))
     if(!is.null(y)) na.fail(y)
-    x <- t(t(x)) ## make shure that col-indices are sorted
+    x <- SparseM::t(SparseM::t(x)) ## make shure that col-indices are sorted
   } else {
     x <- as.matrix(x)
 
@@ -198,8 +198,8 @@ function (x,
 
               # sparse index info
               as.integer (if (sparse) x@ia else 0),
-              as.integer (if (sparse) x@ja else 0), 
-              
+              as.integer (if (sparse) x@ja else 0),
+
               # parameters
               as.integer (type),
               as.integer (kernel),
@@ -220,7 +220,7 @@ function (x,
               as.integer (probability),
 
               # results
-              nclasses = integer  (1), 
+              nclasses = integer  (1),
               nr       = integer  (1), # nr of support vectors
               index    = integer  (nr),
               labels   = integer  (nclass),
@@ -230,7 +230,7 @@ function (x,
               sigma    = double   (1),
               probA    = double   (nclass * (nclass - 1) / 2),
               probB    = double   (nclass * (nclass - 1) / 2),
-              
+
               cresults = double   (cross),
               ctotal1  = double   (1),
               ctotal2  = double   (1),
@@ -255,13 +255,14 @@ function (x,
                scaled   = scale,
                x.scale  = x.scale,
                y.scale  = y.scale,
-               
+
                nclasses = cret$nclasses,            #number of classes
                levels   = lev,
                tot.nSV  = cret$nr,                  #total number of sv
                nSV      = cret$nSV[1:cret$nclasses],#number of SV in diff. classes
                labels   = cret$label[1:cret$nclasses],#labels of the SVs.
-               SV       = t(t(x[cret$index[1:cret$nr],])), #copy of SV
+               SV       = if (sparse) SparseM::t(SparseM::t(x[cret$index[1:cret$nr],]))
+               else t(t(x[cret$index[1:cret$nr],])), #copy of SV
                index    = cret$index[1:cret$nr],     #indexes of sv in x
                #constants in decision functions
                rho      = cret$rho[1:(cret$nclasses * (cret$nclasses - 1) / 2)],
@@ -281,7 +282,7 @@ function (x,
               )
 
   # cross-validation-results
-  if (cross > 0)    
+  if (cross > 0)
     if (type > 2) {
       scale.factor     <- if (any(scale)) crossprod(y.scale$"scaled:scale") else 1;
       ret$MSE          <- cret$cresults * scale.factor;
@@ -298,9 +299,9 @@ function (x,
     ret$fitted <- na.action(predict(ret, xhold))
     if (type > 1) ret$residuals <- y - ret$fitted
   }
-  
+
   ret
-} 
+}
 
 predict.svm <- function (object, newdata,
                          decision.values = FALSE,
@@ -318,7 +319,10 @@ predict.svm <- function (object, newdata,
     library("SparseM")
 
   act <- NULL
-  if ((is.vector(newdata) && is.atomic(newdata)) || sparse) newdata <- t(t(newdata))
+  if ((is.vector(newdata) && is.atomic(newdata)))
+      newdata <- t(t(newdata))
+  if (sparse)
+      newdata <- SparseM::t(SparseM::t(newdata))
   preprocessed <- !is.null(attr(newdata, "na.action"))
   rowns <- if (!is.null(rownames(newdata)))
     rownames(newdata)
@@ -341,7 +345,7 @@ predict.svm <- function (object, newdata,
 
   if (!is.null(act) && !preprocessed)
     rowns <- rowns[-act]
-  
+
   if (any(object$scaled))
     newdata[,object$scaled] <-
       scale(newdata[,object$scaled, drop = FALSE],
@@ -354,7 +358,7 @@ predict.svm <- function (object, newdata,
   ret <- .C ("svmpredict",
              as.integer (decision.values),
              as.integer (probability),
-             
+
              # model
              as.double  (if (object$sparse) object$SV@ra else t(object$SV)),
              as.integer (nrow(object$SV)), as.integer(ncol(object$SV)),
@@ -370,7 +374,7 @@ predict.svm <- function (object, newdata,
              as.integer (object$labels),
              as.integer (object$nSV),
              as.integer (object$sparse),
-             
+
              # parameter
              as.integer (object$type),
              as.integer (object$kernel),
@@ -384,7 +388,7 @@ predict.svm <- function (object, newdata,
              as.integer (if (sparse) newdata@ia else 0),
              as.integer (if (sparse) newdata@ja else 0),
              as.integer (sparse),
-             
+
              # decision-values
              ret = double(nrow(newdata)),
              dec = double(nrow(newdata) * object$nclasses * (object$nclasses - 1) / 2),
@@ -396,7 +400,7 @@ predict.svm <- function (object, newdata,
   ret2 <- if (is.character(object$levels)) # classification: return factors
     factor (object$levels[ret$ret], levels = object$levels)
   else if (object$type == 2) # one-class-classification: return TRUE/FALSE
-    ret$ret == 1 
+    ret$ret == 1
   else if (any(object$scaled) && !is.null(object$y.scale)) # return raw values, possibly scaled back
     ret$ret * object$y.scale$"scaled:scale" + object$y.scale$"scaled:center"
   else
@@ -404,7 +408,7 @@ predict.svm <- function (object, newdata,
 
   names(ret2) <- rowns
   ret2 <- napredict(act, ret2)
-  
+
   if (decision.values) {
     colns = c()
     for (i in 1:(object$nclasses - 1))
@@ -456,10 +460,10 @@ print.svm <- function (x, ...) {
     if (x$compprob)
       cat("Sigma: ", x$sigma, "\n\n")
   }
-  
+
   cat("\nNumber of Support Vectors: ", x$tot.nSV)
   cat("\n\n")
-  
+
 }
 
 summary.svm <- function(object, ...)
@@ -510,7 +514,7 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
       formula <- formula(delete.response(terms(x)))
       formula[2:3] <- formula[[2]][2:3]
     }
-    if (is.null(formula)) 
+    if (is.null(formula))
       stop("missing formula.")
     if (fill) {
       sub <- model.frame(formula, data)
@@ -519,12 +523,22 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
       l <- length(slice)
       if (l < ncol(data) - 3) {
         slnames <- names(slice)
-        slice <- c(slice, rep(list(0), ncol(data) - 3 - 
+        slice <- c(slice, rep(list(0), ncol(data) - 3 -
                               l))
         names <- labels(delete.response(terms(x)))
-        names(slice) <- c(slnames, names[!names %in% 
+        names(slice) <- c(slnames, names[!names %in%
                                          c(colnames(sub), slnames)])
       }
+      for (i in names(which(sapply(data, is.factor))))
+        if (!is.factor(slice[[i]])) {
+          levs <- levels(data[[i]])
+          lev <- if (is.character(slice[[i]])) slice[[i]] else levs[1]
+          fac <- factor(lev, levels = levs)
+          if (is.na(fac))
+            stop(paste("Level", dQuote(lev), "could not be found in factor", sQuote(i)))
+          slice[[i]] <- fac
+        }
+
       lis <- c(list(yr), list(xr), slice)
       names(lis)[1:2] <- colnames(sub)
       new <- expand.grid(lis)[, labels(terms(x))]
@@ -545,13 +559,13 @@ plot.svm <- function(x, data, formula = NULL, fill = TRUE,
                      key.axes = axis(4, 1:(length(levels(preds))) + 0.5,
                        labels = levels(preds),
                        las = 3),
-                     plot.title = title(main = "SVM classification plot", 
-                       xlab = names(lis)[2], ylab = names(lis)[1]), 
+                     plot.title = title(main = "SVM classification plot",
+                       xlab = names(lis)[2], ylab = names(lis)[1]),
                      ...)
     }
     else {
       plot(formula, data = data, type = "n", ...)
-      colind <- as.numeric(model.response(model.frame(x, 
+      colind <- as.numeric(model.response(model.frame(x,
                                                       data)))
       dat1 <- data[-x$index,]
       dat2 <- data[x$index,]
@@ -582,7 +596,7 @@ write.svm <- function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale",
              as.integer (object$labels),
              as.integer (object$nSV),
              as.integer (object$sparse),
-             
+
              # parameter
              as.integer (object$type),
              as.integer (object$kernel),
@@ -599,7 +613,7 @@ write.svm <- function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale",
   write.table(data.frame(center = object$x.scale$"scaled:center",
                          scale  = object$x.scale$"scaled:scale"),
               file=scale.file, col.names=FALSE, row.names=FALSE)
-  
+
   if (!is.null(object$y.scale))
     write.table(data.frame(center = object$y.scale$"scaled:center",
                            scale  = object$y.scale$"scaled:scale"),

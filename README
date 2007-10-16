@@ -7,11 +7,11 @@ hesitate to send any comments or bug reports to one of the authors
 Copyright
 ---------
 
-All of this software (except the SVM C++ code) is copyrighted by the
+All of this software is copyrighted by the
 list of authors in the DESCRIPTION file of the package and subject to
-the GNU GENERAL PUBLIC LICENSE, Version 2 or newer, see the file
+the GNU GENERAL PUBLIC LICENSE, Version 2, see the file
 COPYING for details. The SVM C++ code is copyright Chih-Chung Chang
-and Chih-Jen Lin, see the file COPYRIGHT.svm.cpp for details.
+and Chih-Jen Lin.
 
 Installation
 ------------

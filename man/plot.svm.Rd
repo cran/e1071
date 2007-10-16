@@ -8,7 +8,7 @@
   vectors. Optionally, draws a filled contour plot of the class regions.
 }
 \usage{
-plot.svm(x, data, formula, fill = TRUE, grid = 50, slice = list(),
+\method{plot}{svm}(x, data, formula, fill = TRUE, grid = 50, slice = list(),
 symbolPalette = palette(), svSymbol = "x", dataSymbol = "o", ...)
 }
 %- maybe also `usage' for other objects documented here.
@@ -20,9 +20,11 @@ symbolPalette = palette(), svSymbol = "x", dataSymbol = "o", ...)
   \item{fill}{switch indicating whether a contour plot for the class
     regions should be added.}
   \item{grid}{granularity for the contour plot.}
-  \item{slice}{a list of named numeric values for the dimensions held
+  \item{slice}{a list of named values for the dimensions held
     constant (only needed if more than two variables are
-    used). Dimensions not specified are fixed at 0.}
+    used). The defaults for unspecified dimensions are 0 (for numeric
+    variables) and the first level (for factors). Factor levels can
+    either be specified as factors or character vectors of length 1.}
   \item{symbolPalette}{Color palette used for the class the data points and support
     vectors belong to.}
   \item{svSymbol}{Symbol used for support vectors.}

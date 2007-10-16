@@ -15,7 +15,7 @@
 }
 \usage{
 tune.svm(x, y = NULL, data = NULL, degree = NULL, gamma = NULL, coef0 = NULL,
-         cost = NULL, nu = NULL, class.weights = NULL, ...)
+         cost = NULL, nu = NULL, class.weights = NULL, epsilon = NULL, ...)
 best.svm(x, tunecontrol = tune.control(), ...)
  
 tune.nnet(x, y = NULL, data = NULL, size = NULL, decay = NULL,
@@ -42,7 +42,7 @@ tune.knn(x, y, k = NULL, l = NULL, ...)
   \item{minsplit, minbucket, cp, maxcompete,
         maxsurrogate, usesurrogate, xval,
         surrogatestyle, maxdepth}{\code{rpart} parameters.}
-  \item{degree, gamma, coef0, cost, nu, class.weights}{\code{svm}
+  \item{degree, gamma, coef0, cost, nu, class.weights, epsilon}{\code{svm}
     parameters.}
   \item{k, l}{\code{knn} parameters.}
   \item{mtry, nodesize, ntree}{\code{randomForest} parameters.}

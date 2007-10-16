@@ -3,6 +3,7 @@ tune.control <- function(random = FALSE,
                          repeat.aggregate = min,
                          sampling = c("cross", "fix", "bootstrap"),
                          sampling.aggregate = mean,
+                         sampling.dispersion = sd,
                          cross = 10,
                          fix = 2 / 3,
                          nboot = 10,
@@ -14,6 +15,7 @@ tune.control <- function(random = FALSE,
                  repeat.aggregate = repeat.aggregate,
                  sampling = match.arg(sampling),
                  sampling.aggregate = sampling.aggregate,
+                 sampling.dispersion = sampling.dispersion,
                  cross = cross,
                  fix = fix,
                  nboot = nboot,
@@ -74,7 +76,8 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   else if (tunecontrol$sampling == "fix")
     list(perm.ind[1:trunc(n * tunecontrol$fix)])
   else ## bootstrap
-    lapply(1:tunecontrol$nboot, function(x) sample(n, n * tunecontrol$boot.size))
+    lapply(1:tunecontrol$nboot,
+           function(x) sample(n, n * tunecontrol$boot.size, replace = TRUE))
 
   ## find best model
   parameters <- if (is.null(ranges))
@@ -88,7 +91,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
     if (tunecontrol$random > p) tunecontrol$random <- p
     parameters <- parameters[sample(1:p, tunecontrol$random),]
   }
-  model.errors <- c()
+  model.variances <- model.errors <- c()
 
   ## - loop over all models
   for (para.set in 1:p) {
@@ -139,7 +142,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
         else
           train.y[-train.ind[[sample]]]
         
-        repeat.errors[reps] <- if (is.factor(true.y) && is.factor(pred)) ## classification error
+        repeat.errors[reps] <- if (is.factor(true.y) && (is.factor(pred) || is.character(pred))) ## classification error
           1 - classAgreement(table(pred, true.y))
         else if (is.numeric(true.y) && is.numeric(pred)) ## mean squared error
           crossprod(pred - true.y) / length(pred)
@@ -149,6 +152,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
       sampling.errors[sample] <- tunecontrol$repeat.aggregate(repeat.errors)
     }
     model.errors[para.set] <- tunecontrol$sampling.aggregate(sampling.errors)
+    model.variances[para.set] <- tunecontrol$sampling.dispersion(sampling.errors)
   }
 
   ## return results
@@ -169,7 +173,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                    cross = if (tunecontrol$cross == n) "leave-one-out" else
                            paste(tunecontrol$cross,"-fold cross validation", sep="")
                    ),
-                 performances     = if (tunecontrol$performances) cbind(parameters, error = model.errors),
+                 performances     = if (tunecontrol$performances) cbind(parameters, error = model.errors, dispersion = model.variances),
                  best.model       = if (tunecontrol$best.model) {
                    modeltmp <- if (useFormula) 
                      do.call(method, c(list(train.x, data = data),
@@ -240,17 +244,17 @@ plot.tune <- function(x,
                       nlevels = 20,
                       ...)
 {
-  if (is.null(x$performance))
+  if (is.null(x$performances))
     stop("Object does not contain detailed performance measures!")
-  k <- ncol(x$performance) 
-  if (k > 3) stop("Cannot visualize more than 2 parameters")
+  k <- ncol(x$performances) 
+  if (k > 4) stop("Cannot visualize more than 2 parameters")
   type = match.arg(type)
 
   if (is.null(main))
     main <- paste("Performance of `",x$method, "'", sep="")
   
-  if (k == 2)
-    plot(x$performances, type = "b", main = main)
+  if (k == 3)
+    plot(x$performances[,1:2], type = "b", main = main)
   else  {
     if (!is.null(transform.x))
       x$performances[,1] <- transform.x(x$performances[,1])
@@ -260,7 +264,7 @@ plot.tune <- function(x,
       x$performances[,3] <- transform.z(x$performances[,3])
     if (swapxy)
       x$performances[,1:2] <- x$performances[,2:1]
-    x <- xtabs(error~., data = x$performances)
+    x <- xtabs(error~., data = x$performances[,-k])
     if (is.null(xlab)) xlab <- names(dimnames(x))[1 + swapxy]
     if (is.null(ylab)) ylab <- names(dimnames(x))[2 - swapxy]
     if (type == "perspective")
@@ -293,11 +297,13 @@ plot.tune <- function(x,
 #############################################
 
 tune.svm <- function(x, y = NULL, data = NULL, degree = NULL, gamma = NULL,
-    coef0 = NULL, cost = NULL, nu = NULL, class.weights = NULL, ...) {
+                     coef0 = NULL, cost = NULL, nu = NULL, class.weights = NULL,
+                     epsilon = NULL, ...) {
   call <- match.call()
   call[[1]] <- as.symbol("best.svm")
   ranges <- list(degree = degree, gamma = gamma,
-    coef0 = coef0, cost = cost, nu = nu, class.weights = class.weights)
+                 coef0 = coef0, cost = cost, nu = nu,
+                 class.weights = class.weights, epsilon = epsilon)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
     ranges = NULL

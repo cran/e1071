@@ -113,6 +113,7 @@ predict.naiveBayes <- function(object,
         else {
           prob <- if (isnumeric[v]) {
             msd <- object$tables[[v]]
+	    msd[,2][msd[,2]==0] <-  threshold
             dnorm(nd, msd[,1], msd[,2])
           } else
             object$tables[[v]][,nd]

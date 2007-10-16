@@ -1,6 +1,6 @@
 Package: e1071
-Version: 1.5-16
-Date: 2006-10-09
+Version: 1.5-17
+Date: 2007-10-16
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
 Depends: class
 Imports: graphics, stats, grDevices, utils
@@ -12,7 +12,7 @@ Description: Functions for latent class analysis, short time Fourier
 	     transform, fuzzy clustering, support vector machines,
 	     shortest path computation, bagged clustering, naive Bayes
 	     classifier, ...
-License: GPL-2.  See COPYRIGHT.svm.cpp for the copyright of the svm C++ code.
+License: GPL-2
 SaveImage: no
 LazyLoad: yes
-Packaged: Mon Oct  9 18:39:10 2006; leisch
+Packaged: Fri Oct 19 12:36:40 2007; hornik

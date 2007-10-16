@@ -8,6 +8,7 @@
 \usage{
 tune.control(random = FALSE, nrepeat = 1, repeat.aggregate = min,
 sampling = c("cross", "fix", "bootstrap"), sampling.aggregate = mean,
+sampling.dispersion = sd,
 cross = 10, fix = 2/3, nboot = 10, boot.size = 9/10, best.model = TRUE,
 performances = TRUE)
 }
@@ -19,15 +20,16 @@ performances = TRUE)
   \item{sampling}{sampling scheme. If \code{sampling = "cross"}, a
     \code{cross}-times cross validation is performed. If \code{sampling
       = "boot"}, \code{nboot} training sets of size \code{boot.size} (part)
-    are sampled from the supplied data. If \code{sampling
+    are sampled (with replacement) from the supplied data. If \code{sampling
       = "fix"}, a single split into training/validation set is
     used, the training set containing a \code{fix} part of the supplied
     data. Note that a separate validation set can be supplied via
     \code{validation.x} and \code{validation.y}. It is only used for
     \code{sampling = "boot"} and \code{sampling = "fix"}; in the latter
     case, \code{fix} is set to 1.}
-  \item{sampling.aggregate}{function for aggregating the training
-    results on the generated training samples.}
+  \item{sampling.aggregate,sampling.dispersion}{functions for aggregating the training
+    results on the generated training samples (default: mean and
+    standard deviation).}
   \item{cross}{number of partitions for cross-validation.}
   \item{fix}{part of the data used for training in fixed sampling.}
   \item{nboot}{number of bootstrap replications.}

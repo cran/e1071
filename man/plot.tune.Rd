@@ -6,7 +6,7 @@
   Visualizes the results of parameter tuning.
 }
 \usage{
-plot.tune(x, type = c("contour", "perspective"), theta = 60,
+\method{plot}{tune}(x, type = c("contour", "perspective"), theta = 60,
           col = "lightblue", main = NULL, xlab = NULL, ylab = NULL,
           swapxy = FALSE, transform.x = NULL, transform.y = NULL,
           transform.z = NULL, color.palette = hsv_palette(),
