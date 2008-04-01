@@ -1,3 +1,7 @@
+Changes in Verions 1.5-18
+
+  o Improve DESCRIPTION install metadata.
+
 Changes in Version 1.5-17
 
   o tune() now also returns a dispersion measure of all training samples. 

@@ -26,7 +26,7 @@ tune.control <- function(random = FALSE,
             class = "tune.control"
             )
 }
-                         
+
 tune <- function(method, train.x, train.y = NULL, data = list(),
                  validation.x = NULL, validation.y = NULL,
                  ranges = NULL, predict.func = predict,
@@ -34,7 +34,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                  ...
                  ) {
   call <- match.call()
-  
+
   ## internal helper functions
   resp <- function(formula, data)
     model.response(model.frame(formula, data))
@@ -50,7 +50,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
     }
     p0
   }
-  
+
   ## parameter handling
   if (tunecontrol$sampling == "cross")
     validation.x <- validation.y <- NULL
@@ -60,7 +60,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   if (is.vector(train.x)) train.x <- t(t(train.x))
   if (is.data.frame(train.y))
     train.y <- as.matrix(train.y)
-  
+
   ## prepare training indices
   if (!is.null(validation.x)) tunecontrol$fix <- 1
   n <- nrow(if (useFormula) data else train.x)
@@ -70,7 +70,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
       stop("`cross' must not exceed sampling size!")
     if (tunecontrol$cross == 1)
       stop("`cross' must be greater than 1!")
-  }  
+  }
   train.ind <- if (tunecontrol$sampling == "cross")
     tapply(1:n, cut(1:n, breaks = tunecontrol$cross), function(x) perm.ind[-x])
   else if (tunecontrol$sampling == "fix")
@@ -96,11 +96,11 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   ## - loop over all models
   for (para.set in 1:p) {
     sampling.errors <- c()
-    
+
     ## - loop over all training samples
     for (sample in 1:length(train.ind)) {
       repeat.errors <- c()
-      
+
       ## - repeat training `nrepeat' times
       for (reps in 1:tunecontrol$nrepeat) {
 
@@ -109,15 +109,15 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
           NULL
         else
           lapply(parameters[para.set,,drop = FALSE], unlist)
-        
-        model <- if (useFormula) 
+
+        model <- if (useFormula)
           do.call(method, c(list(train.x,
                                  data = data,
-                                 subset = train.ind[[sample]]), 
+                                 subset = train.ind[[sample]]),
                             pars, list(...)
                             )
                   )
-        else 
+        else
           do.call(method, c(list(train.x[train.ind[[sample]],],
                                  y = train.y[train.ind[[sample]]]),
                             pars, list(...)
@@ -130,10 +130,10 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                           validation.x
                         else if (useFormula)
                           data[-train.ind[[sample]],,drop = FALSE]
-                        else 
+                        else
                           train.x[-train.ind[[sample]],,drop = FALSE]
                         )
-        
+
         ## compute performance measure
         true.y <- if (!is.null(validation.y))
           validation.y
@@ -141,7 +141,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
           resp(train.x, data[-train.ind[[sample]],])
         else
           train.y[-train.ind[[sample]]]
-        
+
         repeat.errors[reps] <- if (is.factor(true.y) && (is.factor(pred) || is.character(pred))) ## classification error
           1 - classAgreement(table(pred, true.y))
         else if (is.numeric(true.y) && is.numeric(pred)) ## mean squared error
@@ -175,10 +175,10 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                    ),
                  performances     = if (tunecontrol$performances) cbind(parameters, error = model.errors, dispersion = model.variances),
                  best.model       = if (tunecontrol$best.model) {
-                   modeltmp <- if (useFormula) 
+                   modeltmp <- if (useFormula)
                      do.call(method, c(list(train.x, data = data),
                                        pars, list(...)))
-                   else 
+                   else
                      do.call(method, c(list(x = train.x,
                                             y = train.y),
                                        pars, list(...)))
@@ -246,13 +246,13 @@ plot.tune <- function(x,
 {
   if (is.null(x$performances))
     stop("Object does not contain detailed performance measures!")
-  k <- ncol(x$performances) 
+  k <- ncol(x$performances)
   if (k > 4) stop("Cannot visualize more than 2 parameters")
   type = match.arg(type)
 
   if (is.null(main))
     main <- paste("Performance of `",x$method, "'", sep="")
-  
+
   if (k == 3)
     plot(x$performances[,1:2], type = "b", main = main)
   else  {
@@ -315,7 +315,7 @@ tune.svm <- function(x, y = NULL, data = NULL, degree = NULL, gamma = NULL,
     modeltmp$best.model$call <- call
   modeltmp
 }
-  
+
 best.svm <- function(x, tunecontrol = tune.control(), ...) {
   call <- match.call()
   tunecontrol$best.model = TRUE
@@ -376,7 +376,7 @@ tune.randomForest <- function(x, y = NULL, data = NULL, nodesize = NULL, mtry = 
     modeltmp$best.model$call <- call
   modeltmp
 }
-  
+
 best.randomForest <- function(x, tunecontrol = tune.control(), ...) {
   call <- match.call()
   tunecontrol$best.model = TRUE
@@ -400,9 +400,9 @@ tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
        ...)
 }
 
-rpart.wrapper <- function(formula, minsplit=20, minbucket=round(minsplit/3), cp=0.01, 
+rpart.wrapper <- function(formula, minsplit=20, minbucket=round(minsplit/3), cp=0.01,
                    maxcompete=4, maxsurrogate=5, usesurrogate=2, xval=10,
-                   surrogatestyle=0, maxdepth=30, ...) 
+                   surrogatestyle=0, maxdepth=30, ...)
   rpart::rpart(formula,
                control = rpart::rpart.control(minsplit=minsplit, minbucket=minbucket,
                  cp=cp, maxcompete=maxcompete, maxsurrogate=maxsurrogate,
@@ -412,7 +412,7 @@ rpart.wrapper <- function(formula, minsplit=20, minbucket=round(minsplit/3), cp=
                )
 
 tune.rpart <- function(formula, data, na.action = na.omit,
-                       minsplit=NULL, minbucket=NULL, cp=NULL, 
+                       minsplit=NULL, minbucket=NULL, cp=NULL,
                        maxcompete=NULL, maxsurrogate=NULL, usesurrogate=NULL, xval=NULL,
                        surrogatestyle=NULL, maxdepth=NULL,
                        predict.func = NULL,
@@ -420,25 +420,25 @@ tune.rpart <- function(formula, data, na.action = na.omit,
   call <- match.call()
   call[[1]] <- as.symbol("best.rpart")
   library("rpart")
-  ranges <- list(minsplit=minsplit, minbucket=minbucket, cp=cp, 
+  ranges <- list(minsplit=minsplit, minbucket=minbucket, cp=cp,
                  maxcompete=maxcompete, maxsurrogate=maxsurrogate,
                  usesurrogate=usesurrogate, xval=xval,
                  surrogatestyle=surrogatestyle, maxdepth=maxdepth)
   ranges[sapply(ranges, is.null)] <- NULL
   if (length(ranges) < 1)
     ranges <- NULL
-  
+
   predict.func <- if (is.factor(model.response(model.frame(formula, data))))
     function(...) predict(..., type = "class")
   else
     predict
   modeltmp <- tune("rpart.wrapper", train.x = formula, data = data, ranges = ranges,
-       predict.func = predict.func, na.action = na.omit, ...)
+       predict.func = predict.func, na.action = na.action, ...)
   if (!is.null(modeltmp$best.model))
     modeltmp$best.model$call <- call
   modeltmp
 }
-  
+
 best.rpart <- function(formula, tunecontrol = tune.control(), ...) {
   call <- match.call()
   tunecontrol$best.model = TRUE
