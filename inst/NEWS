@@ -1,4 +1,10 @@
-Changes in Verions 1.5-18
+Changes in Version 1.5-19
+
+  o Fix bugs in {read,write}.matrix.csr
+  o Allow Matrix objects for svm()
+  o Version bump of libsvm to 2.88
+
+Changes in Version 1.5-18
 
   o Improve DESCRIPTION install metadata.
 

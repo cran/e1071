@@ -27,10 +27,12 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
           By default the variables are taken from the environment which
           \sQuote{svm} is called from.}
   \item{x}{a data matrix, a vector, or a sparse matrix (object of class
-    \code{\link[SparseM]{matrix.csr}} as provided by the package \pkg{SparseM}).}
-  \item{y}{a response vector with one label for each row/component of \code{x}. Can be either
-    a factor (for classification tasks) or a numeric vector (for
-    regression).}
+    \code{\link[Matrix]{Matrix}} provided by the \pkg{Matrix} package,
+    or of class \code{\link[SparseM]{matrix.csr}}
+    as provided by the package \pkg{SparseM}).}
+  \item{y}{a response vector with one label for each row/component of
+    \code{x}. Can be either a factor (for classification tasks)
+    or a numeric vector (for regression).}
   \item{scale}{A logical vector indicating the variables to be
     scaled. If \code{scale} is of length 1, the value is recycled as
     many times as needed.

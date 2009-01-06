@@ -1,10 +1,10 @@
 Package: e1071
-Version: 1.5-18
-Date: 2008-04-01
+Version: 1.5-19
+Date: 2009-01-06
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
 Depends: class
 Imports: graphics, stats, grDevices, utils
-Suggests: cluster, mlbench, nnet, randomForest, rpart, SparseM, xtable, methods
+Suggests: cluster, mlbench, nnet, randomForest, rpart, SparseM, xtable, methods, Matrix
 Author: Evgenia Dimitriadou, Kurt Hornik, Friedrich Leisch,
 	David Meyer, and Andreas Weingessel
 Maintainer: Friedrich Leisch <Friedrich.Leisch@R-project.org>
@@ -14,4 +14,4 @@ Description: Functions for latent class analysis, short time Fourier
 	     classifier, ...
 License: GPL-2
 LazyLoad: yes
-Packaged: Tue Apr  1 10:28:09 2008; hornik
+Packaged: Tue Jan  6 18:39:02 2009; meyer

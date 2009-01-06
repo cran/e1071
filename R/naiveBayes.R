@@ -4,6 +4,7 @@ naiveBayes <- function(x, ...)
 naiveBayes.default <- function(x, y, laplace = 0, ...) {
   call <- match.call()
   Yname <- deparse(substitute(y))
+  x <- as.data.frame(x)
 
   ## estimation-function
   est <- function(var)
@@ -14,11 +15,11 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
       tab <- table(y, var)
       (tab + laplace) / (rowSums(tab) + laplace * nlevels(var))
     }
-  
+
   ## create tables
   apriori <- table(y)
   tables <- lapply(x, est)
-  
+
   ## fix dimname names
   for (i in 1:length(tables))
     names(dimnames(tables[[i]])) <- c(Yname, colnames(x)[i])
@@ -29,7 +30,7 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
                  levels = levels(y),
                  call   = call
                  ),
-            
+
             class = "naiveBayes"
             )
 }
@@ -48,7 +49,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
     m[[1]] <- as.name("model.frame")
     m <- eval(m, parent.frame())
     Terms <- attr(m, "terms")
-    if (any(attr(Terms, "order") > 1)) 
+    if (any(attr(Terms, "order") > 1))
       stop("naiveBayes cannot handle interaction terms")
     Y <- model.extract(m, "response")
     X <- m[,-attr(Terms, "response")]
@@ -63,7 +64,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
     if (length(deps) == 1 && deps == ".")
       deps <- names(dimnames(data))[-Yind]
     Vind <- which(names(dimnames(data)) %in% deps)
-    
+
     ## create tables
     apriori <- margin.table(data, Yind)
     tables <- lapply(Vind,
@@ -74,7 +75,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
                    levels = names(apriori),
                    call   = call
                    ),
-              
+
               class = "naiveBayes"
               )
   } else stop("naiveBayes formula interface handles data frames or arrays only")
@@ -88,10 +89,10 @@ print.naiveBayes <- function(x, ...) {
   print(x$call)
   cat("\nA-priori probabilities:\n")
   print(x$apriori / sum(x$apriori))
-  
+
   cat("\nConditional probabilities:\n")
   for (i in x$tables) {print(i); cat("\n")}
-    
+
 }
 
 predict.naiveBayes <- function(object,
@@ -105,7 +106,7 @@ predict.naiveBayes <- function(object,
   newdata <- data.matrix(newdata)
   L <- sapply(1:nrow(newdata), function(i) {
     ndata <- newdata[i,]
-    L <- log(object$apriori) + 
+    L <- log(object$apriori) +
       apply(log(sapply(1:nattribs, function(v) {
         nd <- ndata[v]
         if(is.na(nd))

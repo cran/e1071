@@ -18,7 +18,7 @@ write.matrix.csr(x, file = "out.dat", y = NULL)
   \item{fac}{If \code{TRUE} and y-values are stored in the file, the
     values are interpreted as factor levels.}
   \item{ncol}{Number of columns, detected automatically. Can be used to
-    add empty columns (these are not stored in the sparse format).}
+    add empty columns (possibly not stored in the sparse format).}
 }
 \value{
   If the data file includes no y variable, \code{read.matrix.csr} returns an object of class
@@ -34,17 +34,17 @@ write.matrix.csr(x, file = "out.dat", y = NULL)
 
 \examples{
 \dontrun{
-  library(methods)
-  if (require(SparseM)) {
+library(methods)
+if (require(SparseM)) {
     data(iris)
     x <- as.matrix(iris[,1:4])
     y <- iris[,5]
     xs <- as.matrix.csr(x)
-    write.matrix.csr(xs, y = y, file="iris.dat")
+    write.matrix.csr(xs, y = y, file = "iris.dat")
     xs2 <- read.matrix.csr("iris.dat")$x
     if (!all(as.matrix(xs) == as.matrix(xs2)))
-      stop("Error: objects are not equal!")
-  }
+        stop("Error: objects are not equal!")
+}
 }
 }
 \keyword{IO}% at least one, from doc/KEYWORDS

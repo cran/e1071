@@ -9,7 +9,8 @@ interpolate(x, a, adims=lapply(dimnames(a), as.numeric),
  \item{x}{Matrix of values at which interpolation shall take place.}
  \item{a}{Array of arbitrary dimension.}
  \item{adims}{List of the same structure as \code{dimnames(a)}.}
- \item{method}{Interpolation method, one of \code{"linear"} or {"constant"}.}
+ \item{method}{Interpolation method, one of \code{"linear"} or
+   \code{"constant"}.}
 }
 \description{
   For each row in matrix \code{x}, the hypercube of \code{a} containing
