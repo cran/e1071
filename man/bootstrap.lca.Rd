@@ -32,12 +32,12 @@ the data to which \code{l} was originally fitted come from an LCA model.
   An object of class \code{bootstrap.lca} is returned, containing
   \item{logl, loglsat}{The LogLikelihood of the models and of the
     corresponding saturated models}
-  \item{lratio}{Likelihood quotient of the models and the coresponding
+  \item{lratio}{Likelihood quotient of the models and the corresponding
     saturated models}
   \item{lratiomean, lratiosd}{Mean and Standard deviation of
     \code{lratio}}
   \item{lratioorg}{Likelihood quotient of the original model and the
-    correspomdiong saturated model}
+    corresponding saturated model}
   \item{zratio}{Z-Statistics of \code{lratioorg}}
   \item{pvalzratio, pvalratio}{P-Values for \code{zratio}, computed via normal
     distribution and empirical distribution}

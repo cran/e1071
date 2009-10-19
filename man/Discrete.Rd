@@ -20,7 +20,7 @@ rdiscrete(n, probs, values = 1:length(probs), ...)
 }
 \arguments{
   \item{x,q}{vector or array of quantiles.}
-  \item{p}{vector or array of probabilites.}
+  \item{p}{vector or array of probabilities.}
   \item{n}{number of observations.}
   \item{probs}{probabilities of the distribution.}
   \item{values}{values of the distribution.}

@@ -39,7 +39,6 @@ represent a powerful technique for
 general (nonlinear) classification, regression and outlier detection with an intuitive
 model representation.
 
-
 The package \pkg{e1071} offers an interface to the
 award-winning\footnote{The library won the IJCNN 2001 Challenge by solving two of
   three problems: the Generalization Ability Challenge (GAC) and the Text

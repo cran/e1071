@@ -5,7 +5,7 @@
 \description{
   Generates a probability plot for a specified theoretical
   distribution, i.e., basically a
-  \code{\link[graphics]{qqplot}} where the y-axis is labeled with
+  \code{\link[stats]{qqplot}} where the y-axis is labeled with
   probabilities instead
   of quantiles. The function
   is mainly intended for teaching the concept of quantile plots.
@@ -33,7 +33,7 @@ probplot(x, qdist=qnorm, probs=NULL, line=TRUE,
 }
 
 \author{Friedrich Leisch}
-\seealso{\code{\link[graphics]{qqplot}}}
+\seealso{\code{\link[stats]{qqplot}}}
 \examples{
 ## a simple example
 x <- rnorm(100, mean=5)

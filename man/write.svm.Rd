@@ -25,7 +25,7 @@ write.svm(object, svm.file = "Rdata.svm",
   libsvm. The scaling data are written to a separate file because scaling
   data are not included in the standard format of libsvm. The format
   of the scaling data file is a n times 2 matrix: the n-th row
-  corresponds to the n-th dimension of the data, the colums being formed
+  corresponds to the n-th dimension of the data, the columns being formed
   of the corresponding mean and scale. If scaling information for the
   dependent variable exists (in case of regression models), it is stored
   in yet another file (1 times 2 matrix).

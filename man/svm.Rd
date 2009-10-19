@@ -40,7 +40,7 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     variables) to zero mean and unit variance. The center and scale
     values are returned and used for later predictions.}
   \item{type}{\code{svm} can be used as a classification
-    machine, as a regresson machine, or for novelty detection.
+    machine, as a regression machine, or for novelty detection.
     Depending of whether \code{y} is
     a factor or not, the default setting for \code{type} is \code{C-classification} or \code{eps-regression}, respectively, but may be overwritten by setting an explicit value.\cr
     Valid options are:
@@ -72,7 +72,7 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
   \item{nu}{parameter needed for \code{nu-classification},
     \code{nu-regression}, and \code{one-classification}}
   \item{class.weights}{a named vector of weights for the different
-    classes, used for asymetric class sizes. Not all factor levels have
+    classes, used for asymmetric class sizes. Not all factor levels have
     to be supplied (default weight: 1). All components have to be named.}
   \item{cachesize}{cache memory in MB (default 40)}
   \item{tolerance}{tolerance of termination criterion (default: 0.001)}
@@ -112,7 +112,7 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     maximum likelihood.}
   \item{probA, probB}{numeric vectors of length k(k-1)/2, k number of
     classes, containing the parameters of the logistic distributions fitted to
-    the decision values of the binary classifers (1 / (1 + exp(a x + b))).}
+    the decision values of the binary classifiers (1 / (1 + exp(a x + b))).}
 }
 \details{
   For multiclass-classification with k levels, k>2, \code{libsvm} uses the

@@ -36,7 +36,7 @@ kurtosis(x, na.rm = FALSE, type = 3)
       Used in SAS and SPSS.
     }
     \item{Type 3:}{
-      \eqn{b_1 = m_4 / s^4 = g_2 ((n-1)/n)^2}.
+      \eqn{b_2 = m_4 / s^4 - 3 = (g_2 + 3) (1 - 1/n)^2 - 3}.
       Used in MINITAB and BMDP.}
   }
   

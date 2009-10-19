@@ -31,7 +31,7 @@ best.tune(...)
   \item{ranges}{a named list of parameter vectors spanning the sampling
     space. The vectors will usually be created by \code{seq}.}
   \item{predict.func}{optional predict function, if the standard \code{predict}
-    behaviour is inadequate.}
+    behavior is inadequate.}
   \item{tunecontrol}{object of class \code{"tune.control"}, as created by the
     function \code{tune.control()}. If omitted, \code{tune.control()}
     gives the defaults.}
@@ -56,7 +56,7 @@ best.tune(...)
   possible to specify only one parameter combination (i.e., vectors of
   length 1) to obtain an error estimation of the specified type
   (bootstrap, cross-classification, etc.) on the given data set. For
-  conveneince, there
+  convenience, there
   are several \code{tune.foo()} wrappers defined, e.g., for
   \code{nnet()}, \code{randomForest()},
   \code{rpart()}, \code{svm()}, and \code{knn()}.

@@ -20,7 +20,7 @@
     used if two parameters are to be visualized. Ignored if only one
     parameter has been tuned.}
   \item{theta}{angle of azimuthal direction.}
-  \item{col}{the color(s) of the surface facets.  Transparent colours are
+  \item{col}{the color(s) of the surface facets.  Transparent colors are
           ignored.}
   \item{main}{main title}
   \item{xlab, ylab}{titles for the axes.  N.B. These must be character

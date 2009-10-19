@@ -43,7 +43,7 @@ cmeans(x, centers, iter.max = 100, verbose = FALSE,
   \eqn{d_{ij}} is the distance (dissimilarity) between observation
   \eqn{i} and center \eqn{j}.  The dissimilarities used are the sums of
   squares (\code{"euclidean"}) or absolute values (\code{"manhattan"})
-  of the elementwise differences.
+  of the element-wise differences.
   
   If \code{centers} is a matrix, its rows are taken as the initial cluster
   centers.  If \code{centers} is an integer, \code{centers} rows of

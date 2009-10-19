@@ -24,7 +24,7 @@ compareMatchedClasses(x, y, method="rowmax", iter=1,
 }
 \details{
     If \code{method="rowmax"}, then each class defining a row in the
-    contingency table is mapped to the column of the correspoding row
+    contingency table is mapped to the column of the corresponding row
     maximum. Hence, some columns may be mapped to more than one row
     (while each row is mapped to a single column).
 

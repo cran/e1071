@@ -51,7 +51,8 @@
       and the separation of the centroids vectors. The minimum values of
       this index under comparison support the best partitions.
       \eqn{u_{XB}(U,V;X)=\frac{\sum_{j=1}^k\sum_{i=1}^Nu_{ij}^2{||x_i-v_j||}^2}{N(\min_{j\neq l}\{{||v_j-v_l||}^2\})}}
-      \item \bold{fukuyama.sugeno}:
+    }
+    \item{\bold{fukuyama.sugeno}:}{
       This index consists of the difference of two terms, the first
       combining the fuzziness in the membership matrix with the
       geometrical compactness of the representation of the data set via

@@ -10,7 +10,7 @@
 \item{n}{The length of the window.}
 }
 
-\description{Returns the filter coefficents of a rectangle
+\description{Returns the filter coefficients of a rectangle
 window. That is a vector of \code{n} 1.
 
 The purpose of this function is just to have a name for the R command

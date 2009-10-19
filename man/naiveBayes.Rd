@@ -25,7 +25,7 @@
   \item{y}{Class vector.}
   \item{formula}{A formula of the form \code{class ~ x1 + x2 +
       \dots}. Interactions are not allowed.}
-  \item{data}{Either a data frame of predictors (caegorical and/or
+  \item{data}{Either a data frame of predictors (categorical and/or
     numeric) or a contingency table.}
   \item{laplace}{positive double controlling Laplace smoothing. The
     default (0) disables Laplace smoothing.}
@@ -41,7 +41,9 @@
           with missing values on any required variable.  (NOTE: If
           given, this argument must be named.)}
   \item{object}{An object of class \code{"naiveBayes"}.}
-  \item{newdata}{A dataframe with new predictors.}
+  \item{newdata}{A dataframe with new predictors (with possibly fewer
+    columns than the training data). Note that the column names of
+    \code{newdata} are matched against the training data ones.}
   \item{type}{If \code{"raw"}, the conditional a-posterior
     probabilities for each class are returned, and the class with
     maximal probability else.}
