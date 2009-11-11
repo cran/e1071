@@ -125,9 +125,10 @@ function (x,
                 df <- na.action(data.frame(y, x))
                 y <- df[,1]
                 x <- as.matrix(df[,-1])
-                attr(x, "na.action") <-
-                    attr(y, "na.action") <-
-                        attr(df, "na.action")
+                nac <-
+                    attr(x, "na.action") <-
+                        attr(y, "na.action") <-
+                            attr(df, "na.action")
             }
         }
 
@@ -351,12 +352,11 @@ function (object, newdata,
             newdata <- na.action(newdata)
             act <- attr(newdata, "na.action")
             newdata <- model.matrix(delete.response(terms(object)),
-                                    as.data.frame(newdata), na.action = na.action)
+                                    as.data.frame(newdata))
+        } else {
+            newdata <- na.action(as.matrix(newdata))
+            act <- attr(newdata, "na.action")
         }
-    }
-    if (!sparse) {
-        newdata <- na.action(as.matrix(newdata))
-        act <- attr(newdata, "na.action")
     }
 
     if (!is.null(act) && !preprocessed)
@@ -369,7 +369,8 @@ function (object, newdata,
                   scale  = object$x.scale$"scaled:scale"
                   )
 
-    if (ncol(object$SV) != ncol(newdata)) stop ("test data does not match model !")
+    if (ncol(object$SV) != ncol(newdata))
+        stop ("test data does not match model !")
 
     ret <- .C ("svmpredict",
                as.integer (decision.values),
