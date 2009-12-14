@@ -69,6 +69,15 @@ function (x,
         library("Matrix")
         x <- as(x, "matrix.csr")
     }
+    if(inherits(x, "simple_triplet_matrix")) {
+        library("SparseM")
+        ind <- order(x$i, x$j)
+        x <- new("matrix.csr",
+                 ra = x$v[ind],
+                 ja = x$j[ind],
+                 ia = as.integer(cumsum(c(1, tabulate(x$i[ind])))),
+                 dimension = c(x$nrow, x$ncol))
+    }
     if (sparse <- inherits(x, "matrix.csr"))
         library("SparseM")
 

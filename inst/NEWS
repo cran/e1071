@@ -1,6 +1,6 @@
 Changes in Version 1.5-21
 
-  o Fixed a bug in predict.svm() when handling NAs
+  o Allow sparse_triplet_matrix objects for svm()
 
 Changes in Version 1.5-20
 

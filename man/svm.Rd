@@ -29,7 +29,9 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
   \item{x}{a data matrix, a vector, or a sparse matrix (object of class
     \code{\link[Matrix]{Matrix}} provided by the \pkg{Matrix} package,
     or of class \code{\link[SparseM]{matrix.csr}}
-    as provided by the package \pkg{SparseM}).}
+    provided by the \pkg{SparseM} package, or of class
+    \code{\link[slam]{simple_triplet_matrix}} provided by the \pkg{slam}
+    package).}
   \item{y}{a response vector with one label for each row/component of
     \code{x}. Can be either a factor (for classification tasks)
     or a numeric vector (for regression).}
