@@ -214,6 +214,7 @@ function (x,
         warning("`class.weights' are set to NULL for regression mode. For classification, use a _factor_ for `y', or specify the correct `type' argument.")
     }
 
+    err <- empty_string <- paste(rep(" ", 255), collapse = "")
     cret <- .C ("svmtrain",
                 ## data
                 as.double  (if (sparse) x@ra else t(x)),
@@ -258,11 +259,11 @@ function (x,
                 cresults = double   (cross),
                 ctotal1  = double   (1),
                 ctotal2  = double   (1),
-                error    = character(1),
+                error    = err,
 
                 PACKAGE = "e1071")
 
-    if (nchar(cret$error))
+    if (cret$error != empty_string)
         stop(paste(cret$error, "!", sep=""))
 
     ret <- list (
