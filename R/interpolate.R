@@ -26,7 +26,7 @@ interpolate <- function(x, a, adims=lapply(dimnames(a), as.numeric),
 
     for(n in 1:nrow(x)){
         
-        ## the `leftmost' corner of the enclosing hypercube 
+        ## the "leftmost" corner of the enclosing hypercube 
         leftidx <- rep(0, ad)
         xabstand <- rep(0, ad)
         aabstand <- rep(0, ad)

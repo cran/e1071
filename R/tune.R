@@ -67,9 +67,9 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
   perm.ind <- sample(n)
   if (tunecontrol$sampling == "cross") {
     if (tunecontrol$cross > n)
-      stop("`cross' must not exceed sampling size!")
+      stop(sQuote("cross"), " must not exceed sampling size!")
     if (tunecontrol$cross == 1)
-      stop("`cross' must be greater than 1!")
+      stop(sQuote("cross"), " must be greater than 1!")
   }
   train.ind <- if (tunecontrol$sampling == "cross")
     tapply(1:n, cut(1:n, breaks = tunecontrol$cross), function(x) perm.ind[-x])
@@ -200,7 +200,7 @@ best.tune <- function(...) {
 
 print.tune <- function(x, ...) {
   if (x$nparcomb > 1) {
-    cat("\nParameter tuning of `", x$method, "':\n\n", sep="")
+    cat("\nParameter tuning of ", sQuote(x$method), ":\n\n", sep="")
     cat("- sampling method:", x$sampling,"\n\n")
     cat("- best parameters:\n")
     tmp <- x$best.parameters
@@ -251,7 +251,7 @@ plot.tune <- function(x,
   type = match.arg(type)
 
   if (is.null(main))
-    main <- paste("Performance of `",x$method, "'", sep="")
+    main <- paste("Performance of `", x$method, "'", sep="")
 
   if (k == 3)
     plot(x$performances[,1:2], type = "b", main = main)

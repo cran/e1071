@@ -12,8 +12,5 @@ impute <- function(x, what=c("median", "mean")){
             apply(x, 2,
                   function(z) {z[is.na(z)] <- mean(z, na.rm=TRUE); z})
     }
-    else{
-        stop("`what' invalid")
-    }
     retval
 }

@@ -82,13 +82,13 @@ function (x,
         library("SparseM")
 
     ## NULL parameters?
-    if(is.null(degree)) stop("`degree' must not be NULL!")
-    if(is.null(gamma)) stop("`gamma' must not be NULL!")
-    if(is.null(coef0)) stop("`coef0' must not be NULL!")
-    if(is.null(cost)) stop("`cost' must not be NULL!")
-    if(is.null(nu)) stop("`nu' must not be NULL!")
-    if(is.null(epsilon)) stop("`epsilon' must not be NULL!")
-    if(is.null(tolerance)) stop("`tolerance' must not be NULL!")
+    if(is.null(degree)) stop(sQuote("degree"), " must not be NULL!")
+    if(is.null(gamma)) stop(sQuote("gamma"), " must not be NULL!")
+    if(is.null(coef0)) stop(sQuote("coef0"), " must not be NULL!")
+    if(is.null(cost)) stop(sQuote("cost"), " must not be NULL!")
+    if(is.null(nu)) stop(sQuote("nu"), " must not be NULL!")
+    if(is.null(epsilon)) stop(sQuote("epsilon"), " must not be NULL!")
+    if(is.null(tolerance)) stop(sQuote("tolerance"), " must not be NULL!")
 
     xhold   <- if (fitted) x else NA
     x.scale <- y.scale <- NULL
@@ -170,7 +170,7 @@ function (x,
     ## further parameter checks
     nr <- nrow(x)
     if (cross > nr)
-        stop("`cross' cannot exceed the number of observations!")
+        stop(sQuote("cross"), " cannot exceed the number of observations!")
 
     if (!is.vector(y) && !is.factor (y) && type != 2)
         stop("y must be a vector or a factor.")
@@ -201,9 +201,13 @@ function (x,
                     stop("At least one level name is missing or misspelled.")
             }
         } else {
-            if (type < 3 && any(as.integer(y) != y))
-                stop("dependent variable has to be of factor or integer type for classification mode.")
-            lev <- unique(y)
+            if (type < 3) {
+                if(any(as.integer(y) != y))
+                    stop("dependent variable has to be of factor or integer type for classification mode.")
+                y <- as.factor(y)
+                lev <- levels(y)
+                y <- as.integer(y)
+            } else lev <- unique(y)
         }
 
     nclass <- 2
@@ -211,7 +215,8 @@ function (x,
 
     if (type > 1 && length(class.weights) > 0) {
         class.weights <- NULL
-        warning("`class.weights' are set to NULL for regression mode. For classification, use a _factor_ for `y', or specify the correct `type' argument.")
+        warning(sQuote("class.weights"), " are set to NULL for regression mode. For classification, use a _factor_ for ", sQuote("y"),
+", or specify the correct ", sQuote("type"), " argument.")
     }
 
     err <- empty_string <- paste(rep(" ", 255), collapse = "")
@@ -220,7 +225,6 @@ function (x,
                 as.double  (if (sparse) x@ra else t(x)),
                 as.integer (nr), as.integer(ncol(x)),
                 as.double  (y),
-
                 ## sparse index info
                 as.integer (if (sparse) x@ia else 0),
                 as.integer (if (sparse) x@ja else 0),
@@ -321,7 +325,10 @@ function (x,
     class (ret) <- "svm"
 
     if (fitted) {
-        ret$fitted <- na.action(predict(ret, xhold))
+        ret$fitted <- na.action(predict(ret, xhold,
+                                        decision.values = TRUE))
+        ret$decision.values <- attr(ret$fitted, "decision.values")
+        attr(ret$fitted, "decision.values") <- NULL
         if (type > 1) ret$residuals <- y - ret$fitted
     }
 
