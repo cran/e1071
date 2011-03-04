@@ -348,6 +348,22 @@ function (object, newdata,
     if (object$tot.nSV < 1)
         stop("Model is empty!")
 
+
+    if(inherits(newdata, "Matrix")) {
+        library("SparseM")
+        library("Matrix")
+        newdata <- as(newdata, "matrix.csr")
+    }
+    if(inherits(newdata, "simple_triplet_matrix")) {
+       library("SparseM")
+       ind <- order(newdata$i, newdata$j)
+       newdata <- new("matrix.csr",
+                      ra = newdata$v[ind],
+                      ja = newdata$j[ind],
+                      ia = as.integer(cumsum(c(1, tabulate(newdata$i[ind])))),
+                      dimension = c(newdata$nrow, newdata$ncol))
+   }
+
     sparse <- inherits(newdata, "matrix.csr")
     if (object$sparse || sparse)
         library("SparseM")

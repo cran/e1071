@@ -11,7 +11,13 @@ probability = FALSE, ..., na.action = na.omit)
 
 \arguments{
   \item{object}{Object of class \code{"svm"}, created by \code{svm}.}
-  \item{newdata}{A matrix containing the new input data. A vector will
+  \item{newdata}{An object containing the new input data: either a
+  matrix or a sparse matrix (object of class
+    \code{\link[Matrix]{Matrix}} provided by the \pkg{Matrix} package,
+    or of class \code{\link[SparseM]{matrix.csr}}
+    provided by the \pkg{SparseM} package, or of class
+    \code{\link[slam]{simple_triplet_matrix}} provided by the \pkg{slam}
+    package). A vector will
     be transformed to a n x 1 matrix.}
   \item{decision.values}{Logical controlling whether the decision values
     of all binary classifiers computed in multiclass classification

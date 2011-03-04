@@ -1,3 +1,11 @@
+Changes in Version 1.5-25
+
+  o add auto-coercion from Matrix and simple_triplet_matrix objects 
+    to predict.svm()
+
+  o Bug fix in tune.svm: when a data frame was provided as validation sample,
+    the response variable was not correctly extracted.
+
 Changes in Version 1.5-24
 
   o Cosmetics: use sQuote() instead of hard-coded quotes in warnings
