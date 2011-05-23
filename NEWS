@@ -1,3 +1,7 @@
+Changes in Version 1.5-26
+
+  o tune() now allows user-specified error functionals
+
 Changes in Version 1.5-25
 
   o add auto-coercion from Matrix and simple_triplet_matrix objects 

@@ -10,7 +10,7 @@ tune.control(random = FALSE, nrepeat = 1, repeat.aggregate = min,
 sampling = c("cross", "fix", "bootstrap"), sampling.aggregate = mean,
 sampling.dispersion = sd,
 cross = 10, fix = 2/3, nboot = 10, boot.size = 9/10, best.model = TRUE,
-performances = TRUE)
+performances = TRUE, error.fun = NULL)
 }
 \arguments{
   \item{random}{if an integer value is specified, \code{random}
@@ -39,6 +39,11 @@ performances = TRUE)
     training on the complete training set).}
   \item{performances}{if \code{TRUE}, the performance results for all
     parameter combinations are returned.}
+  \item{error.fun}{function returning the error measure to be minimized.
+    It takes two arguments: a vector of true values and a vector of
+    predicted values. If \code{NULL}, the misclassification error is used
+    for categorical predictions and the mean squared error for numeric
+    predictions.}
 }
 \value{
   An object of class \code{"tune.control"} containing all the above

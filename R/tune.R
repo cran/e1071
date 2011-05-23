@@ -9,7 +9,8 @@ tune.control <- function(random = FALSE,
                          nboot = 10,
                          boot.size = 9 / 10,
                          best.model = TRUE,
-                         performances = TRUE) {
+                         performances = TRUE,
+                         error.fun = NULL) {
     structure(list(random = random,
                    nrepeat = nrepeat,
                    repeat.aggregate = repeat.aggregate,
@@ -21,7 +22,8 @@ tune.control <- function(random = FALSE,
                    nboot = nboot,
                    boot.size = boot.size,
                    best.model = best.model,
-                   performances = performances
+                   performances = performances,
+		   error.fun = error.fun
                    ),
               class = "tune.control"
               )
@@ -36,8 +38,10 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
     call <- match.call()
 
     ## internal helper functions
-    resp <- function(formula, data)
+    resp <- function(formula, data) {
+        
         model.response(model.frame(formula, data))
+    }
 
     classAgreement <- function (tab) {
         n <- sum(tab)
@@ -145,7 +149,11 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                 } else
                     train.y[-train.ind[[sample]]]
 
-                repeat.errors[reps] <- if (is.factor(true.y) && (is.factor(pred) || is.character(pred))) ## classification error
+                if (is.null(true.y)) true.y <- rep(TRUE, length(pred))
+
+                repeat.errors[reps] <- if (!is.null(tunecontrol$error.fun))
+                    tunecontrol$error.fun(true.y, pred)
+                else if ((is.logical(true.y) || is.factor(true.y)) && (is.logical(pred) || is.factor(pred) || is.character(pred))) ## classification error
                     1 - classAgreement(table(pred, true.y))
                 else if (is.numeric(true.y) && is.numeric(pred)) ## mean squared error
                     crossprod(pred - true.y) / length(pred)
