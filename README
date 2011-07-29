@@ -9,8 +9,9 @@ Copyright
 
 All of this software is copyrighted by the
 list of authors in the DESCRIPTION file of the package and subject to
-the GNU GENERAL PUBLIC LICENSE, Version 2, see the file
-COPYING for details. The SVM C++ code is copyright Chih-Chung Chang
+the GNU GENERAL PUBLIC LICENSE, Version 2 (see the file
+COPYING in share/licenses of the R installation directory).
+The SVM C++ code is copyrighted by Chih-Chung Chang
 and Chih-Jen Lin.
 
 Installation

@@ -1,3 +1,7 @@
+Changes in Version 1.5-27
+
+  o svm() now accepts to set the random seed for libsvm
+
 Changes in Version 1.5-26
 
   o tune() now allows user-specified error functionals

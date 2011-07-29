@@ -18,7 +18,7 @@ na.omit, scale = TRUE)
 "radial", degree = 3, gamma = if (is.vector(x)) 1 else 1 / ncol(x),
 coef0 = 0, cost = 1, nu = 0.5,
 class.weights = NULL, cachesize = 40, tolerance = 0.001, epsilon = 0.1,
-shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE, 
+shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE, seed = 1L,
 ..., subset, na.action = na.omit)
 }
 \arguments{
@@ -89,6 +89,8 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     and included in the model or not (default: \code{TRUE})}
   \item{probability}{logical indicating whether the model should
     allow for probability predictions.}
+  \item{seed}{integer seed for libsvm (used for cross-validation and
+    probability prediction models).}
   \item{\dots}{additional parameters for the low level fitting function
     \code{svm.default}}
   \item{subset}{An index vector specifying the cases to be used in the

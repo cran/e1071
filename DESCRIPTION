@@ -1,6 +1,6 @@
 Package: e1071
-Version: 1.5-26
-Date: 2011-05-23
+Version: 1.5-27
+Date: 2011-07-29
 Title: Misc Functions of the Department of Statistics (e1071), TU Wien
 Depends: class
 Imports: graphics, stats, grDevices, utils
@@ -15,6 +15,6 @@ Description: Functions for latent class analysis, short time Fourier
         ...
 License: GPL-2
 LazyLoad: yes
-Packaged: 2011-05-22 21:37:20 UTC; meyer
+Packaged: 2011-07-29 11:04:10 UTC; meyer
 Repository: CRAN
-Date/Publication: 2011-05-22 21:57:18
+Date/Publication: 2011-07-29 11:09:14

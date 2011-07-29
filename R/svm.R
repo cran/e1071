@@ -60,6 +60,7 @@ function (x,
           cross       = 0,
           probability = FALSE,
           fitted      = TRUE,
+          seed        = 1L,
           ...,
           subset,
           na.action = na.omit)
@@ -247,6 +248,7 @@ function (x,
                 as.integer (cross),
                 as.integer (sparse),
                 as.integer (probability),
+                as.integer (seed),
 
                 ## results
                 nclasses = integer  (1),

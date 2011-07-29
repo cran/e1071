@@ -238,6 +238,7 @@ void svmtrain (double *x, int *r, int *c,
 	       int    *cross,
 	       int    *sparse,
 	       int    *probability,
+	       int    *seed,
 	       
 	       int    *nclasses,
 	       int    *nr,
@@ -296,6 +297,9 @@ void svmtrain (double *x, int *r, int *c,
     if (s) {
 	strcpy(*error, s);
     } else {
+	/* set seed */
+	srand(*seed);
+
 	/* call svm_train */
 	model = svm_train(&prob, &par);
     
