@@ -39,8 +39,7 @@ symbolPalette = palette(), svSymbol = "x", dataSymbol = "o", ...)
 
 \examples{
 ## a simple example
-library(MASS)
-data(cats)
+data(cats, package = "MASS")
 m <- svm(Sex~., data = cats)
 plot(m, cats)
 

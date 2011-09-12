@@ -6,35 +6,6 @@
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 /*
- * svm_model
- */
-struct svm_model
-{
-    struct svm_parameter param; /* parameter */
-    int nr_class;		/* number of classes, = 2 in
-				   regression/one class svm */
-    int l;			/* total #SV */
-    struct svm_node **SV;	/* SVs (SV[l]) */
-    double **sv_coef;	        /* coefficients for SVs in decision functions
-			           (sv_coef[n-1][l]) */
-    double *rho;		/* constants in decision functions
-				   (rho[n*(n-1)/2]) */
-    double *probA;              /* pairwise probability information */
-    double *probB;
-    
-    /* for classification only */
-
-    int *label;		        /* label of each class (label[n]) */
-    int *nSV;		        /* number of SVs for each class (nSV[n]) */
-				/* nSV[0] + nSV[1] + ... + nSV[n-1] = l */
-    /* XXX */
-    int free_sv;		/* 1 if svm_model is created by
-				   svm_load_model */
-				/* 0 if svm_model is created by
-				   svm_train */
-};
-
-/*
  * results from cross-validation
  */
 
@@ -117,7 +88,7 @@ void do_cross_validation(struct svm_problem *prob,
 	/* random shuffle */
 	for(i=0; i<prob->l; i++)
 	{
-		int j = rand()%(prob->l-i);
+		int j = i+rand()%(prob->l-i);
 		struct svm_node *tx;
 		double ty;
 			
@@ -171,7 +142,7 @@ void do_cross_validation(struct svm_problem *prob,
 				sumyy += y*y;
 				sumvy += v*y;
 			}
-			svm_destroy_model(submodel);
+			svm_free_and_destroy_model(&submodel);
 			/* printf("Mean squared error = %g\n",
 			   error/(end-begin)); */
 			cresults[i] = error/(end-begin);
@@ -187,7 +158,7 @@ void do_cross_validation(struct svm_problem *prob,
 				if(v == prob->y[j])
 					++correct;
 			}
-			svm_destroy_model(submodel);
+			svm_free_and_destroy_model(&submodel);
 			/* printf("Accuracy = %g%% (%d/%d)\n", */
 			/* 100.0*correct/(end-begin),correct,(end-begin)); */
 			cresults[i] = 100.0*correct/(end-begin);
@@ -337,7 +308,7 @@ void svmtrain (double *x, int *r, int *c,
 				 ctotal1, ctotal2);
 
 	/* clean up memory */
-	svm_destroy_model(model);
+	svm_free_and_destroy_model(&model);
     }
     
     /* clean up memory */

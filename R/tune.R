@@ -39,7 +39,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
 
     ## internal helper functions
     resp <- function(formula, data) {
-        
+
         model.response(model.frame(formula, data))
     }
 
@@ -134,6 +134,8 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                                      validation.x
                                      else if (useFormula)
                                      data[-train.ind[[sample]],,drop = FALSE]
+                                     else if (inherits(train.x, "matrix.csr"))
+                                     train.x[-train.ind[[sample]],]
                                      else
                                      train.x[-train.ind[[sample]],,drop = FALSE]
                                      )

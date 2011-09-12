@@ -42,7 +42,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
 
     if (is.data.frame(data)) {
         ## handle formula
-        m <- match.call(expand = FALSE)
+        m <- match.call(expand.dots = FALSE)
         m$... <- NULL
         m$laplace = NULL
         m$na.action <- na.action
