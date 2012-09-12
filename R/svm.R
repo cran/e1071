@@ -221,6 +221,23 @@ function (x,
     }
 
     err <- empty_string <- paste(rep(" ", 255), collapse = "")
+
+    if (is.null(type)) stop("type argument must not be NULL!")
+    if (is.null(kernel)) stop("kernel argument must not be NULL!")
+    if (is.null(degree)) stop("degree argument must not be NULL!")
+    if (is.null(gamma)) stop("gamma argument must not be NULL!")
+    if (is.null(coef0)) stop("coef0 seed argument must not be NULL!")
+    if (is.null(cost)) stop("cost argument must not be NULL!")
+    if (is.null(nu)) stop("nu argument must not be NULL!")
+    if (is.null(cachesize)) stop("cachesize argument must not be NULL!")
+    if (is.null(tolerance)) stop("tolerance argument must not be NULL!")
+    if (is.null(epsilon)) stop("epsilon argument must not be NULL!")
+    if (is.null(shrinking)) stop("shrinking argument must not be NULL!")
+    if (is.null(cross)) stop("cross argument must not be NULL!")
+    if (is.null(sparse)) stop("sparse argument must not be NULL!")
+    if (is.null(probability)) stop("probability argument must not be NULL!")
+    if (is.null(seed)) stop("seed argument must not be NULL!")
+
     cret <- .C ("svmtrain",
                 ## data
                 as.double  (if (sparse) x@ra else t(x)),

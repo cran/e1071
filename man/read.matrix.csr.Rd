@@ -8,15 +8,15 @@
 }
 \usage{
 read.matrix.csr(file, fac = TRUE, ncol = NULL)
-write.matrix.csr(x, file = "out.dat", y = NULL)
+write.matrix.csr(x, file = "out.dat", y = NULL, fac = TRUE)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
   \item{x}{An object of class \code{matrix.csr}}
   \item{y}{A vector (either numeric or a factor)}
   \item{file}{The filename.}
-  \item{fac}{If \code{TRUE} and y-values are stored in the file, the
-    values are interpreted as factor levels.}
+  \item{fac}{If \code{TRUE}, the
+    y-values (if any) are interpreted as factor levels.}
   \item{ncol}{Number of columns, detected automatically. Can be used to
     add empty columns (possibly not stored in the sparse format).}
 }
@@ -27,7 +27,7 @@ write.matrix.csr(x, file = "out.dat", y = NULL)
   \item{y}{vector of numeric values or factor levels, depending on \code{fac}.}
 }
 \author{
-  David Meyer (based on C/C++-code by Chih-Chung Chang and Chih-Jen Lin)\cr
+  David Meyer\cr
   \email{David.Meyer@R-project.org}
 }
 \seealso{\code{\link[SparseM]{matrix.csr}}}

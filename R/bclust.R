@@ -183,7 +183,7 @@ function (x, n = nrow(x$centers), bycluster = TRUE,
             boxplot(cendf[memb == k, ], col = "grey",
                     names = rep("",ncol(cendf)),
                     ylim = ylim, ...)
-            if (x$datamean) {
+            if (!is.null(x$datamean)) {
                 lines(x$datamean, col = "red")
             }
             if(!is.null(x$colnames)){

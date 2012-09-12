@@ -105,36 +105,37 @@ predict.naiveBayes <- function(object,
                                ...) {
     type <- match.arg(type)
     newdata <- as.data.frame(newdata)
-    attribs <- which(names(object$tables) %in% names(newdata))
+    attribs <- match(names(object$tables), names(newdata))
     isnumeric <- sapply(newdata, is.numeric)
     newdata <- data.matrix(newdata)
     L <- sapply(1:nrow(newdata), function(i) {
-        ndata <- newdata[i,]
-        L <- log(object$apriori) +
-            apply(log(sapply(attribs, function(v) {
-                nd <- ndata[v]
-                if(is.na(nd))
-                    rep(1, length(object$apriori))
-                else {
-                    prob <- if (isnumeric[v]) {
-                        msd <- object$tables[[v]]
-                        msd[,2][msd[,2]==0] <- threshold
-                        dnorm(nd, msd[,1], msd[,2])
-                    } else
-                        object$tables[[v]][,nd]
-                    prob[prob == 0] <- threshold
-                    prob
+        ndata <- newdata[i, ]
+        L <- log(object$apriori) + apply(log(sapply(seq_along(attribs),
+            function(v) {
+                nd <- ndata[attribs[v]]
+                if (is.na(nd)) rep(1, length(object$apriori)) else {
+                  prob <- if (isnumeric[attribs[v]]) {
+                    msd <- object$tables[[v]]
+                    msd[, 2][msd[, 2] == 0] <- threshold
+                    dnorm(nd, msd[, 1], msd[, 2])
+                  } else object$tables[[v]][, nd]
+                  prob[prob == 0] <- threshold
+                  prob
                 }
             })), 1, sum)
         if (type == "class")
             L
         else {
-            L <- exp(L)
-            L / sum(L)
+            ## Numerically unstable:
+            ##            L <- exp(L)
+            ##            L / sum(L)
+            ## instead, we use:
+            sapply(L, function(lp) {
+                1/sum(exp(L - lp))
+            })
         }
     })
     if (type == "class")
         factor(object$levels[apply(L, 2, which.max)], levels = object$levels)
-    else
-        t(L)
+    else t(L)
 }

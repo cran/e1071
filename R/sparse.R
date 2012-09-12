@@ -2,7 +2,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 {
     library("SparseM")
 
-    l <- strsplit(readLines(file(file)), "[ ]+")
+    l <- strsplit(readLines(file), "[ ]+")
 
     ## extract y-values, if any
     y <- if (is.na(l[[1]][1]) || length(grep(":",l[[1]][1])))
@@ -30,7 +30,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
     else x
 }
 
-write.matrix.csr <- function (x, file = "out.dat", y = NULL) {
+write.matrix.csr <- function (x, file = "out.dat", y = NULL, fac = TRUE) {
     on.exit(sink())
     library("SparseM")
 
@@ -42,6 +42,8 @@ write.matrix.csr <- function (x, file = "out.dat", y = NULL) {
     sink(file)
     l <- length(x@ra)
     zerocols <- all(x@ja < ncol(x))
+    if (!is.null(y) && is.factor(y) && fac)
+        y <- as.character(y)
     for (i in 1:nrow(x)) {
         if (!is.null(y)) cat (y[i],"")
         if ((x@ia[i] <= l) && (x@ia[i] < x@ia[i + 1])) {
