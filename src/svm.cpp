@@ -1,3 +1,6 @@
+#include <R.h>
+#include <Rdefines.h>
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,6 +8,8 @@
 #include <float.h>
 #include <string.h>
 #include <stdarg.h>
+#include <limits.h>
+#include <locale.h>
 #include "svm.h"
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
@@ -38,8 +43,11 @@ static inline double powi(double base, int times)
 
 static void print_string_stdout(const char *s)
 {
+    /*
 	fputs(s,stdout);
 	fflush(stdout);
+    */
+    Rprintf(s);
 }
 static void (*svm_print_string) (const char *) = &print_string_stdout;
 #if 0
@@ -474,7 +482,7 @@ void Solver::reconstruct_gradient()
 			nr_free++;
 
 	if(2*nr_free < active_size)
-		info("\nWarning: using -h 0 may be faster\n");
+		info("\nWARNING: using -h 0 may be faster\n");
 
 	if (nr_free*l > 2*active_size*(l-active_size))
 	{
@@ -556,9 +564,10 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 	// optimization step
 
 	int iter = 0;
+	int max_iter = max(10000000, l>INT_MAX/100 ? INT_MAX : 100*l);
 	int counter = min(l,1000)+1;
-
-	while(1)
+	
+	while(iter < max_iter)
 	{
 		// show progress and do shrinking
 
@@ -723,6 +732,18 @@ void Solver::Solve(int l, const QMatrix& Q, const double *p_, const schar *y_,
 						G_bar[k] += C_j * Q_j[k];
 			}
 		}
+	}
+
+	if(iter >= max_iter)
+	{
+		if(active_size < l)
+		{
+			// reconstruct the whole gradient to calculate objective value
+			reconstruct_gradient();
+			active_size = l;
+			info("*");
+		}
+		REprintf("\nWARNING: reaching max number of iterations\n");
 	}
 
 	// calculate rho
@@ -991,7 +1012,7 @@ double Solver::calculate_rho()
 //
 // additional constraint: e^T \alpha = constant
 //
-class Solver_NU : public Solver
+class Solver_NU: public Solver
 {
 public:
 	Solver_NU() {}
@@ -2033,6 +2054,24 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 		}
 	}
 
+	//
+	// Labels are ordered by their first occurrence in the training set. 
+	// However, for two-class sets with -1/+1 labels and -1 appears first, 
+	// we swap labels to ensure that internally the binary SVM has positive data corresponding to the +1 instances.
+	//
+	if (nr_class == 2 && label[0] == -1 && label[1] == 1)
+	{
+		swap(label[0],label[1]);
+		swap(count[0],count[1]);
+		for(i=0;i<l;i++)
+		{
+			if(data_label[i] == 0)
+				data_label[i] = 1;
+			else
+				data_label[i] = 0;
+		}
+	}
+
 	int *start = Malloc(int,nr_class);
 	start[0] = 0;
 	for(i=1;i<nr_class;i++)
@@ -2092,12 +2131,14 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		model->l = nSV;
 		model->SV = Malloc(svm_node *,nSV);
 		model->sv_coef[0] = Malloc(double,nSV);
+		model->sv_indices = Malloc(int,nSV);
 		int j = 0;
 		for(i=0;i<prob->l;i++)
 			if(fabs(f.alpha[i]) > 0)
 			{
 				model->SV[j] = prob->x[i];
 				model->sv_coef[0][j] = f.alpha[i];
+				model->sv_indices[j] = i+1;
 				++j;
 			}		
 
@@ -2114,7 +2155,10 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 		int *perm = Malloc(int,l);
 
 		// group training data of the same class
-		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);		
+		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);
+		if(nr_class == 1) 
+			info("WARNING: training data in only one class. See README for details.\n");
+		
 		svm_node **x = Malloc(svm_node *,l);
 		int i;
 		for(i=0;i<l;i++)
@@ -2132,7 +2176,7 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 				if(param->weight_label[i] == label[j])
 					break;
 			if(j == nr_class)
-				fprintf(stderr,"warning: class label %d specified in weight is not found\n", param->weight_label[i]);
+				REprintf("WARNING: class label %d specified in weight is not found\n", param->weight_label[i]);
 			else
 				weighted_C[j] *= param->weight[i];
 		}
@@ -2236,9 +2280,14 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 
 		model->l = total_sv;
 		model->SV = Malloc(svm_node *,total_sv);
+		model->sv_indices = Malloc(int,total_sv);
 		p = 0;
 		for(i=0;i<l;i++)
-			if(nonzero[i]) model->SV[p++] = x[i];
+			if(nonzero[i])
+			{
+				model->SV[p] = x[i];
+				model->sv_indices[p++] = perm[i] + 1;
+			}
 
 		int *nz_start = Malloc(int,nr_class);
 		nz_start[0] = 0;
@@ -2296,11 +2345,16 @@ svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)
 void svm_cross_validation(const svm_problem *prob, const svm_parameter *param, int nr_fold, double *target)
 {
 	int i;
-	int *fold_start = Malloc(int,nr_fold+1);
+	int *fold_start;
 	int l = prob->l;
 	int *perm = Malloc(int,l);
 	int nr_class;
-
+	if (nr_fold > l)
+	{
+		nr_fold = l;
+		REprintf("WARNING: # folds > # data. Will use # folds = # data instead (i.e., leave-one-out cross validation)\n");
+	}
+	fold_start = Malloc(int,nr_fold+1);
 	// stratified cv may not give leave-one-out rate
 	// Each class to l folds -> some folds may have zero elements
 	if((param->svm_type == C_SVC ||
@@ -2426,6 +2480,18 @@ void svm_get_labels(const svm_model *model, int* label)
 			label[i] = model->label[i];
 }
 
+void svm_get_sv_indices(const svm_model *model, int* indices)
+{
+	if (model->sv_indices != NULL)
+		for(int i=0;i<model->l;i++)
+			indices[i] = model->sv_indices[i];
+}
+
+int svm_get_nr_sv(const svm_model *model)
+{
+	return model->l;
+}
+
 double svm_get_svr_probability(const svm_model *model)
 {
 	if ((model->param.svm_type == EPSILON_SVR || model->param.svm_type == NU_SVR) &&
@@ -2433,20 +2499,21 @@ double svm_get_svr_probability(const svm_model *model)
 		return model->probA[0];
 	else
 	{
-		fprintf(stderr,"Model doesn't contain information for SVR probability inference\n");
+		REprintf("Model doesn't contain information for SVR probability inference\n");
 		return 0;
 	}
 }
 
 double svm_predict_values(const svm_model *model, const svm_node *x, double* dec_values)
 {
+	int i;
 	if(model->param.svm_type == ONE_CLASS ||
 	   model->param.svm_type == EPSILON_SVR ||
 	   model->param.svm_type == NU_SVR)
 	{
 		double *sv_coef = model->sv_coef[0];
 		double sum = 0;
-		for(int i=0;i<model->l;i++)
+		for(i=0;i<model->l;i++)
 			sum += sv_coef[i] * Kernel::k_function(x,model->SV[i],model->param);
 		sum -= model->rho[0];
 		*dec_values = sum;
@@ -2458,7 +2525,6 @@ double svm_predict_values(const svm_model *model, const svm_node *x, double* dec
 	}
 	else
 	{
-		int i;
 		int nr_class = model->nr_class;
 		int l = model->l;
 		
@@ -2583,6 +2649,9 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 	FILE *fp = fopen(model_file_name,"w");
 	if(fp==NULL) return -1;
 
+	char *old_locale = strdup(setlocale(LC_ALL, NULL));
+	setlocale(LC_ALL, "C");
+
 	const svm_parameter& param = model->param;
 
 	fprintf(fp,"svm_type %s\n", svm_type_table[param.svm_type]);
@@ -2661,6 +2730,10 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 			}
 		fprintf(fp, "\n");
 	}
+
+	setlocale(LC_ALL, old_locale);
+	free(old_locale);
+
 	if (ferror(fp) != 0 || fclose(fp) != 0) return -1;
 	else return 0;
 }
@@ -2690,7 +2763,10 @@ svm_model *svm_load_model(const char *model_file_name)
 {
 	FILE *fp = fopen(model_file_name,"rb");
 	if(fp==NULL) return NULL;
-	
+
+	char *old_locale = strdup(setlocale(LC_ALL, NULL));
+	setlocale(LC_ALL, "C");
+
 	// read parameters
 
 	svm_model *model = Malloc(svm_model,1);
@@ -2698,6 +2774,7 @@ svm_model *svm_load_model(const char *model_file_name)
 	model->rho = NULL;
 	model->probA = NULL;
 	model->probB = NULL;
+	model->sv_indices = NULL;
 	model->label = NULL;
 	model->nSV = NULL;
 
@@ -2720,7 +2797,10 @@ svm_model *svm_load_model(const char *model_file_name)
 			}
 			if(svm_type_table[i] == NULL)
 			{
-				fprintf(stderr,"unknown svm type.\n");
+				REprintf("unknown svm type.\n");
+				
+				setlocale(LC_ALL, old_locale);
+				free(old_locale);
 				free(model->rho);
 				free(model->label);
 				free(model->nSV);
@@ -2742,7 +2822,10 @@ svm_model *svm_load_model(const char *model_file_name)
 			}
 			if(kernel_type_table[i] == NULL)
 			{
-				fprintf(stderr,"unknown kernel function.\n");
+				REprintf("unknown kernel function.\n");
+				
+				setlocale(LC_ALL, old_locale);
+				free(old_locale);
 				free(model->rho);
 				free(model->label);
 				free(model->nSV);
@@ -2806,7 +2889,10 @@ svm_model *svm_load_model(const char *model_file_name)
 		}
 		else
 		{
-			fprintf(stderr,"unknown text in model file: [%s]\n",cmd);
+			REprintf("unknown text in model file: [%s]\n",cmd);
+			
+			setlocale(LC_ALL, old_locale);
+			free(old_locale);
 			free(model->rho);
 			free(model->label);
 			free(model->nSV);
@@ -2879,6 +2965,9 @@ svm_model *svm_load_model(const char *model_file_name)
 	}
 	free(line);
 
+	setlocale(LC_ALL, old_locale);
+	free(old_locale);
+
 	if (ferror(fp) != 0 || fclose(fp) != 0)
 		return NULL;
 
@@ -2913,6 +3002,9 @@ void svm_free_model_content(svm_model* model_ptr)
 
 	free(model_ptr->probB);
 	model_ptr->probB= NULL;
+
+	free(model_ptr->sv_indices);
+	model_ptr->sv_indices = NULL;
 
 	free(model_ptr->nSV);
 	model_ptr->nSV = NULL;

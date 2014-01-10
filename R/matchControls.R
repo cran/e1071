@@ -8,15 +8,15 @@ matchControls <- function(formula, data = list(), subset,
     m <- match.call()
     m$contlabel <- m$caselabel <- m$dogrep <- m$replace <- NULL
     m$na.action <- function(x) x
-        
+
     m[[1]] <- as.name("model.frame")
     m1 <- eval(m, sys.frame(sys.parent()))
 
     ## the full model.frame is used only to determine the number of rows
-    ## of the complete data frame 
+    ## of the complete data frame
     m$subset <- NULL
     m2 <- eval(m, sys.frame(sys.parent()))
-    
+
     if (dogrep) {
         ok <- grep(contlabel, as.character(model.response(m1)))
         controls <- rownames(m1)[ok]
@@ -24,13 +24,13 @@ matchControls <- function(formula, data = list(), subset,
             cases <- rownames(m1)[-ok]
         }
         else {
-            ok <- grep(caselabel, as.character(model.response(m1)))            
+            ok <- grep(caselabel, as.character(model.response(m1)))
             cases <- rownames(m1)[ok]
         }
     }
     else {
         controls <- rownames(m1)[model.response(m1) == contlabel]
-        if (is.null(caselabel)){        
+        if (is.null(caselabel)){
             cases <- rownames(m1)[model.response(m1) != contlabel]
         }
         else {
@@ -42,11 +42,11 @@ matchControls <- function(formula, data = list(), subset,
         }
     }
 
-    d <- as.matrix(as.dist(cluster:::daisy(m1[,-1,drop=FALSE])))
+    d <- as.matrix(as.dist(cluster::daisy(m1[,-1,drop=FALSE])))
 
     which.is.min <- function (x) {
         y <- seq(length(x))[(x == min(x, na.rm = TRUE)) & !is.na(x)]
-        if (length(y) > 1) 
+        if (length(y) > 1)
             sample(y, 1)
         else y
     }
@@ -57,13 +57,13 @@ matchControls <- function(formula, data = list(), subset,
         if (!replace)
             controls <- controls[controls != retval[k]]
     }
-        
+
     fac <- rep(NA, nrow(m2))
     names(fac) <- rownames(m2)
     fac[cases] <- "case"
     fac[retval] <- "cont"
     fac <- factor(fac)
-    
+
     list(cases = cases, controls = retval, factor = fac)
 }
 

@@ -402,7 +402,7 @@ knn.wrapper <- function(x, y, k = 1, l = 0, ...)
     list(train = x, cl = y, k = k, l = l, ...)
 
 tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
-    library("class")
+#    library("class")
     ranges <- list(k = k, l = l)
     ranges[sapply(ranges, is.null)] <- NULL
     if (length(ranges) < 1)

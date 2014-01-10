@@ -104,7 +104,7 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
     d <- dist(object$allcenters, method = dist.method)
     if(hclust.method=="diana"){
         if (!require("cluster")) stop("Could not load required package cluster")        
-        object$hclust <- as.hclust(cluster:::diana(d, diss=TRUE))
+        object$hclust <- as.hclust(cluster::diana(d, diss=TRUE))
     }
     else
         object$hclust <- hclust(d, method = hclust.method)

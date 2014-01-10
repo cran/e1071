@@ -29,7 +29,8 @@ tune.rpart(formula, data, na.action = na.omit, minsplit = NULL,
            NULL, predict.func = NULL, ...)
 best.rpart(formula, tunecontrol = tune.control(), ...)
 
-tune.randomForest(x, y = NULL, data = NULL, nodesize = NULL, mtry = NULL, ntree = NULL, ...)
+tune.randomForest(x, y = NULL, data = NULL, nodesize = NULL, 
+                  mtry = NULL, ntree = NULL, ...)
 best.randomForest(x, tunecontrol = tune.control(), ...)
 
 tune.knn(x, y, k = NULL, l = NULL, ...) 
