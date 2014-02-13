@@ -2,6 +2,12 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.6-3}{
+  \itemize{
+    \item remove require() statements and dependency on stats
+  }
+}
+
 \section{Changes in version 1.6-2}{
   \itemize{
     \item vignettes moved to \code{vignettes} folder.

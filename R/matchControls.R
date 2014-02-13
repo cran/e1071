@@ -2,8 +2,10 @@ matchControls <- function(formula, data = list(), subset,
                            contlabel = "con", caselabel = NULL,
                            dogrep = TRUE, replace = FALSE)
 {
-    require("cluster")
-    require("stats")
+    if (system.file(package = "cluster") == "")
+        stop("Could not load required package 'cluster'!")
+    if (system.file(package = "stats") == "")
+        stop("Could not load required package 'stats'!")
 
     m <- match.call()
     m$contlabel <- m$caselabel <- m$dogrep <- m$replace <- NULL
@@ -42,7 +44,7 @@ matchControls <- function(formula, data = list(), subset,
         }
     }
 
-    d <- as.matrix(as.dist(cluster::daisy(m1[,-1,drop=FALSE])))
+    d <- as.matrix(stats::as.dist(cluster::daisy(m1[,-1,drop=FALSE])))
 
     which.is.min <- function (x) {
         y <- seq(length(x))[(x == min(x, na.rm = TRUE)) & !is.na(x)]

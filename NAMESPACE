@@ -1,7 +1,6 @@
 useDynLib(e1071)
 
 import(graphics)
-import(stats)
 import(grDevices)
 
 importFrom(class, knn, knn1)

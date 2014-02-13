@@ -362,7 +362,7 @@ void svmpredict  (int    *decisionvalues,
     /* set up model */
     m.l        = *totnSV;
     m.nr_class = *nclasses;
-    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double));
+    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double*));
     for (i = 0; i < m.nr_class - 1; i++) {
       m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
       memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
@@ -453,7 +453,7 @@ void svmwrite (double *v, int *r, int *c,
     /* set up model */
     m.l        = *totnSV;
     m.nr_class = *nclasses;
-    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double));
+    m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double*));
     for (i = 0; i < m.nr_class - 1; i++) {
       m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
       memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
