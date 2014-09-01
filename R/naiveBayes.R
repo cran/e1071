@@ -102,6 +102,7 @@ predict.naiveBayes <- function(object,
                                newdata,
                                type = c("class", "raw"),
                                threshold = 0.001,
+                               eps = 0,
                                ...) {
     type <- match.arg(type)
     newdata <- as.data.frame(newdata)
@@ -116,10 +117,10 @@ predict.naiveBayes <- function(object,
                 if (is.na(nd)) rep(1, length(object$apriori)) else {
                   prob <- if (isnumeric[attribs[v]]) {
                     msd <- object$tables[[v]]
-                    msd[, 2][msd[, 2] == 0] <- threshold
+                    msd[, 2][msd[, 2] <= eps] <- threshold
                     dnorm(nd, msd[, 1], msd[, 2])
                   } else object$tables[[v]][, nd]
-                  prob[prob == 0] <- threshold
+                  prob[prob <= eps] <- threshold
                   prob
                 }
             })), 1, sum)

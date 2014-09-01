@@ -16,7 +16,7 @@
 
 
 \S3method{predict}{naiveBayes}(object, newdata,
-  type = c("class", "raw"), threshold = 0.001, ...)
+  type = c("class", "raw"), threshold = 0.001, eps = 0, ...)
 
 }
 \arguments{
@@ -47,7 +47,9 @@
   \item{type}{If \code{"raw"}, the conditional a-posterior
     probabilities for each class are returned, and the class with
     maximal probability else.}
-  \item{threshold}{Value replacing cells with 0 probabilities.}
+  \item{threshold}{Value replacing cells with probabilities within \code{eps} range.}
+  \item{eps}{double for specifying an epsilon-range to apply laplace
+    smoothing (to replace zero or close-zero probabilities by \code{theshold}.)}
 }
 \value{
   An object of class \code{"naiveBayes"} including components:

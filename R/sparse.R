@@ -1,7 +1,5 @@
 read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 {
-    library("SparseM")
-
     l <- strsplit(readLines(file), "[ ]+")
 
     ## extract y-values, if any
@@ -23,7 +21,8 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 
     max.ja <- max(ja)
     dimension <- c(length(l), if (is.null(ncol)) max.ja else max(ncol, max.ja))
-    x = new("matrix.csr", ra = as.numeric(rja[,2]), ja = ja,
+    x = new(getClass("matrix.csr", where = asNamespace("SparseM")),
+    ra = as.numeric(rja[,2]), ja = ja,
     ia = as.integer(ia), dimension = as.integer(dimension))
     if (length(y))
         list(x = x, y = if (fac) as.factor(y) else as.numeric(y))
@@ -32,9 +31,8 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
 
 write.matrix.csr <- function (x, file = "out.dat", y = NULL, fac = TRUE) {
     on.exit(sink())
-    library("SparseM")
 
-    x <- as.matrix.csr(x)
+    x <- SparseM::as.matrix.csr(x)
     if (!is.null(y) & (length(y) != nrow(x)))
         stop(paste("Length of y (=", length(y),
                    ") does not match number of rows of x (=",

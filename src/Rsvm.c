@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <R.h>
+#include <Rdefines.h>
 #include "svm.h"
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
@@ -86,9 +88,10 @@ void do_cross_validation(struct svm_problem *prob,
 	double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
 
 	/* random shuffle */
+	GetRNGstate();
 	for(i=0; i<prob->l; i++)
 	{
-		int j = i+rand()%(prob->l-i);
+	        int j = i+((int) (unif_rand() * (prob->l-i)))%(prob->l-i);
 		struct svm_node *tx;
 		double ty;
 			
@@ -100,6 +103,7 @@ void do_cross_validation(struct svm_problem *prob,
 		prob->y[i] = prob->y[j];
 		prob->y[j] = ty;
 	}
+	PutRNGstate();
 
 	for(i=0; i<nr_fold; i++)
 	{
@@ -209,7 +213,6 @@ void svmtrain (double *x, int *r, int *c,
 	       int    *cross,
 	       int    *sparse,
 	       int    *probability,
-	       int    *seed,
 	       
 	       int    *nclasses,
 	       int    *nr,
@@ -268,8 +271,6 @@ void svmtrain (double *x, int *r, int *c,
     if (s) {
 	strcpy(*error, s);
     } else {
-	/* set seed */
-	srand(*seed);
 
 	/* call svm_train */
 	model = svm_train(&prob, &par);
@@ -429,6 +430,7 @@ void svmwrite (double *v, int *r, int *c,
 		  int    *colindex,
 		  double *coefs,
 		  double *rho,
+	          int    *compprob,
 	          double *probA,
 	          double *probB,
 		  int    *nclasses,
@@ -448,15 +450,15 @@ void svmwrite (double *v, int *r, int *c,
 {
     struct svm_model m;
     int i;
-	char *fname = *filename;    
+    char *fname = *filename;    
 
     /* set up model */
     m.l        = *totnSV;
     m.nr_class = *nclasses;
     m.sv_coef  = (double **) malloc (m.nr_class * sizeof(double*));
     for (i = 0; i < m.nr_class - 1; i++) {
-      m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
-      memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
+	m.sv_coef[i] = (double *) malloc (m.l * sizeof (double));
+	memcpy (m.sv_coef[i], coefs + i*m.l, m.l * sizeof (double));
     }
     
     if (*sparsemodel > 0)
@@ -467,8 +469,13 @@ void svmwrite (double *v, int *r, int *c,
     m.rho      = rho;
     m.label    = labels;
     m.nSV      = nSV;
-    m.probA    = probA;
-    m.probB    = probB;
+    if (*compprob) {
+	m.probA    = probA;
+	m.probB    = probB;
+    } else {
+	m.probA    = NULL;
+	m.probB    = NULL;
+    }
 
     /* set up parameter */
     m.param.svm_type    = *svm_type;
@@ -479,13 +486,16 @@ void svmwrite (double *v, int *r, int *c,
 
     m.free_sv           = 1;
 
-	/* write svm model */
-	svm_save_model(fname, &m);
+    /* write svm model */
+    svm_save_model(fname, &m);
 
     for (i = 0; i < m.nr_class - 1; i++)
-      free(m.sv_coef[i]);
+	free(m.sv_coef[i]);
     free(m.sv_coef);
 
+    for (i = 0; i < *r; i++)
+	free (m.SV[i]);
+    free (m.SV);
 
 }
 
