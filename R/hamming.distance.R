@@ -1,9 +1,9 @@
 hamming.distance <- function(x,y){
-  
+
   z<-NULL
-  
+
   if(is.vector(x) && is.vector(y)){
-    z <- sum(as.logical(x) != as.logical(y))
+    z <- sum(x != y)
   }
   else{
     z <- matrix(0,nrow=nrow(x),ncol=nrow(x))

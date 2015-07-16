@@ -2,6 +2,27 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.6-6}{
+  \itemize{
+    \item fix numeric issue in \code{classAgreement()}
+    \item add functions from recommended packages to NAMESPACE
+    \item fix bug in svm.default (incorrect handling of subset=
+    argument)
+    \item fix bug in predict.svm (new data with NA in response got
+    removed)
+    \item residuals are now correctly computed for regression in case of
+  scaled data
+  }
+}
+
+\section{Changes in version 1.6-5}{
+  \itemize{
+    \item \code{hamming.distance()} no longer converts input to binary
+    \item \code{tune()} now uses \code{mean()} to aggregate error
+    measures from cross-fold replications
+  }
+}
+
 \section{Changes in version 1.6-4}{
   \itemize{
     \item remove library("SparseM") statements in code, use namespace

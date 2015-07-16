@@ -1,5 +1,5 @@
 classAgreement <-
-function (tab, match.names=FALSE) 
+    function (tab, match.names=FALSE)
 {
     n <- sum(tab)
     ni <- apply(tab, 1, sum)
@@ -7,22 +7,23 @@ function (tab, match.names=FALSE)
 
     ## patch for matching factors
     if (match.names && !is.null(dimnames(tab))) {
-      lev <- intersect (colnames (tab), rownames(tab))
-      p0 <- sum(diag(tab[lev,lev]))/n
-      pc <- sum(ni[lev] * nj[lev])/n^2
+        lev <- intersect (colnames (tab), rownames(tab))
+        p0 <- sum(diag(tab[lev,lev]))/n
+        pc <- sum(ni[lev] * nj[lev])/n^2
     } else { # cutoff larger dimension
-      m <- min(length(ni), length(nj))
-      p0 <- sum(diag(tab[1:m, 1:m]))/n
-      pc <- sum(ni[1:m] * nj[1:m])/n^2
+        m <- min(length(ni), length(nj))
+        p0 <- sum(diag(tab[1:m, 1:m]))/n
+        pc <- sum((ni[1:m] / n) * (nj[1:m] / n))
     }
     n2 <- choose(n, 2)
     rand <- 1 + (sum(tab^2) - (sum(ni^2) + sum(nj^2))/2)/n2
     nis2 <- sum(choose(ni[ni > 1], 2))
     njs2 <- sum(choose(nj[nj > 1], 2))
-    crand <- (sum(choose(tab[tab > 1], 2)) - (nis2 * njs2)/n2)/((nis2 + 
-        njs2)/2 - (nis2 * njs2)/n2)
-    list(diag = p0, kappa = (p0 - pc)/(1 - pc), rand = rand, 
-        crand = crand)
+    crand <- (sum(choose(tab[tab > 1], 2)) -
+                  (nis2 * njs2)/n2)/((nis2 + njs2)/2 -
+                                         (nis2 * njs2)/n2)
+    list(diag = p0, kappa = (p0 - pc)/(1 - pc), rand = rand,
+         crand = crand)
 }
 
 matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
@@ -30,7 +31,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
 
     methods <- c("rowmax", "greedy", "exact")
     method <- pmatch(method, methods)
-    
+
     rmax <- apply(tab,1,which.max)
     myseq <- 1:ncol(tab)
     cn <- colnames(tab)
@@ -41,7 +42,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
     if(is.null(rn)){
         rn <- myseq
     }
-    
+
     if(method==1){
         retval <- rmax
     }
@@ -50,7 +51,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
             stop("Unique matching only for square tables.")
         }
 
-        
+
         dimnames(tab) <- list(myseq, myseq)
         cmax <- apply(tab,2,which.max)
         retval <- rep(NA, ncol(tab))
@@ -59,7 +60,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
         baseok <- cmax[rmax]==myseq
         for(k in myseq[baseok]){
             therow <- (tab[k,])[-rmax[k]]
-            thecol <- (tab[, rmax[k]])[-k]            
+            thecol <- (tab[, rmax[k]])[-k]
             if(max(outer(therow, thecol, "+")) < tab[k, rmax[k]]){
                 retval[k] <- rmax[k]
             }
@@ -67,8 +68,8 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
                 baseok[k] <- FALSE
             }
         }
-        
-                   
+
+
 
         if(verbose){
             cat("Direct agreement:", sum(baseok),
@@ -90,7 +91,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
                     perm <- permutations(ncol(tab)-sum(baseok))
                 }
             }
-            
+
             ## rest for permute matching
             if(any(baseok)){
                 rest <- myseq[-retval[baseok]]
@@ -98,7 +99,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
             else{
                 rest <- myseq
             }
-            
+
             for(l in 1:iter){
                 newretval <- retval
                 if(method == 2){
@@ -120,7 +121,7 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
                 else{
                     newretval[!baseok] <- rest[perm[l,]]
                 }
-                
+
                 if(l>1){
                     agree <- sum(diag(tab[,newretval]))/sum(tab)
                     if(agree>oldagree){
@@ -140,12 +141,12 @@ matchClasses <- function(tab, method = "rowmax", iter=1, maxexact=9,
         cat("Cases in matched pairs:",
             round(100*sum(diag(tab[,retval]))/sum(tab), 2), "%\n")
     }
-            
+
     if(any(as.character(myseq)!=cn)){
         retval <- cn[retval]
     }
     names(retval) <- rn
-    
+
     retval
 }
 
@@ -191,7 +192,7 @@ compareMatchedClasses <- function(x, y,
             }
         }
     }
-    
+
     retval
 }
 
@@ -202,17 +203,17 @@ permutations <- function(n) {
         return(matrix(1))
     else if(n<2)
         stop("n must be a positive integer")
-    
+
     z <- matrix(1)
-    for (i in 2:n) { 
+    for (i in 2:n) {
         x <- cbind(z, i)
         a <- c(1:i, 1:(i - 1))
         z <- matrix(0, ncol=ncol(x), nrow=i*nrow(x))
-        z[1:nrow(x),] <- x 
-        for (j in 2:i-1) { 
-            z[j*nrow(x)+1:nrow(x),] <- x[, a[1:i+j]] 
-        } 
-    } 
+        z[1:nrow(x),] <- x
+        for (j in 2:i-1) {
+            z[j*nrow(x)+1:nrow(x),] <- x[, a[1:i+j]]
+        }
+    }
     dimnames(z) <- NULL
     z
-} 
+}

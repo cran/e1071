@@ -6,7 +6,7 @@
   the \code{tune} function, containing various control parameters.
 }
 \usage{
-tune.control(random = FALSE, nrepeat = 1, repeat.aggregate = min,
+tune.control(random = FALSE, nrepeat = 1, repeat.aggregate = mean,
 sampling = c("cross", "fix", "bootstrap"), sampling.aggregate = mean,
 sampling.dispersion = sd,
 cross = 10, fix = 2/3, nboot = 10, boot.size = 9/10, best.model = TRUE,

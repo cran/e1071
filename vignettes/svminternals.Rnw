@@ -202,6 +202,25 @@ predsvm <- function(object, newdata)
 \}
 \end{smallexample}
 
+In case data were scaled prior fitting the model (note that this is the
+default for \texttt{svm()}, the new data needs to be scaled as well
+before applying the predition functions, for example using the
+following code snipped (object is an object returned by \texttt{svm()},
+\texttt{newdata} a data frame):
+
+\begin{smallexample}
+if (any(object$scaled)) 
+    newdata[,object$scaled] <-
+        scale(newdata[,object$scaled, drop = FALSE],
+            center = object$x.scale$"scaled:center",
+            scale  = object$x.scale$"scaled:scale"
+        )
+
+\end{smallexample}  
+
+\noindent For regression, the response needs to be scaled as well
+before training, and the predictions need to be scaled back accordingly.
+
 \end{document}
 
 

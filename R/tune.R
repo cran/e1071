@@ -1,6 +1,6 @@
 tune.control <- function(random = FALSE,
                          nrepeat = 1,
-                         repeat.aggregate = min,
+                         repeat.aggregate = mean,
                          sampling = c("cross", "fix", "bootstrap"),
                          sampling.aggregate = mean,
                          sampling.dispersion = sd,
@@ -343,7 +343,7 @@ tune.nnet <- function(x, y = NULL, data = NULL,
                       ...) {
     call <- match.call()
     call[[1]] <- as.symbol("best.nnet")
-    library("nnet")
+    loadNamespace("nnet")
     predict.func <- predict
     useFormula <- inherits(x, "formula")
     if (is.factor(y) ||
@@ -376,7 +376,7 @@ best.nnet <- function(x, tunecontrol = tune.control(nrepeat = 5), ...) {
 tune.randomForest <- function(x, y = NULL, data = NULL, nodesize = NULL, mtry = NULL, ntree = NULL, ...) {
     call <- match.call()
     call[[1]] <- as.symbol("best.randomForest")
-    library("randomForest")
+    loadNamespace("randomForest")
     ranges <- list(nodesize = nodesize, mtry = mtry, ntree = ntree)
     ranges[sapply(ranges, is.null)] <- NULL
     if (length(ranges) < 1)
@@ -402,7 +402,7 @@ knn.wrapper <- function(x, y, k = 1, l = 0, ...)
     list(train = x, cl = y, k = k, l = l, ...)
 
 tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
-#    library("class")
+    loadNamespace("class")
     ranges <- list(k = k, l = l)
     ranges[sapply(ranges, is.null)] <- NULL
     if (length(ranges) < 1)
@@ -432,7 +432,7 @@ tune.rpart <- function(formula, data, na.action = na.omit,
                        ...) {
     call <- match.call()
     call[[1]] <- as.symbol("best.rpart")
-    library("rpart")
+    loadNamespace("rpart")
     ranges <- list(minsplit=minsplit, minbucket=minbucket, cp=cp,
                    maxcompete=maxcompete, maxsurrogate=maxsurrogate,
                    usesurrogate=usesurrogate, xval=xval,

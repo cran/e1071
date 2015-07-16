@@ -9,7 +9,7 @@
 }
 \description{ If both \code{x} and
 \code{y} are vectors, \code{hamming.distance} returns the Hamming
-distance (number of different bytes) between this two vectors. If
+distance (number of different elements) between this two vectors. If
 \code{x} is a matrix, the Hamming distances between the rows of \code{x}
 are computed and \code{y} is ignored.
 }
@@ -20,5 +20,7 @@ hamming.distance(x, y)
 z <- rbind(x,y)
 rownames(z) <- c("Fred", "Tom")
 hamming.distance(z)
+
+hamming.distance(1:3, 3:1)
 }
 \keyword{multivariate}

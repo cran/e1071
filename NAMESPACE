@@ -2,10 +2,12 @@ useDynLib(e1071)
 
 import(graphics)
 import(grDevices)
+import(stats)
 
-importFrom(class, knn, knn1)
+importFrom("methods", "as", "getClass", "new")
+importFrom("class", "knn", "knn1")
 if(getRversion() >= "2.5.0")
-    importFrom(utils, write.table)
+    importFrom("utils", "write.table")
 
 export(ddiscrete, pdiscrete, qdiscrete, rdiscrete, bclust,
        hclust.bclust, centers.bclust, clusters.bclust, bincombinations,
@@ -37,8 +39,8 @@ S3method(plot, stft)
 S3method(plot, svm)
 S3method(plot, tune)
 
-S3method(predict, lca)         
-S3method(predict, naiveBayes)         
+S3method(predict, lca)
+S3method(predict, naiveBayes)
 S3method(predict, svm)
 
 S3method(print, bootstrap.lca)
