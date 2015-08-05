@@ -179,8 +179,9 @@ function (x,
     if (cross > nr)
         stop(sQuote("cross"), " cannot exceed the number of observations!")
 
-    if (!is.vector(`attributes<-`(y, NULL))
-        && !is.factor (y) && type != 2)
+    ytmp <- y
+    attributes(ytmp) <- NULL
+    if (!is.vector(ytmp) && !is.factor(y) && type != 2)
         stop("y must be a vector or a factor.")
     if (type != 2 && length(y) != nr)
         stop("x and y don't match.")
@@ -201,13 +202,6 @@ function (x,
         if (is.factor(y)) {
             lev <- levels(y)
             y <- as.integer(y)
-            if (!is.null(class.weights)) {
-                if (is.null(names(class.weights)))
-                    stop("Weights have to be specified along with their according level names !")
-                weightlabels <- match (names(class.weights), lev)
-                if (any(is.na(weightlabels)))
-                    stop("At least one level name is missing or misspelled.")
-            }
         } else {
             if (type < 3) {
                 if(any(as.integer(y) != y))
@@ -217,6 +211,14 @@ function (x,
                 y <- as.integer(y)
             } else lev <- unique(y)
         }
+
+    if (type < 3 && !is.null(class.weights)) {
+        if (is.null(names(class.weights)))
+            stop("Weights have to be specified along with their according level names !")
+        weightlabels <- match (names(class.weights), lev)
+        if (any(is.na(weightlabels)))
+            stop("At least one level name is missing or misspelled.")
+    }
 
     nclass <- 2
     if (type < 2) nclass <- length(lev)

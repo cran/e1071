@@ -2,6 +2,11 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.6-7}{
+  \itemize{
+    \item fix some bug in handling weights in svm.default}
+  }
+
 \section{Changes in version 1.6-6}{
   \itemize{
     \item fix numeric issue in \code{classAgreement()}
