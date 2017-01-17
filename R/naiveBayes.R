@@ -104,39 +104,35 @@ predict.naiveBayes <- function(object,
                                threshold = 0.001,
                                eps = 0,
                                ...) {
-    type <- match.arg(type)
-    newdata <- as.data.frame(newdata)
-    attribs <- match(names(object$tables), names(newdata))
-    isnumeric <- sapply(newdata, is.numeric)
-    newdata <- data.matrix(newdata)
-    L <- sapply(1:nrow(newdata), function(i) {
-        ndata <- newdata[i, ]
-        L <- log(object$apriori) + apply(log(sapply(seq_along(attribs),
-            function(v) {
-                nd <- ndata[attribs[v]]
-                if (is.na(nd)) rep(1, length(object$apriori)) else {
-                  prob <- if (isnumeric[attribs[v]]) {
-                    msd <- object$tables[[v]]
-                    msd[, 2][msd[, 2] <= eps] <- threshold
-                    dnorm(nd, msd[, 1], msd[, 2])
-                  } else object$tables[[v]][, nd]
-                  prob[prob <= eps] <- threshold
-                  prob
-                }
-            })), 1, sum)
-        if (type == "class")
-            L
-        else {
-            ## Numerically unstable:
-            ##            L <- exp(L)
-            ##            L / sum(L)
-            ## instead, we use:
-            sapply(L, function(lp) {
-                1/sum(exp(L - lp))
-            })
-        }
-    })
-    if (type == "class")
-        factor(object$levels[apply(L, 2, which.max)], levels = object$levels)
-    else t(L)
+  # Initializing
+  type <- match.arg(type)
+  newdata <- as.data.frame(newdata)
+  attribs <- match(names(object$tables), names(newdata))
+  log_eps <- log(eps)
+  logp <- lapply(object$tables, log)
+  aprior <- log(object$apriori)
+
+  # Function for assigning log probabilities to new data
+  assign_probabilities <- function(v) {
+    nb.id <- match(v, names(logp))
+    p <- logp[[nb.id]][, newdata[, v]]
+    p <- ifelse(p < log_eps, log(threshold), p)
+    return(p)
+  }
+
+  # Actually assign log probabilities to new data
+  a <- lapply(names(newdata)[attribs], assign_probabilities)
+
+  # Compute likelihood by summing log probabilities (including prior)
+  prior_p <- matrix(rep(aprior, ncol(a[[1]])), nrow(a[[1]]))
+  posterior_p <- Reduce("+", a, prior_p)
+  normalize_log_p <- function(x) sapply(x, function(y) {1 / sum(exp(x - y))})
+  L <- apply(posterior_p, 2, normalize_log_p)
+
+  # Return probabilities
+  if (type == "class")
+    factor(object$levels[apply(L, 2, which.max)], levels = object$levels)
+  else
+    t(L)
 }
+
