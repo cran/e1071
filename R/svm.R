@@ -13,7 +13,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
         m$data <- as.data.frame(eval.parent(m$data))
     m$... <- NULL
     m$scale <- NULL
-    m[[1]] <- as.name("model.frame")
+    m[[1L]] <- quote(stats::model.frame)
     m$na.action <- na.action
     m <- eval(m, parent.frame())
     Terms <- attr(m, "terms")
@@ -246,7 +246,7 @@ function (x,
     if (is.null(sparse)) stop("sparse argument must not be NULL!")
     if (is.null(probability)) stop("probability argument must not be NULL!")
 
-    cret <- .C ("svmtrain",
+    cret <- .C (R_svmtrain,
                 ## data
                 as.double  (if (sparse) x@ra else t(x)),
                 as.integer (nr), as.integer(ncol(x)),
@@ -289,9 +289,9 @@ function (x,
                 cresults = double   (cross),
                 ctotal1  = double   (1),
                 ctotal2  = double   (1),
-                error    = err,
+                error    = err
 
-                PACKAGE = "e1071")
+                )
 
     if (cret$error != empty_string)
         stop(paste(cret$error, "!", sep=""))
@@ -318,8 +318,8 @@ function (x,
                  tot.nSV  = cret$nr, #total number of sv
                  nSV      = cret$nSV[1:cret$nclasses], #number of SV in diff. classes
                  labels   = cret$labels[1:cret$nclasses], #labels of the SVs.
-                 SV       = if (sparse) SparseM::t(SparseM::t(x[cret$index,]))
-                 else t(t(x[cret$index,])), #copy of SV
+                 SV       = if (sparse) SparseM::t(SparseM::t(x[cret$index]))
+                 else t(t(x[cret$index,,drop = FALSE])), #copy of SV
                  index    = cret$index,  #indexes of sv in x
                  ##constants in decision functions
                  rho      = cret$rho[1:(cret$nclasses * (cret$nclasses - 1) / 2)],
@@ -410,10 +410,10 @@ function (object, newdata,
         if (inherits(object, "svm.formula")) {
             if(is.null(colnames(newdata)))
                 colnames(newdata) <- colnames(object$SV)
-            newdata <- model.matrix(delete.response(terms(object)),
-                                    as.data.frame(newdata))
             newdata <- na.action(newdata)
             act <- attr(newdata, "na.action")
+            newdata <- model.matrix(delete.response(terms(object)),
+                                    as.data.frame(newdata))
         } else {
             newdata <- na.action(as.matrix(newdata))
             act <- attr(newdata, "na.action")
@@ -433,7 +433,7 @@ function (object, newdata,
     if (ncol(object$SV) != ncol(newdata))
         stop ("test data does not match model !")
 
-    ret <- .C ("svmpredict",
+    ret <- .C (R_svmpredict,
                as.integer (decision.values),
                as.integer (probability),
 
@@ -470,9 +470,9 @@ function (object, newdata,
                ## decision-values
                ret = double(nrow(newdata)),
                dec = double(nrow(newdata) * object$nclasses * (object$nclasses - 1) / 2),
-               prob = double(nrow(newdata) * object$nclasses),
+               prob = double(nrow(newdata) * object$nclasses)
 
-               PACKAGE = "e1071"
+
                )
 
     ret2 <- if (is.character(object$levels)) # classification: return factors
@@ -673,11 +673,11 @@ function(x, data, formula = NULL, fill = TRUE,
 }
 
 write.svm <-
-function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale",
+function (object, svm.file = "Rdata.svm", scale.file = "Rdata.scale",
           yscale.file = "Rdata.yscale")
 {
 
-    ret <- .C ("svmwrite",
+    ret <- .C (R_svmwrite,
                ## model
                as.double  (if (object$sparse) object$SV@ra else t(object$SV)),
                as.integer (nrow(object$SV)), as.integer(ncol(object$SV)),
@@ -702,9 +702,9 @@ function (object, svm.file="Rdata.svm", scale.file = "Rdata.scale",
                as.double  (object$coef0),
 
                ## filename
-               as.character(svm.file),
+               as.character(svm.file)
 
-               PACKAGE = "e1071"
+
                )$ret
 
     write.table(data.frame(center = object$x.scale$"scaled:center",

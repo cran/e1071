@@ -27,7 +27,7 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
 
     structure(list(apriori = apriori,
                    tables = tables,
-                   levels = levels(y),
+                   levels = if (is.logical(y)) c(FALSE, TRUE) else levels(y),
                    call   = call
                    ),
 
@@ -46,7 +46,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
         m$... <- NULL
         m$laplace = NULL
         m$na.action <- na.action
-        m[[1]] <- as.name("model.frame")
+        m[[1L]] <- quote(stats::model.frame)
         m <- eval(m, parent.frame())
         Terms <- attr(m, "terms")
         if (any(attr(Terms, "order") > 1))
@@ -108,6 +108,7 @@ predict.naiveBayes <- function(object,
     newdata <- as.data.frame(newdata)
     attribs <- match(names(object$tables), names(newdata))
     isnumeric <- sapply(newdata, is.numeric)
+    islogical <- sapply(newdata, is.logical)
     newdata <- data.matrix(newdata)
     L <- sapply(1:nrow(newdata), function(i) {
         ndata <- newdata[i, ]
@@ -119,7 +120,7 @@ predict.naiveBayes <- function(object,
                     msd <- object$tables[[v]]
                     msd[, 2][msd[, 2] <= eps] <- threshold
                     dnorm(nd, msd[, 1], msd[, 2])
-                  } else object$tables[[v]][, nd]
+                  } else object$tables[[v]][, nd + islogical[attribs[v]]]
                   prob[prob <= eps] <- threshold
                   prob
                 }
@@ -136,7 +137,10 @@ predict.naiveBayes <- function(object,
             })
         }
     })
-    if (type == "class")
-        factor(object$levels[apply(L, 2, which.max)], levels = object$levels)
-    else t(L)
+    if (type == "class") {
+        if (is.logical(object$levels))
+            L[2,] > L[1,]
+        else
+            factor(object$levels[apply(L, 2, which.max)], levels = object$levels)
+    } else t(L)
 }

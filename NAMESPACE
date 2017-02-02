@@ -1,4 +1,4 @@
-useDynLib(e1071)
+useDynLib("e1071", .registration = TRUE, .fixes = "R_")
 
 import(graphics)
 import(grDevices)

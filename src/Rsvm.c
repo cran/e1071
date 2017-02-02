@@ -233,7 +233,7 @@ void svmtrain (double *x, int *r, int *c,
     struct svm_parameter par;
     struct svm_problem   prob;
     struct svm_model    *model = NULL;
-    int i, ii;
+    int i;
     const char* s;
     
     /* set parameters */

@@ -1,11 +1,19 @@
 \name{NEWS}
 \title{News for Package \pkg{e1071}}
-\newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+\newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+
+\section{Changes in version 1.6-8}{
+  \itemize{
+    \item add and use native symbols for C-code
+    \item \code{naiveBayes()} now supports logical variables
+  }
+}
 
 \section{Changes in version 1.6-7}{
   \itemize{
-    \item fix some bug in handling weights in svm.default}
+    \item fix some bug in handling weights in \code{svm.default()}
   }
+}
 
 \section{Changes in version 1.6-6}{
   \itemize{

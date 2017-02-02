@@ -25,9 +25,12 @@ best.tune(...)
     predictor matrix and response are supplied directly.}
   \item{validation.x}{an optional validation set. Depending on whether a
     formula interface is used or not, the response can be
-    included in \code{validation.x} or separately specified using \code{validation.y}.}
+    included in \code{validation.x} or separately specified using
+    \code{validation.y}. Only used for bootstrap and fixed validation
+    set (see \code{\link{tune.control}})}
   \item{validation.y}{if no formula interface is used, the response of
-    the (optional) validation set.}
+    the (optional) validation set. Only used for bootstrap and fixed validation
+    set (see \code{\link{tune.control}})}
   \item{ranges}{a named list of parameter vectors spanning the sampling
     space. The vectors will usually be created by \code{seq}.}
   \item{predict.func}{optional predict function, if the standard \code{predict}

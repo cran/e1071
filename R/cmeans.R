@@ -81,7 +81,7 @@ function(x, centers, iter.max = 100, verbose = FALSE,
     rownames(centers) <- pos
 
     if(method == 1) {
-        retval <- .C("cmeans",
+        retval <- .C(R_cmeans,
                      as.double(x),
                      as.integer(xrows),
                      as.integer(xcols),
@@ -95,11 +95,10 @@ function(x, centers, iter.max = 100, verbose = FALSE,
                      as.integer(verbose),
                      u = double(xrows * ncenters),
                      ermin = double(1),
-                     iter = integer(1),
-                     PACKAGE = "e1071")
+                     iter = integer(1))
     }
     else if(method == 2) {
-        retval <- .C("ufcl",
+        retval <- .C(R_ufcl,
                      x = as.double(x),                         
                      as.integer(xrows),
                      as.integer(xcols), 
@@ -114,8 +113,8 @@ function(x, centers, iter.max = 100, verbose = FALSE,
                      as.double(rate.par),
                      u = double(xrows * ncenters),
                      ermin = double(1),
-                     iter = integer(1),
-                     PACKAGE = "e1071")
+                     iter = integer(1)
+                     )
     }
         
     centers <- matrix(retval$centers, ncol = xcols,

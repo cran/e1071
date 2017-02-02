@@ -11,7 +11,7 @@ matchControls <- function(formula, data = list(), subset,
     m$contlabel <- m$caselabel <- m$dogrep <- m$replace <- NULL
     m$na.action <- function(x) x
 
-    m[[1]] <- as.name("model.frame")
+    m[[1L]] <- quote(stats::model.frame)
     m1 <- eval(m, sys.frame(sys.parent()))
 
     ## the full model.frame is used only to determine the number of rows
