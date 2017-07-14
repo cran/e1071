@@ -880,6 +880,9 @@ int Solver::select_working_set(int &out_i, int &out_j)
 		}
 	}
 
+	if (Gmax_idx < 0 || Gmin_idx < 0)
+		error("Overflow / NaNs produced.");
+
 	if(Gmax+Gmax2 < eps)
 		return 1;
 
@@ -1132,6 +1135,8 @@ int Solver_NU::select_working_set(int &out_i, int &out_j)
 		}
 	}
 
+	if (Gmin_idx == -1 || ((y[Gmin_idx] == +1)?Gmaxp_idx:Gmaxn_idx) == -1)
+		error("Overflow / NaNs produced.");
 	if(max(Gmaxp+Gmaxp2,Gmaxn+Gmaxn2) < eps)
 		return 1;
 
