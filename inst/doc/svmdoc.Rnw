@@ -326,7 +326,7 @@ If the cross-classification feature is enabled, the
 \section*{Tips on practical use}
 \begin{itemize}
  \item Note that SVMs may be very
-  sensible to the proper choice of parameters, so allways check a range
+  sensitive to the proper choice of parameters, so allways check a range
   of parameter combinations, at least on a reasonable subset of your
   data.
  \item For classification tasks, you will most likely use
@@ -353,7 +353,7 @@ Dual representation of models implemented:
 \begin{itemize}
  \item $C$-classification:\\
   \begin{eqnarray}
-    \min_\alpha&&\frac{1}{2}\alpha^\top \mathbf{Q} \alpha-e^\top\alpha \nonumber\\
+    \min_\alpha&&\frac{1}{2}\alpha^\top \mathbf{Q} \alpha-\mathbf{e}^\top\alpha \nonumber\\
     \mbox{s.t.} &&0\le\alpha_i\le C,~i=1,\ldots,l,\\
     &&\mathbf{y}^\top\alpha=0~, \nonumber
   \end{eqnarray}

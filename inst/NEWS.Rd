@@ -2,6 +2,19 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.7-0}{
+  \itemize{
+    \item Bug fix in \code{lca()}
+    \item The \code{class.weights} argument of \code{svm()} now accepts
+    \code{"inverse"}, setting the weights inversely proportional to the
+    class distribution
+    \item \code{predict.naiveBayes} now fixes the factor levels of
+    \code{newdata} to be identical with the training data.
+    \item{libsvm updated to version 3.23}
+    
+  }
+}
+
 \section{Changes in version 1.6-8}{
   \itemize{
     \item add and use native symbols for C-code

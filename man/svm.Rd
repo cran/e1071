@@ -75,7 +75,9 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     \code{nu-regression}, and \code{one-classification}}
   \item{class.weights}{a named vector of weights for the different
     classes, used for asymmetric class sizes. Not all factor levels have
-    to be supplied (default weight: 1). All components have to be named.}
+    to be supplied (default weight: 1). All components have to be
+    named. Specifying \code{"inverse"} will choose the weights \emph{inversely}
+    proportional to the class distribution.}
   \item{cachesize}{cache memory in MB (default 40)}
   \item{tolerance}{tolerance of termination criterion (default: 0.001)}
   \item{epsilon}{epsilon in the insensitive-loss function (default: 0.1)}

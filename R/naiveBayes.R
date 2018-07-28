@@ -106,6 +106,12 @@ predict.naiveBayes <- function(object,
                                ...) {
     type <- match.arg(type)
     newdata <- as.data.frame(newdata)
+
+    ## fix factor levels to be identical with training data
+    for (i in names(object$tables))
+        if (!is.numeric(newdata[[i]]))
+            newdata[[i]] <- factor(newdata[[i]], levels = colnames(object$tables[[i]]))
+
     attribs <- match(names(object$tables), names(newdata))
     isnumeric <- sapply(newdata, is.numeric)
     islogical <- sapply(newdata, is.logical)

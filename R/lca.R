@@ -19,7 +19,7 @@ lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
     n <- sum(x)
     npat <- length(x)
     nvar <- round(log(npat)/log(2))
-    
+
     ## build matrix of all possible binary vectors
     b <- matrix(0, 2^nvar, nvar)
     for (i in 1:nvar)
@@ -31,10 +31,10 @@ lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
     names(classprob) <- 1:k
     p <- matrix(runif(nvar*k), k)
 
-    
+
     pas <- matrix(0, k, npat)
     classsize <- numeric(k)
-    
+
     for (i in 1:niter)
     {
         for (j in 1:k)
@@ -44,8 +44,8 @@ lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
             pas[j,] <- drop(exp(rep(1,nvar)%*%log(mp))) # column product
         }
         ##  P(pattern|class)*P(class)
-        pas <- t(t(pas)*classprob)        
-        
+        pas <- pas * classprob
+
         ## P(class|pattern)
         sump <- drop(rep(1,k)%*%pas)  # column sums
         pas <- t(t(pas)/sump)
@@ -77,10 +77,10 @@ lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
     ## bic
     bic <- -2*ll+log(n)*(k*(nvar+1)-1)
     bicsat <- -2*ll0+log(n)*(2^nvar-1)
-    
+
     ## chisq
     ch <- sum((x-n*pmust)^2/(n*pmust))
-    
+
     ## P(class|pattern)
     sump <- drop(rep(1,k)%*%pas)  # column sums
     pas <- t(t(pas)/sump)
@@ -91,7 +91,7 @@ lca <- function(x, k, niter=100, matchdata=FALSE, verbose=FALSE)
 
     colnames(p) <- 1:nvar
     rownames(p) <- 1:k
-    
+
     lcaresult <- list(classprob=classprob, p=p, matching=mat,
                       logl=ll, loglsat=ll0,
                       chisq=ch, lhquot=lq, bic=bic, bicsat=bicsat, n=n,
@@ -129,7 +129,7 @@ summary.lca <- function(object, ...)
     object$classprob <- NULL
     object$p <- NULL
     object$matching <- NULL
-    
+
     class(object) <- "summary.lca"
     return(object)
 }
@@ -178,7 +178,7 @@ bootstrap.lca <- function(l, nsamples=10, lcaiter=30, verbose=FALSE)
         b[, nvar+1-i] <- rep(rep(c(0,1),c(2^(i-1),2^(i-1))),2^(nvar-i))
 
     ll <- lq <- ll0 <- ch <- numeric(nsamples)
-    
+
     for (i in 1:nsamples)
     {
         ## generate data
@@ -190,7 +190,7 @@ bootstrap.lca <- function(l, nsamples=10, lcaiter=30, verbose=FALSE)
         if (verbose)
             cat ("Start of Bootstrap Sample", i, "\n")
         lc <- lca(x, nclass, niter=lcaiter, verbose=verbose)
-        
+
         ll[i] <- lc$logl
         ll0[i] <- lc$loglsat
         lq[i] <- lc$lhquot
@@ -213,8 +213,8 @@ bootstrap.lca <- function(l, nsamples=10, lcaiter=30, verbose=FALSE)
     pzc <- 1-pnorm(zc)
     pl <- sum(l$lhquot<lq)/length(lq)
     pc <- sum(l$ch<ch)/length(ch)
-    
-    lcaboot <- list(logl=ll, loglsat=ll0, lratio=lq, 
+
+    lcaboot <- list(logl=ll, loglsat=ll0, lratio=lq,
                     lratiomean=lratm, lratiosd=lrats,
                     lratioorg=l$lhquot, zratio=zl,
                     pvalzratio=pzl, pvalratio=pl,
@@ -233,7 +233,7 @@ print.bootstrap.lca <- function(x, ...)
 
     cat ("Number of Bootstrap Samples:    ", x$nsamples, "\n")
     cat ("Number of LCA Iterations/Sample:", x$lcaiter, "\n")
-    
+
     cat("Likelihood Ratio\n\n")
     cat("Mean:", x$lratiomean, "\n")
     cat("SDev:", x$lratiosd, "\n")

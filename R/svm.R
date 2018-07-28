@@ -213,6 +213,8 @@ function (x,
         }
 
     if (type < 3 && !is.null(class.weights)) {
+        if (is.character(class.weights) && class.weights == "inverse")
+            class.weights <- 1 / table(y)
         if (is.null(names(class.weights)))
             stop("Weights have to be specified along with their according level names !")
         weightlabels <- match (names(class.weights), lev)
