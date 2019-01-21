@@ -1,4 +1,4 @@
-2c8327bc27a11692f15678277826aea4 *DESCRIPTION
+0845a0361aa1fbca74614d9db1749e98 *DESCRIPTION
 cbcf71df9d663a5ae99ba5648ea17ea2 *NAMESPACE
 dbf1fc5e33e50fbeb2b34278a62edeed *R/bclust.R
 e42d535057714da65c807409febb5be8 *R/bincombinations.R
@@ -93,7 +93,7 @@ a920400b80897304d8c7e7c861a3eabc *man/tune.control.Rd
 3e8de7ef56baf940ba9fb88d6e73617e *src/floyd.c
 3f15bfd42342c6dba3813acbc77f1821 *src/init.c
 33692de07fe24ecd4d750bc750bcf850 *src/svm.cpp
-257059055b378f7c91c4413376610f15 *src/svm.h
+229e6c1217e9900cfd0797e0a272dc9c *src/svm.h
 0cf3205810ff1e471ee07ab3d4c2bfad *tests/clustering.R
 7f8951b054765414b6c2bdf282954286 *vignettes/svm.pdf
 a8765de7db73ded2de171bada0ec3e2b *vignettes/svmdoc.Rnw
