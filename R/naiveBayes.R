@@ -19,6 +19,7 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
     ## create tables
     apriori <- table(y)
     tables <- lapply(x, est)
+    isnumeric <- sapply(x, is.numeric)
 
     ## fix dimname names
     for (i in 1:length(tables))
@@ -28,6 +29,7 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
     structure(list(apriori = apriori,
                    tables = tables,
                    levels = if (is.logical(y)) c(FALSE, TRUE) else levels(y),
+                   isnumeric = isnumeric,
                    call   = call
                    ),
 
@@ -52,7 +54,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
         if (any(attr(Terms, "order") > 1))
             stop("naiveBayes cannot handle interaction terms")
         Y <- model.extract(m, "response")
-        X <- m[,-attr(Terms, "response"), drop = FALSE]
+        X <- m[,attr(Terms, "term.labels"), drop = FALSE]
 
         return(naiveBayes(X, Y, laplace = laplace, ...))
     } else if (is.array(data)) {
@@ -61,7 +63,8 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
         Yind <- which(nam == Yname)
 
         ## Create Variable index
-        deps <- strsplit(as.character(formula)[3], ".[+].")[[1]]
+#        deps <- strsplit(as.character(formula)[3], ".[+].")[[1]]
+        deps <- labels(terms(formula, data = data))
         if (length(deps) == 1 && deps == ".")
             deps <- nam[-Yind]
         Vind <- which(nam %in% deps)
@@ -73,9 +76,13 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
                          (as.numeric(apriori) + laplace * dim(data)[i]))
         names(tables) <- nam[Vind]
 
+        isnumeric = rep(FALSE, length(Vind))
+        names(isnumeric) <- nam[Vind]
+
         structure(list(apriori = apriori,
                        tables = tables,
                        levels = names(apriori),
+                       isnumeric = isnumeric,
                        call   = call
                        ),
 
@@ -108,9 +115,13 @@ predict.naiveBayes <- function(object,
     newdata <- as.data.frame(newdata)
 
     ## fix factor levels to be identical with training data
-    for (i in names(object$tables))
-        if (!is.numeric(newdata[[i]]))
+    for (i in names(object$tables)) {
+        if (!is.null(newdata[[i]]) && !is.numeric(newdata[[i]]))
             newdata[[i]] <- factor(newdata[[i]], levels = colnames(object$tables[[i]]))
+        if (object$isnumeric[i] != is.numeric(newdata[[i]]))
+            warning(paste0("Type mismatch between training and new data for variable '", i,
+                           "'. Did you use factors with numeric labels for training, and numeric values for new data?"))
+    }
 
     attribs <- match(names(object$tables), names(newdata))
     isnumeric <- sapply(newdata, is.numeric)

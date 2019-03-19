@@ -97,13 +97,12 @@ void svm_destroy_param(struct svm_parameter *param);
 const char *svm_check_parameter(const struct svm_problem *prob, const struct svm_parameter *param);
 int svm_check_probability_model(const struct svm_model *model);
 
-// void svm_set_print_string_function(void (*print_func)(const char *));
+//void svm_set_print_string_function(void (*print_func)(const char *));
 
 #ifdef __cplusplus
 }
 #endif
 
 void svm_set_print_string_function(void (*print_func)(const char *));
-
 
 #endif /* _LIBSVM_H */

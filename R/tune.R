@@ -94,6 +94,7 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
             stop("random must be a strictly positive integer")
         if (tunecontrol$random > p) tunecontrol$random <- p
         parameters <- parameters[sample(1:p, tunecontrol$random),]
+        p <- nrow(parameters)
     }
     model.variances <- model.errors <- c()
 
