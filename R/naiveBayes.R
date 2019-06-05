@@ -54,7 +54,7 @@ naiveBayes.formula <- function(formula, data, laplace = 0, ...,
         if (any(attr(Terms, "order") > 1))
             stop("naiveBayes cannot handle interaction terms")
         Y <- model.extract(m, "response")
-        X <- m[,attr(Terms, "term.labels"), drop = FALSE]
+        X <- m[,gsub("`", "", labels(Terms)), drop = FALSE]
 
         return(naiveBayes(X, Y, laplace = laplace, ...))
     } else if (is.array(data)) {

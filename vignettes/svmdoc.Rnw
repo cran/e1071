@@ -402,7 +402,7 @@ Dual representation of models implemented:
   \begin{tabular}{|l|l|l|} \hline
     kernel            & formula & parameters \\ \hline \hline
     linear            & $\bf u^\top v$& (none) \\
-    polynomial        & $\gamma (\mathbf{u^\top v}+c_0)^d$ & $\gamma, d, c_0$\\
+    polynomial        & $(\gamma \mathbf{u^\top v}+c_0)^d$ & $\gamma, d, c_0$\\    
     radial basis fct. & $\exp\{-\gamma|\mathbf{u-v}|^2\}$&$\gamma$\\
     sigmoid           & $\tanh\{\gamma \mathbf{u^\top v}+c_0\}$ &$\gamma, c_0$\\ \hline
   \end{tabular}

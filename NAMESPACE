@@ -24,14 +24,12 @@ exportPattern("tune\\..+", "best\\..+")
 
 S3method(boxplot, bclust)
 
+S3method(coef, svm)
+
 S3method(lines, probplot)
 
 S3method(naiveBayes, default)
 S3method(naiveBayes, formula)
-
-S3method(summary, lca)
-S3method(summary, svm)
-S3method(summary, tune)
 
 S3method(plot, bclust)
 S3method(plot, ica)
@@ -53,6 +51,10 @@ S3method(print, svm)
 S3method(print, summary.svm)
 S3method(print, tune)
 S3method(print, summary.tune)
+
+S3method(summary, lca)
+S3method(summary, svm)
+S3method(summary, tune)
 
 S3method(svm, default)
 S3method(svm, formula)

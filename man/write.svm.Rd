@@ -22,7 +22,7 @@ write.svm(object, svm.file = "Rdata.svm",
 \details{
   This function is useful when SVM models trained in R shall be used in 
   other environments. The SVM model is saved in the standard format of
-  libsvm. The scaling data are written to a separate file because scaling
+  libsvm. The scaling data are written to separate files because scaling
   data are not included in the standard format of libsvm. The format
   of the scaling data file is a n times 2 matrix: the n-th row
   corresponds to the n-th dimension of the data, the columns being formed
@@ -45,15 +45,20 @@ attach(iris)
 # default with factor response:
 model <- svm (Species~., data=iris)
 
-# export SVM object to file
-write.svm(model, svm.file = "iris-classifier.svm", scale.file = "iris-classifier.scale")
+# export SVM object to (temporary) files
+svm_file <- tempfile()
+scale_file <- tempfile()
+
+write.svm(model, svm.file = svm_file, scale.file = scale_file)
 
 # read scale file
 # the n-th row is corresponding to n-th dimension. The 1st column contains the
 # center value, the 2nd column is the scale value.
+read.table(scale_file)
 
-read.table("iris-classifier.scale")
-
+# clean up
+unlink(svm_file)
+unlink(scale_file)
 }
 \keyword{neural}
 \keyword{nonlinear}

@@ -538,15 +538,16 @@ function (x, ...)
         cat("       cost: ", x$cost, "\n")
     if (x$kernel==1)
         cat("     degree: ", x$degree, "\n")
-    cat("      gamma: ", x$gamma, "\n")
+    if (x$type==1 || x$type==2 || x$type==3)
+        cat("      gamma: ", x$gamma, "\n")
     if (x$kernel==1 || x$kernel==3)
         cat("     coef.0: ", x$coef0, "\n")
     if (x$type==1 || x$type==2 || x$type==4)
         cat("         nu: ", x$nu, "\n")
     if (x$type==3) {
         cat("    epsilon: ", x$epsilon, "\n\n")
-        if (x$compprob)
-            cat("Sigma: ", x$sigma, "\n\n")
+    if (x$compprob)
+        cat("Sigma: ", x$sigma, "\n\n")
     }
 
     cat("\nNumber of Support Vectors: ", x$tot.nSV)
@@ -717,4 +718,15 @@ function (object, svm.file = "Rdata.svm", scale.file = "Rdata.scale",
         write.table(data.frame(center = object$y.scale$"scaled:center",
                                scale  = object$y.scale$"scaled:scale"),
                     file=yscale.file, col.names=FALSE, row.names=FALSE)
+}
+
+coef.svm <- function(object, ...)
+{
+    if (object$kernel != 0 || object$nclasses > 2)
+        stop("Only implemented for regression or binary classification with linear kernel.")
+    ret <- drop(crossprod(object$coefs, object$SV))
+    trm <- object$terms
+    if(!is.null(trm))
+        names(ret) <- labels(trm)
+    c(`(Intercept)` = -object$rho, ret)
 }

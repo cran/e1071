@@ -4,6 +4,7 @@
 \alias{svm.formula}
 \alias{summary.svm}
 \alias{print.summary.svm}
+\alias{coef.svm}
 \alias{print.svm}
 \title{Support Vector Machines}
 \description{
@@ -137,7 +138,11 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
   classifiers, and computes the a-posteriori class probabilities for the
   multi-class problem using quadratic optimization. The probabilistic
   regression model assumes (zero-mean) laplace-distributed errors for the
-  predictions, and estimates the scale parameter using maximum likelihood.
+  predictions, and estimates the scale parameter using maximum
+  likelihood.
+
+  For linear kernel, the coefficients of the regression/decision hyperplane
+  can be extracted using the \code{coef} method (see examples).
 }
 \note{
 Data are scaled internally, usually yielding better results.
@@ -246,14 +251,44 @@ predict (m, newdata)
 plot(X, col = 1:1000 \%in\% m$index + 1, xlim = c(-5,5), ylim=c(-5,5))
 points(newdata, pch = "+", col = 2, cex = 5)
 
-# weights: (example not particularly sensible)
+## weights: (example not particularly sensible)
 i2 <- iris
 levels(i2$Species)[3] <- "versicolor"
 summary(i2$Species)
 wts <- 100 / table(i2$Species)
 wts
 m <- svm(Species ~ ., data = i2, class.weights = wts)
+
+## extract coefficients for linear kernel
+
+# a. regression
+x <- 1:100
+y <- x + rnorm(100)
+m <- svm(y ~ x, scale = FALSE, kernel = "linear")
+coef(m)
+plot(y ~ x)
+abline(m, col = "red")
+
+# b. classification
+# transform iris data to binary problem, and scale data
+setosa <- as.factor(iris$Species == "setosa")
+iris2 = scale(iris[,-5])
+
+# fit binary C-classification model
+m <- svm(setosa ~ Petal.Width + Petal.Length,
+        data = iris2, kernel = "linear")
+
+# plot data and separating hyperplane
+plot(Petal.Length ~ Petal.Width, data = iris2, col = setosa)
+(cf <- coef(m))
+abline(-cf[1]/cf[3], -cf[2]/cf[3], col = "red")
+
+# plot margin and mark support vectors
+abline(-(cf[1] + 1)/cf[3], -cf[2]/cf[3], col = "blue")
+abline(-(cf[1] - 1)/cf[3], -cf[2]/cf[3], col = "blue")
+points(m$SV, pch = 5, cex = 2)
 }
+
 \keyword{neural}
 \keyword{nonlinear}
 \keyword{classif}
