@@ -60,7 +60,7 @@ shrinking = TRUE, cross = 0, probability = FALSE, fitted = TRUE,
     \describe{
       \item{linear:}{\eqn{u'v}{u'*v}}
       \item{polynomial:}{\eqn{(\gamma u'v + coef0)^{degree}}{(gamma*u'*v + coef0)^degree}}
-      \item{radial basis:}{\eqn{e^(-\gamma |u-v|^2)}{exp(-gamma*|u-v|^2)}}
+      \item{radial basis:}{\eqn{e^{(-\gamma |u-v|^2)}}{exp(-gamma*|u-v|^2)}}
       \item{sigmoid:}{\eqn{tanh(\gamma u'v + coef0)}{tanh(gamma*u'*v + coef0)}}
       }
     }
