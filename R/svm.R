@@ -9,7 +9,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
     if (!inherits(formula, "formula"))
         stop("method is only for formula objects")
     m <- match.call(expand.dots = FALSE)
-    if (identical(class(eval.parent(m$data)), "matrix"))
+    if (inherits(eval.parent(m$data), "matrix"))
         m$data <- as.data.frame(eval.parent(m$data))
     m$... <- NULL
     m$scale <- NULL
