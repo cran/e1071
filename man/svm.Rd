@@ -154,20 +154,20 @@ Parameters of SVM-models usually \emph{must} be tuned to yield sensible results!
     \item
       Chang, Chih-Chung and Lin, Chih-Jen:\cr
       \emph{LIBSVM: a library for Support Vector Machines}\cr
-      \url{http://www.csie.ntu.edu.tw/~cjlin/libsvm}
+      \url{https://www.csie.ntu.edu.tw/~cjlin/libsvm/}
 
      \item
       Exact formulations of models, algorithms, etc. can be found in the
       document:\cr
       Chang, Chih-Chung and Lin, Chih-Jen:\cr
       \emph{LIBSVM: a library for Support Vector Machines}\cr
-      \url{http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.ps.gz}
+      \url{https://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.ps.gz}
     
       \item
       More implementation details and speed benchmarks can be found on:
       Rong-En Fan and Pai-Hsune Chen and Chih-Jen Lin:\cr
       \emph{Working Set Selection Using the Second Order Information for Training SVM}\cr
-      \url{http://www.csie.ntu.edu.tw/~cjlin/papers/quadworkset.pdf}
+      \url{https://www.csie.ntu.edu.tw/~cjlin/papers/quadworkset.pdf}
     
   }
 }

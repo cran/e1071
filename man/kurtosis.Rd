@@ -13,10 +13,10 @@ kurtosis(x, na.rm = FALSE, type = 3)
   \item{na.rm}{a logical value indicating whether \code{NA} values
     should be stripped before the computation proceeds.}
   \item{type}{an integer between 1 and 3 selecting one of the algorithms
-    for computing skewness detailed below.}
+    for computing kurtosis detailed below.}
 }
 \details{
-  If \code{x} contains missings and these are not removed, the skewness
+  If \code{x} contains missings and these are not removed, the kurtosis
   is \code{NA}.
 
   Otherwise, write \eqn{x_i} for the non-missing elements of \code{x},

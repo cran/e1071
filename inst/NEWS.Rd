@@ -2,6 +2,14 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.7-4}{
+  \itemize{
+    \item Bug fix: "inverse" argument for class.weights argument
+    in \code{svm.default()} did not work
+  }
+}
+
+
 \section{Changes in version 1.7-2}{
   \itemize{
     \item Change license to GPL-2 OR GPL-3
