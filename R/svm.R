@@ -161,7 +161,7 @@ function (x,
                         )
                 scale <- rep(FALSE, ncol(x))
             } else {
-                xtmp <- scale(x[,scale])
+                xtmp <- scale_data_frame(x[,scale])
                 x[,scale] <- xtmp
                 x.scale <- attributes(xtmp)[c("scaled:center","scaled:scale")]
                 if (is.numeric(y) && (type > 2)) {
@@ -429,10 +429,10 @@ function (object, newdata,
 
     if (any(object$scaled))
         newdata[,object$scaled] <-
-            scale(newdata[,object$scaled, drop = FALSE],
+            scale_data_frame(newdata[,object$scaled, drop = FALSE],
                   center = object$x.scale$"scaled:center",
                   scale  = object$x.scale$"scaled:scale"
-                  )
+            )
 
     if (ncol(object$SV) != ncol(newdata))
         stop ("test data does not match model !")
@@ -587,20 +587,6 @@ function (x, ...)
     cat("\n\n")
 }
 
-scale.data.frame <-
-function(x, center = TRUE, scale = TRUE)
-{
-    i <- sapply(x, is.numeric)
-    if (ncol(x[, i, drop = FALSE])) {
-        x[, i] <- tmp <- scale.default(x[, i, drop = FALSE], na.omit(center), na.omit(scale))
-        if(center || !is.logical(center))
-            attr(x, "scaled:center")[i] <- attr(tmp, "scaled:center")
-        if(scale || !is.logical(scale))
-            attr(x, "scaled:scale")[i]  <- attr(tmp, "scaled:scale")
-    }
-    x
-}
-
 plot.svm <-
 function(x, data, formula = NULL, fill = TRUE,
          grid = 50, slice = list(), symbolPalette = palette(),
@@ -615,8 +601,8 @@ function(x, data, formula = NULL, fill = TRUE,
             stop("missing formula.")
         if (fill) {
             sub <- model.frame(formula, data)
-            xr <- seq(min(sub[, 2]), max(sub[, 2]), length = grid)
-            yr <- seq(min(sub[, 1]), max(sub[, 1]), length = grid)
+            xr <- seq(min(sub[, 2]), max(sub[, 2]), length.out = grid)
+            yr <- seq(min(sub[, 1]), max(sub[, 1]), length.out = grid)
             l <- length(slice)
             if (l < ncol(data) - 3) {
                 slnames <- names(slice)

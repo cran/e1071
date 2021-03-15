@@ -5,13 +5,17 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
     call <- match.call()
     Yname <- deparse(substitute(y))
     x <- as.data.frame(x)
-
+    if (is.logical(y))
+        y <- factor(y, levels = c("FALSE", "TRUE"))
+    
     ## estimation-function
     est <- function(var)
         if (is.numeric(var)) {
             cbind(tapply(var, y, mean, na.rm = TRUE),
                   tapply(var, y, sd, na.rm = TRUE))
         } else {
+            if (is.logical(var))
+                var <- factor(var, levels = c("FALSE", "TRUE"))
             tab <- table(y, var)
             (tab + laplace) / (rowSums(tab) + laplace * nlevels(var))
         }
@@ -28,7 +32,7 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
 
     structure(list(apriori = apriori,
                    tables = tables,
-                   levels = if (is.logical(y)) c(FALSE, TRUE) else levels(y),
+                   levels = names(apriori),
                    isnumeric = isnumeric,
                    call   = call
                    ),

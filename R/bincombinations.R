@@ -5,7 +5,7 @@ bincombinations <- function(p) {
 
   for(n in 1:p){
     retval[,n] <- rep(c(rep(0, (2^p/2^n)), rep(1, (2^p/2^n))),
-                      length=2^p)
+                      length.out = 2^p)
   }
   retval
 }

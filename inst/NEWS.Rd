@@ -2,6 +2,15 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.7-5}{
+  \itemize{
+    \item NaiveBayes: better handling od character and logical features
+    \item Added: \code{gknn()} for generalized k-Nearest Neighbours (using arbitrary proximity measures)
+    \item Added: \code{scale_data_frame()} for scaling the numeric columns of a data frame.
+  }
+}
+
+
 \section{Changes in version 1.7-4}{
   \itemize{
     \item Bug fix: "inverse" argument for class.weights argument

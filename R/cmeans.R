@@ -66,7 +66,7 @@ function(x, centers, iter.max = 100, verbose = FALSE,
         stop("Argument 'weights' has negative elements.")
     if(!any(weights > 0))
         stop("Argument 'weights' has no positive elements.")
-    weights <- rep(weights, length = xrows)
+    weights <- rep_len(weights, xrows)
     weights <- weights / sum(weights)
     
     ## <FIXME>        

@@ -1,6 +1,6 @@
 "bclust" <-
 function (x, centers = 2, iter.base = 10, minsize = 0,
-          dist.method = "euclidian", hclust.method = "average",
+          dist.method = "euclidean", hclust.method = "average",
           base.method = "kmeans", base.centers = 20, 
           verbose = TRUE, final.kmeans = FALSE, docmdscale=FALSE,
           resample=TRUE, weights=NULL, maxcluster=base.centers, ...) 
@@ -143,7 +143,7 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
     y <- rev(x$hclust$height)[x1]
     z <- abs(diff(y))
     par(mar = c(4, 4, 1, 2))
-    plot(x1, ((y - min(y))/(max(y) - min(y))), ty = "l", xlab = "", 
+    plot(x1, ((y - min(y))/(max(y) - min(y))), type = "l", xlab = "", 
          ylab = "", ylim = c(0, 1))
     lines(x2, z/sum(z), col = "grey")
     text(x2, z/sum(z), labels = as.character(x2))

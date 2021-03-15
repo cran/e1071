@@ -7,7 +7,7 @@
 \title{Bagged Clustering}
 \usage{
 bclust(x, centers=2, iter.base=10, minsize=0,
-       dist.method="euclidian",
+       dist.method="euclidean",
        hclust.method="average", base.method="kmeans",
        base.centers=20, verbose=TRUE,
        final.kmeans=FALSE, docmdscale=FALSE,
