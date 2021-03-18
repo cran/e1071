@@ -38,8 +38,8 @@ function (formula, data = NULL, ..., subset, na.action = na.pass, scale = TRUE)
 }
 
 
-gknn.default <- function(x, y, k = 1, method = NULL, 
-                         scale = TRUE, use_all = TRUE, 
+gknn.default <- function(x, y, k = 1, method = NULL,
+                         scale = TRUE, use_all = TRUE,
                          FUN = mean,
                          ...)
 {
@@ -64,16 +64,16 @@ gknn.default <- function(x, y, k = 1, method = NULL,
     )
 }
 
-predict.gknn <- function(object, newdata, 
-                         type = c("class", "votes", "prob"), 
+predict.gknn <- function(object, newdata,
+                         type = c("class", "votes", "prob"),
                          ...,
                          na.action = na.pass)
 {
     if (missing(newdata))
         return(fitted(object))
-  
+
     type = match.arg(type)
-    
+
     if (inherits(object, "gknn.formula")) {
         if(is.null(colnames(newdata)))
             colnames(newdata) <- colnames(object$x)
@@ -85,9 +85,9 @@ predict.gknn <- function(object, newdata,
         newdata <- na.action(as.matrix(newdata))
         act <- attr(newdata, "na.action")
     }
-    
+
     if (object$scaled)
-        newdata[,object$scale] <- scale(newdata[,object$scale], 
+        newdata[,object$scale] <- scale(newdata[,object$scale],
                          center = attr(object$x, "scaled:center"),
                          scale = attr(object$x, "scaled:scale")
                          )
@@ -100,15 +100,15 @@ predict.gknn <- function(object, newdata,
         if (is.numeric(lab))
             object$FUN(lab)
         else
-            switch(type, 
+            switch(type,
                    class = levels(object$y)[which.max(table(lab))],
-                   prob = proportions(table(lab)),
+                   prob = prop.table(table(lab)),
                    table(lab))
     }
     ret <- apply(d, 2, FUN)
-    if (is.matrix(ret)) 
-      t(ret) 
-    else 
+    if (is.matrix(ret))
+      t(ret)
+    else
       if (is.numeric(object$y))
           napredict(act, ret)
        else

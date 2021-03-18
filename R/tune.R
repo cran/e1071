@@ -318,7 +318,7 @@ tune.svm <- function(x, y = NULL, data = NULL, degree = NULL, gamma = NULL,
     ranges <- list(degree = degree, gamma = gamma,
                    coef0 = coef0, cost = cost, nu = nu,
                    class.weights = class.weights, epsilon = epsilon)
-    ranges[sapply(ranges, is.null)] <- NULL
+    ranges[vapply(ranges, is.null, NA)] <- NULL
     if (length(ranges) < 1)
         ranges = NULL
     modeltmp <- if (inherits(x, "formula"))
@@ -352,7 +352,7 @@ tune.nnet <- function(x, y = NULL, data = NULL,
         )
         predict.func = function(...) predict(..., type = "class")
     ranges <- list(size = size, decay = decay)
-    ranges[sapply(ranges, is.null)] <- NULL
+    ranges[vapply(ranges, is.null, NA)] <- NULL
     if (length(ranges) < 1)
         ranges = NULL
     modeltmp <- if (useFormula)
@@ -379,7 +379,7 @@ tune.randomForest <- function(x, y = NULL, data = NULL, nodesize = NULL, mtry = 
     call[[1]] <- as.symbol("best.randomForest")
     loadNamespace("randomForest")
     ranges <- list(nodesize = nodesize, mtry = mtry, ntree = ntree)
-    ranges[sapply(ranges, is.null)] <- NULL
+    ranges[vapply(ranges, is.null, NA)] <- NULL
     if (length(ranges) < 1)
         ranges = NULL
     modeltmp <- if (inherits(x, "formula"))
@@ -405,7 +405,7 @@ knn.wrapper <- function(x, y, k = 1, l = 0, ...)
 tune.knn <- function(x, y, k = NULL, l = NULL, ...) {
     loadNamespace("class")
     ranges <- list(k = k, l = l)
-    ranges[sapply(ranges, is.null)] <- NULL
+    ranges[vapply(ranges, is.null, NA)] <- NULL
     if (length(ranges) < 1)
         ranges = NULL
     tune("knn.wrapper",
@@ -438,7 +438,7 @@ tune.rpart <- function(formula, data, na.action = na.omit,
                    maxcompete=maxcompete, maxsurrogate=maxsurrogate,
                    usesurrogate=usesurrogate, xval=xval,
                    surrogatestyle=surrogatestyle, maxdepth=maxdepth)
-    ranges[sapply(ranges, is.null)] <- NULL
+    ranges[vapply(ranges, is.null, NA)] <- NULL
     if (length(ranges) < 1)
         ranges <- NULL
 

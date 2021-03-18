@@ -6,7 +6,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
     y <- if (is.na(l[[1]][1]) || length(grep(":",l[[1]][1])))
         NULL
     else
-        sapply(l, function(x) x[1])
+        vapply(l, function(x) x[1], double(1))
 
     ## x-values
     rja <- do.call("rbind",
@@ -17,7 +17,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
                           )
                    )
     ja <- as.integer(rja[,1])
-    ia <- cumsum(c(1, sapply(l, length) - !is.null(y)))
+    ia <- cumsum(c(1, vapply(l, length, integer(1)) - !is.null(y)))
 
     max.ja <- max(ja)
     dimension <- c(length(l), if (is.null(ncol)) max.ja else max(ncol, max.ja))

@@ -23,7 +23,7 @@ naiveBayes.default <- function(x, y, laplace = 0, ...) {
     ## create tables
     apriori <- table(y)
     tables <- lapply(x, est)
-    isnumeric <- sapply(x, is.numeric)
+    isnumeric <- vapply(x, is.numeric, NA)
 
     ## fix dimname names
     for (i in 1:length(tables))
@@ -128,15 +128,16 @@ predict.naiveBayes <- function(object,
     }
 
     attribs <- match(names(object$tables), names(newdata))
-    isnumeric <- sapply(newdata, is.numeric)
-    islogical <- sapply(newdata, is.logical)
+    isnumeric <- vapply(newdata, is.numeric, NA)
+    islogical <- vapply(newdata, is.logical, NA)
     newdata <- data.matrix(newdata)
-    L <- sapply(1:nrow(newdata), function(i) {
+    len <- length(object$apriori)
+    L <- vapply(seq_len(nrow(newdata)), function(i) {
         ndata <- newdata[i, ]
-        L <- log(object$apriori) + apply(log(sapply(seq_along(attribs),
+        L <- log(object$apriori) + apply(log(vapply(seq_along(attribs),
             function(v) {
                 nd <- ndata[attribs[v]]
-                if (is.na(nd)) rep(1, length(object$apriori)) else {
+                if (is.na(nd)) rep.int(1, len) else {
                   prob <- if (isnumeric[attribs[v]]) {
                     msd <- object$tables[[v]]
                     msd[, 2][msd[, 2] <= eps] <- threshold
@@ -145,7 +146,7 @@ predict.naiveBayes <- function(object,
                   prob[prob <= eps] <- threshold
                   prob
                 }
-            })), 1, sum)
+            }, double(len))), 1, sum)
         if (type == "class")
             L
         else {
@@ -153,11 +154,11 @@ predict.naiveBayes <- function(object,
             ##            L <- exp(L)
             ##            L / sum(L)
             ## instead, we use:
-            sapply(L, function(lp) {
+            vapply(L, function(lp) {
                 1/sum(exp(L - lp))
-            })
+            }, double(1))
         }
-    })
+    }, double(len))
     if (type == "class") {
         if (is.logical(object$levels))
             L[2,] > L[1,]

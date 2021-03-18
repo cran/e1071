@@ -612,7 +612,7 @@ function(x, data, formula = NULL, fill = TRUE,
                 names(slice) <- c(slnames, names[!names %in%
                                                  c(colnames(sub), slnames)])
             }
-            for (i in names(which(sapply(data, is.factor))))
+            for (i in names(which(vapply(data, is.factor, NA))))
                 if (!is.factor(slice[[i]])) {
                     levs <- levels(data[[i]])
                     lev <- if (is.character(slice[[i]])) slice[[i]] else levs[1]

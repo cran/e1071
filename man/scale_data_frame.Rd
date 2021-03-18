@@ -3,13 +3,14 @@
 \title{Scaling and Centering of Data Frames}
 \description{
   \code{scale_data_frame} centers and/or
-  scales the columns of a data frame.
+  scales the columns of a data frame (or matrix).
 }
 \usage{
 scale_data_frame(x, center = TRUE, scale = TRUE)
 }
 \arguments{
-  \item{x}{a data frame or a numeric matrix (or vector). In the latter case, the default method is used.}
+  \item{x}{a data frame or a numeric matrix (or vector). For matrices or vectors, 
+    \code{scale()} is used.}
   \item{center}{either a logical value or numeric-alike vector of length
     equal to the number of columns of \code{x}, where
     \sQuote{numeric-alike} means that \code{\link{as.numeric}(.)} will
@@ -19,13 +20,14 @@ scale_data_frame(x, center = TRUE, scale = TRUE)
 }
 \value{
   For \code{scale.default}, the centered, scaled data frame. Non-numeric columns are ignored.
+  Note that logicals are treated as 0/1-numerics to be consistent with \code{scale()}.
   The numeric centering and scalings used (if any) are returned as attributes
-  \code{"scaled:center"} and \code{"scaled:scale"}
+  \code{"scaled:center"} and \code{"scaled:scale"} - but only for the numeric/logical columns.
 }
 \details{
   The value of \code{center} determines how column centering is
   performed.  If \code{center} is a numeric-alike vector with length equal to
-  the number of columns of \code{x}, then each column of \code{x} has
+  the number of numeric/logical columns of \code{x}, then each column of \code{x} has
   the corresponding value from \code{center} subtracted from it.  If
   \code{center} is \code{TRUE} then centering is done by subtracting the
   column means (omitting \code{NA}s) of \code{x} from their
@@ -34,7 +36,7 @@ scale_data_frame(x, center = TRUE, scale = TRUE)
 
   The value of \code{scale} determines how column scaling is performed
   (after centering).  If \code{scale} is a numeric-alike vector with length
-  equal to the number of columns of \code{x}, then each column of
+  equal to the number of numeric/logiocal columns of \code{x}, then each column of
   \code{x} is divided by the corresponding value from \code{scale}.
   If \code{scale} is \code{TRUE} then scaling is done by dividing the
   (centered) columns of \code{x} by their standard deviations if

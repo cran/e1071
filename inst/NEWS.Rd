@@ -2,6 +2,13 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.7-6}{
+  \itemize{
+    \item Bugfix in \code{scale_data_frame()} - now calls \code{scale()} if x is not a data frame.
+  }
+}
+
+
 \section{Changes in version 1.7-5}{
   \itemize{
     \item NaiveBayes: better handling od character and logical features
