@@ -18,7 +18,7 @@ cshell(x, centers, iter.max=100, verbose=FALSE, dist="euclidean",
     clustering method}
   \item{m}{The degree of fuzzification. It is defined for values greater
     than \emph{1}}
-  \item{radius}{The radius of resulting clusters} 
+  \item{radius}{The radius of resulting clusters}
 }
 \description{
   The \emph{c}-shell clustering algorithm, the shell prototype-based version
@@ -79,14 +79,9 @@ cshell(x, centers, iter.max=100, verbose=FALSE, dist="euclidean",
 }
 \examples{
 ## a 2-dimensional example
-x<-rbind(matrix(rnorm(50,sd=0.3),ncol=2),
-         matrix(rnorm(50,mean=1,sd=0.3),ncol=2))
-cl<-cshell(x,2,20,verbose=TRUE,method="cshell",m=2)
+x <- rbind(matrix(rnorm(50, sd = 0.3), ncol = 2),
+           matrix(rnorm(50, mean = 1, sd=0.3), ncol = 2))
+cl <- cshell(x, 2, 20, verbose = TRUE, method = "cshell", m = 2)
 print(cl)
-
-# assign classes to some new data
-y<-rbind(matrix(rnorm(13,sd=0.3),ncol=2),
-         matrix(rnorm(13,mean=1,sd=0.3),ncol=2))
-#         ycl<-predict(cl, y, type="both")
-        }
+}
 \keyword{cluster}

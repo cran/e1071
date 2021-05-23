@@ -177,45 +177,47 @@ cshell <- function (x, centers, iter.max = 100, verbose = FALSE,
 }
 
 
-#predict.cshell <- function( clobj, x){
+## unfinished!
+##
+## predict.cshell <- function(object, newdata, ...){
 
-#  xrows<-dim(x)[1]
-#  xcols<-dim(x)[2]
-#  ncenters <- clobj$ncenters
-#  cluster <- integer(xrows)
-#  clustersize <- integer(ncenters)
-#  f <- clobj$m
-#  radius <- clobj$radius
+##  xrows<-dim(newdata)[1]
+##  xcols<-dim(newdata)[2]
+##  ncenters <- object$centers
+##  cluster <- integer(xrows)
+##  clustersize <- integer(ncenters)
+##  f <- object$m
+##  radius <- object$radius
 
-#  if(dim(clobj$centers)[2] != xcols){
-#    stop("Number of variables in cluster object and x are not the same!")
-#  }
-
-
-#  retval <- .C("cshell_assign",
-#               xrows = as.integer(xrows),
-#               xcols = as.integer(xcols),
-#               x = as.double(x),
-#               ncenters = as.integer(ncenters),
-#               centers = as.double(clobj$centers),
-#               dist = as.integer(clobj$dist-1),
-#               U = double(xrows*ncenters),
-#               f = as.double(f),
-#               radius = as.double(radius))
+##  if(dim(object$centers)[2] != xcols){
+##    stop("Number of variables in cluster object and x are not the same!")
+##  }
 
 
+##  retval <- .C("cshell_assign",
+##               xrows = as.integer(xrows),
+##               xcols = as.integer(xcols),
+##               x = as.double(newdata),
+##               ncenters = as.integer(ncenters),
+##               centers = as.double(object$centers),
+##               dist = as.integer(object$dist-1),
+##               U = double(xrows*ncenters),
+##               f = as.double(f),
+##               radius = as.double(radius))
 
-#  U <- retval$U
-#  U <- matrix(U, ncol=ncenters)
-
-#  clusterU <- apply(U,1,which.max)
-#  clustersize <- as.integer(table(clusterU))
 
 
-#  clobj$iter <- NULL
-#  clobj$cluster <- clusterU
-#  clobj$size <- retval$clustersize
-#  clobj$membership <- U
+##  U <- retval$U
+##  U <- matrix(U, ncol=ncenters)
 
-#  return(clobj)
-#}
+##  clusterU <- apply(U,1,which.max)
+##  clustersize <- as.integer(table(clusterU))
+
+
+##  object$iter <- NULL
+##  object$cluster <- clusterU
+##  object$size <- retval$clustersize
+##  object$membership <- U
+
+##  return(object)
+## }
