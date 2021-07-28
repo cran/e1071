@@ -52,7 +52,7 @@
 }
 
 \value{
-  For \code{gknn()}, an object of class \code{"gknn"} containing the data and the specified parameters. For \code{predict.gknn()}, a vector of predictions, or a matrix with votes for all classes.
+  For \code{gknn()}, an object of class \code{"gknn"} containing the data and the specified parameters. For \code{predict.gknn()}, a vector of predictions, or a matrix with votes for all classes. In case of an overall class tie, the predicted class is chosen by random.
 }
 \author{
   David Meyer (\email{David.Meyer@R-project.org})

@@ -12,7 +12,7 @@ importFrom("stats", "cmdscale", "complete.cases", "cutree",
              "terms", "time", "ts", "var", "xtabs")
 
 importFrom("proxy", "dist")
-
+importFrom("utils", "head")
 importFrom("methods", "as", "getClass", "new")
 importFrom("class", "knn", "knn1")
 if(getRversion() >= "2.5.0")

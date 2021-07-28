@@ -87,7 +87,7 @@ predict.gknn <- function(object, newdata,
     }
 
     if (object$scaled)
-        newdata[,object$scale] <- scale(newdata[,object$scale],
+        newdata[,object$scale] <- scale(newdata[,object$scale, drop = FALSE],
                          center = attr(object$x, "scaled:center"),
                          scale = attr(object$x, "scaled:scale")
                          )
@@ -95,15 +95,17 @@ predict.gknn <- function(object, newdata,
     FUN <- function(x) {
         o <- order(x)
         ks <- which(x[o][object$k] == x) ## check for ties on kth place
-        if (!object$use_all) ks <- sample(ks, 1) ## handle ties
-        lab <- object$y[c(o[1:object$k][-1], ks)]
+        if (!object$use_all) ks <- sample(c(ks, ks), 1) ## handle ties
+        lab <- object$y[c(head(o[1:object$k], -1), ks)]
         if (is.numeric(lab))
             object$FUN(lab)
-        else
+        else {
+            tab <- table(lab)
             switch(type,
-                   class = levels(object$y)[which.max(table(lab))],
-                   prob = prop.table(table(lab)),
-                   table(lab))
+                   class = levels(object$y)[sample(rep(which(tab == max(tab)), 2), 1)], ## break class tie by random
+                   prob = prop.table(tab),
+                   tab)
+        }
     }
     ret <- apply(d, 2, FUN)
     if (is.matrix(ret))
