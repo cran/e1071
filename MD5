@@ -1,4 +1,4 @@
-1f0a171034aaf225d5543c190b0a5d82 *DESCRIPTION
+aab72c5ace77b31911f51c72bf1a9f88 *DESCRIPTION
 46aa60cb9ba88bb40ce42a1532df7a5c *NAMESPACE
 e8db4b66edf88cba9f12e4b0498fb742 *R/bclust.R
 b6dce356797c9f7cb3077469773b030e *R/bincombinations.R
@@ -35,16 +35,13 @@ b591cf4a6512cf53743af5d6cd301788 *R/sparse.R
 bed8f86b4b9c45ebf4c847960b7a6824 *R/stft.R
 940c8accdd912816fda4545fd2d7b36f *R/svm.R
 c255efada482db5738a7019c9b1567d0 *R/tune.R
-c75f050069c85bdc19e6706103b81c3f *build/vignette.rds
-fb6b792a9e8e2594594fa576710065cf *cleanup
-01d04a23dccc58d5ac29e6f77a01ea11 *configure
-4563bd3d99118cc5843e6fada62bd8cd *configure.ac
-73904c0375ea0cf8a297615825f5704d *inst/NEWS.Rd
+b98af6a2c6a6b559d82e5e4679391b75 *build/vignette.rds
+ca3b1ce9426c15d5d1f297c7c4f8906d *inst/NEWS.Rd
 83303ca1cdf472b2962d78f7c04078a1 *inst/doc/svmdoc.R
 2f8a349b4f6dbbcc5ce181a81c418e55 *inst/doc/svmdoc.Rnw
-b8d25e7cab6647d7c4acefc829a5e892 *inst/doc/svmdoc.pdf
+6df5da7838b3d76b48ed4245d25da908 *inst/doc/svmdoc.pdf
 0b80939360bc7f55d1e04be24adf8872 *inst/doc/svminternals.Rnw
-3f2257ce84ec5a0fa50288e9f3eaf168 *inst/doc/svminternals.pdf
+3b71f1d83118126356881cbc939b4d9b *inst/doc/svminternals.pdf
 e7d7541d75e4ecda9570a9f8f90d2439 *man/Discrete.Rd
 e1741200d5204babfd7752fd283e03e8 *man/bclust.Rd
 168807874afed9032ae4b1732f25a73e *man/bincombinations.Rd

@@ -2,6 +2,12 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 1.7-9}{
+  \itemize{
+    \item Remove configure code testing for gcc 2.96.
+  }
+}
+
 \section{Changes in version 1.7-8}{
   \itemize{
     \item Bugfixes in \code{gknn()}: wrong behavior in case of tied k-nearest neighbors (for \code{use_all=TRUE}), and also in case of an overall class tie.
