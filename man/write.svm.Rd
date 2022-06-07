@@ -4,7 +4,7 @@
 \description{
   This function exports an SVM object (trained by \code{svm}) to two
   specified files. One is in the format that the
-  function 'svm\_load\_model' of libsvm can read. The other is for
+  function 'svm_load_model()' of libsvm can read. The other is for
   scaling data, containing a data with centers and scales for all variables.
 }
 \usage{

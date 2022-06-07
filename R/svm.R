@@ -712,7 +712,11 @@ coef.svm <- function(object, ...)
 {
     if (object$kernel != 0 || object$nclasses > 2)
         stop("Only implemented for regression or binary classification with linear kernel.")
-    ret <- drop(crossprod(object$coefs, object$SV))
+    ret <- if (inherits(object$SV, "matrix.csr")) {
+        loadNamespace("SparseM")
+        drop(crossprod(object$coefs, SparseM::as.matrix(object$SV)))
+    } else
+        drop(crossprod(object$coefs, object$SV))
     trm <- object$terms
     if(!is.null(trm))
         names(ret) <- labels(trm)
