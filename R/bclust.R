@@ -5,7 +5,7 @@ function (x, centers = 2, iter.base = 10, minsize = 0,
           verbose = TRUE, final.kmeans = FALSE, docmdscale=FALSE,
           resample=TRUE, weights=NULL, maxcluster=base.centers, ...) 
 {
-    x <- as.matrix(x)
+    x <- as.matrix(y)
     xr <- nrow(x)
     xc <- ncol(x)
     CLUSFUN <- get(base.method)
