@@ -419,6 +419,10 @@ function (object, newdata,
             newdata <- model.matrix(delete.response(terms(object)),
                                     as.data.frame(newdata))
         } else {
+            ## FIXME: would be safer, but users might provide new data with
+            ## other colnames than the training data ...
+            ## if (!is.null(colnames(newdata)))
+            ##    newdata <- newdata[,colnames(object$SV)]
             newdata <- na.action(as.matrix(newdata))
             act <- attr(newdata, "na.action")
         }
@@ -427,15 +431,15 @@ function (object, newdata,
     if (!is.null(act) && !preprocessed)
         rowns <- rowns[-act]
 
+    if (ncol(object$SV) != ncol(newdata))
+        stop ("test data does not match model !")
+
     if (any(object$scaled))
         newdata[,object$scaled] <-
             scale_data_frame(newdata[,object$scaled, drop = FALSE],
                   center = object$x.scale$"scaled:center",
                   scale  = object$x.scale$"scaled:scale"
             )
-
-    if (ncol(object$SV) != ncol(newdata))
-        stop ("test data does not match model !")
 
     ret <- .C (R_svmpredict,
                as.integer (decision.values),

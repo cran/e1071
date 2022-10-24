@@ -8,6 +8,8 @@
 \alias{best.nnet}
 \alias{tune.randomForest}
 \alias{best.randomForest}
+\alias{tune.gknn}
+\alias{best.gknn}
 \alias{tune.knn}
 \title{Convenience Tuning Wrapper Functions}
 \description{
@@ -33,6 +35,10 @@ tune.randomForest(x, y = NULL, data = NULL, nodesize = NULL,
                   mtry = NULL, ntree = NULL, ...)
 best.randomForest(x, tunecontrol = tune.control(), ...)
 
+tune.gknn(x, y = NULL, data = NULL, k = NULL, ...)
+
+best.gknn(x, tunecontrol = tune.control(), ...)
+
 tune.knn(x, y, k = NULL, l = NULL, ...) 
 
 }
@@ -45,7 +51,7 @@ tune.knn(x, y, k = NULL, l = NULL, ...)
         surrogatestyle, maxdepth}{\code{rpart} parameters.}
   \item{degree, gamma, coef0, cost, nu, class.weights, epsilon}{\code{svm}
     parameters.}
-  \item{k, l}{\code{knn} parameters.}
+  \item{k, l}{\code{(g)knn} parameters.}
   \item{mtry, nodesize, ntree}{\code{randomForest} parameters.}
   \item{size, decay, trace}{parameters passed to
     \code{nnet}.}

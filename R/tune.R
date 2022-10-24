@@ -29,7 +29,7 @@ tune.control <- function(random = FALSE,
               )
 }
 
-tune <- function(method, train.x, train.y = NULL, data = list(),
+tune <- function(METHOD, train.x, train.y = NULL, data = list(),
                  validation.x = NULL, validation.y = NULL,
                  ranges = NULL, predict.func = predict,
                  tunecontrol = tune.control(),
@@ -116,14 +116,14 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                     lapply(parameters[para.set,,drop = FALSE], unlist)
 
                 model <- if (useFormula)
-                    do.call(method, c(list(train.x,
+                    do.call(METHOD, c(list(train.x,
                                            data = data,
                                            subset = train.ind[[sample]]),
                                       pars, list(...)
                                       )
                             )
                 else
-                    do.call(method, c(list(train.x[train.ind[[sample]],],
+                    do.call(METHOD, c(list(train.x[train.ind[[sample]],],
                                            y = train.y[train.ind[[sample]]]),
                                       pars, list(...)
                                       )
@@ -177,8 +177,8 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
         lapply(parameters[best,,drop = FALSE], unlist)
     structure(list(best.parameters  = parameters[best,,drop = FALSE],
                    best.performance = model.errors[best],
-                   method           = if (!is.character(method))
-                   deparse(substitute(method)) else method,
+                   method           = if (!is.character(METHOD))
+                   deparse(substitute(METHOD)) else METHOD,
                    nparcomb         = nrow(parameters),
                    train.ind        = train.ind,
                    sampling         = switch(tunecontrol$sampling,
@@ -190,10 +190,10 @@ tune <- function(method, train.x, train.y = NULL, data = list(),
                    performances     = if (tunecontrol$performances) cbind(parameters, error = model.errors, dispersion = model.variances),
                    best.model       = if (tunecontrol$best.model) {
                        modeltmp <- if (useFormula)
-                           do.call(method, c(list(train.x, data = data),
+                           do.call(METHOD, c(list(train.x, data = data),
                                              pars, list(...)))
                        else
-                           do.call(method, c(list(x = train.x,
+                           do.call(METHOD, c(list(x = train.x,
                                                   y = train.y),
                                              pars, list(...)))
                        call[[1]] <- as.symbol("best.tune")
@@ -398,6 +398,32 @@ best.randomForest <- function(x, tunecontrol = tune.control(), ...) {
     modeltmp$call <- call
     modeltmp
 }
+
+tune.gknn <- function(x, y = NULL, data = NULL, k = NULL, ...) {
+    call <- match.call()
+    call[[1]] <- as.symbol("best.gknn")
+    ranges <- list(k = k)
+    ranges[vapply(ranges, is.null, NA)] <- NULL
+    if (length(ranges) < 1)
+        ranges = NULL
+    modeltmp <- if (inherits(x, "formula"))
+        tune("gknn", train.x = x, data = data, ranges = ranges, ...)
+    else
+        tune("gknn", train.x = x, train.y = y, ranges = ranges, ...)
+    if (!is.null(modeltmp$best.model))
+        modeltmp$best.model$call <- call
+    modeltmp
+}
+
+best.gknn <- function(x, tunecontrol = tune.control(), ...) {
+    call <- match.call()
+    tunecontrol$best.model = TRUE
+    modeltmp <- tune.gknn(x, ..., tunecontrol = tunecontrol)$best.model
+    modeltmp$call <- call
+    modeltmp
+}
+
+
 
 knn.wrapper <- function(x, y, k = 1, l = 0, ...)
     list(train = x, cl = y, k = k, l = l, ...)

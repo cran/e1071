@@ -10,13 +10,13 @@
   using a grid search over supplied parameter ranges.
 }
 \usage{
-tune(method, train.x, train.y = NULL, data = list(), validation.x =
+tune(METHOD, train.x, train.y = NULL, data = list(), validation.x =
      NULL, validation.y = NULL, ranges = NULL, predict.func = predict,
      tunecontrol = tune.control(), ...)
 best.tune(...)
 }
 \arguments{
-  \item{method}{either the function to be tuned, or a character string
+  \item{METHOD}{either the function to be tuned, or a character string
     naming such a function.}
   \item{train.x}{either a formula or a matrix of predictors.}
   \item{train.y}{the response variable if \code{train.x} is a predictor
@@ -99,11 +99,18 @@ best.tune(...)
   summary(obj2)
   plot(obj2)
 
-  ## tune `rpart' for regression, using 10-fold cross validation (default)
-  data(mtcars)
-  obj3 <- tune.rpart(mpg~., data = mtcars, minsplit = c(5,10,15))
+  ## tune `gknn' using the formula interface.
+  ## (Use Euclidean distances instead of Gower metric)
+  obj3 <- tune.gknn(Species ~ ., data = iris, k = 1:5, method = "Euclidean")
   summary(obj3)
   plot(obj3)
+  
+
+  ## tune `rpart' for regression, using 10-fold cross validation (default)
+  data(mtcars)
+  obj4 <- tune.rpart(mpg~., data = mtcars, minsplit = c(5,10,15))
+  summary(obj4)
+  plot(obj4)
 
   ## simple error estimation for lm using 10-fold cross validation
   tune(lm, mpg~., data = mtcars)
