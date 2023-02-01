@@ -1,4 +1,4 @@
-51e71c876a6bed23a1b6219f10d4091f *DESCRIPTION
+9c30463b660f5537c98f4dd0c8bc47bf *DESCRIPTION
 46aa60cb9ba88bb40ce42a1532df7a5c *NAMESPACE
 e8db4b66edf88cba9f12e4b0498fb742 *R/bclust.R
 b6dce356797c9f7cb3077469773b030e *R/bincombinations.R
@@ -35,13 +35,13 @@ b591cf4a6512cf53743af5d6cd301788 *R/sparse.R
 bed8f86b4b9c45ebf4c847960b7a6824 *R/stft.R
 9c15670dd43f6686c7b96ff038c42160 *R/svm.R
 5c6e3ee47a44caa44e5a246063cee71d *R/tune.R
-c8b39dab9a9d258be495cae4a0f06c32 *build/vignette.rds
-441746f0a40244473fcb62d8254b4bd2 *inst/NEWS.Rd
+10a9eefbb76c847df5347e336a4115b6 *build/vignette.rds
+943fc369491920f7635fd731759fd561 *inst/NEWS.Rd
 1566eb1ddca193c65c4f013736d79998 *inst/doc/svmdoc.R
 1476412446c6f1bb6ea682756b1a6261 *inst/doc/svmdoc.Rnw
-3b880f7bdcc597679671f9351359b9ef *inst/doc/svmdoc.pdf
+2cb9c819986c115007c131970d82ef63 *inst/doc/svmdoc.pdf
 0b80939360bc7f55d1e04be24adf8872 *inst/doc/svminternals.Rnw
-306ca0e0bfd0f97da922ec9ba07fbb3b *inst/doc/svminternals.pdf
+efd724382424d369d0b2cda4cb6f0ebb *inst/doc/svminternals.pdf
 e7d7541d75e4ecda9570a9f8f90d2439 *man/Discrete.Rd
 e1741200d5204babfd7752fd283e03e8 *man/bclust.Rd
 168807874afed9032ae4b1732f25a73e *man/bincombinations.Rd
