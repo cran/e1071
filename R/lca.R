@@ -208,18 +208,18 @@ bootstrap.lca <- function(l, nsamples=10, lcaiter=30, verbose=FALSE)
     chisqs <- sd(ch)
 
     zl <- (l$lhquot-lratm)/lrats
-    zc <- (l$ch-chisqm)/chisqs
+    zc <- (l$chisq-chisqm)/chisqs
     pzl <- 1-pnorm(zl)
     pzc <- 1-pnorm(zc)
     pl <- sum(l$lhquot<lq)/length(lq)
-    pc <- sum(l$ch<ch)/length(ch)
+    pc <- sum(l$chisq<ch)/length(ch)
 
     lcaboot <- list(logl=ll, loglsat=ll0, lratio=lq,
                     lratiomean=lratm, lratiosd=lrats,
                     lratioorg=l$lhquot, zratio=zl,
                     pvalzratio=pzl, pvalratio=pl,
                     chisq=ch, chisqmean=chisqm, chisqsd=chisqs,
-                    chisqorg=l$ch, zchisq=zc,
+                    chisqorg=l$chisq, zchisq=zc,
                     pvalzchisq=pzc, pvalchisq=pc,
                     nsamples=nsamples, lcaiter=lcaiter)
     class(lcaboot) <- "bootstrap.lca"

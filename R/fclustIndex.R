@@ -8,8 +8,8 @@ fclustIndex <- function ( y, x, index= "all" )
 
   gath.geva <- function (clres,x)#for m=2
     {
-      xrows <- dim(clres$me)[1]
-      xcols <- dim(clres$ce)[2]
+      xrows <- dim(clres$membership)[1]
+      xcols <- dim(clres$centers)[2]
       ncenters <- dim(clres$centers)[1]
       scatter <- array(0.0, c(xcols, xcols, ncenters))
       scatternew <- array(0.0, c(xcols, xcols, ncenters))
@@ -23,20 +23,20 @@ fclustIndex <- function ( y, x, index= "all" )
         paronomastis2 <- as.double(0)
 
         for (j in 1:xrows){
-          paronomastis <- paronomastis+clres$me[j,i]
+          paronomastis <- paronomastis+clres$membership[j,i]
 
-          diff <- x[j,]-clres$ce[i,]
-          scatternew[,,i] <- clres$me[j,i]*(t(t(diff))%*%t(diff))
+          diff <- x[j,]-clres$centers[i,]
+          scatternew[,,i] <- clres$membership[j,i]*(t(t(diff))%*%t(diff))
           scatter[,,i] <- scatter[,,i]+scatternew[,,i]
         }#xrows
         scatter[,,i] <- scatter[,,i]/paronomastis
 
 
         for (j in 1:xrows){
-          diff <- x[j,]-clres$ce[i,]
+          diff <- x[j,]-clres$centers[i,]
           control <- (t(diff)%*%solve(scatter[,,i]))%*%t(t(diff))
           if (control<1.0)
-            paronomastis2 <- paronomastis2+clres$me[j,i]
+            paronomastis2 <- paronomastis2+clres$membership[j,i]
           ##   else
           ##     cat("...")
         }#xrows
@@ -55,13 +55,13 @@ fclustIndex <- function ( y, x, index= "all" )
     }
 
   xie.beni <- function(clres){#for all m
-    xrows <- dim(clres$me)[1]
+    xrows <- dim(clres$membership)[1]
     minimum<--1
-    error <- clres$within#sd
+    error <- clres$withinerror #sd
     ncenters <- dim(clres$centers)[1]
     for (i in 1:(ncenters-1)){
       for (j in (i+1):ncenters){
-        diff<- clres$ce[i,]-clres$ce[j,]
+        diff<- clres$centers[i,]-clres$centers[j,]
         diffdist <- t(diff)%*%t(t(diff))
         if (minimum==-1)
           minimum <- diffdist
@@ -73,18 +73,18 @@ fclustIndex <- function ( y, x, index= "all" )
   }
 
   fukuyama.sugeno <- function(clres){#for all m
-    xrows <- dim(clres$me)[1]
+    xrows <- dim(clres$membership)[1]
     ncenters <-dim(clres$centers)[1]
-    error <- clres$within#sd
+    error <- clres$withinerror #sd
     k2<-as.double(0)
 
-    meancenters <- apply(clres$ce,2,mean)
+    meancenters <- apply(clres$centers,2,mean)
     for (i in 1:ncenters){
       paronomastis3 <- as.double(0)
       for (j in 1:xrows){
-        paronomastis3 <- paronomastis3+(clres$me[j,i]^2)}
+        paronomastis3 <- paronomastis3+(clres$membership[j,i]^2)}
 
-      diff <- clres$ce[i,]-meancenters
+      diff <- clres$centers[i,]-meancenters
       diffdist <- t(diff)%*%t(t(diff))
       k2 <- k2 +paronomastis3*diffdist
     }#ncenters
@@ -94,29 +94,29 @@ fclustIndex <- function ( y, x, index= "all" )
   }
 
   partition.coefficient <- function(clres){
-    xrows <- dim(clres$me)[1]
+    xrows <- dim(clres$membership)[1]
 
-    partitioncoefficient <- sum(apply(clres$me^2,1,sum))/xrows
+    partitioncoefficient <- sum(apply(clres$membership^2,1,sum))/xrows
     return(partitioncoefficient)
   }
 
   partition.entropy <- function(clres){
-    xrows <- dim(clres$me)[1]
+    xrows <- dim(clres$membership)[1]
     ncenters <- dim(clres$centers)[1]
     partitionentropy <- 0.0
     for (i in 1:xrows){
       for (k in 1:ncenters){
-        if (clres$me[i,k]!=0.0)
-          partitionentropy<- partitionentropy+(clres$me[i,k]*log(clres$me[i,k]))
+        if (clres$membership[i,k]!=0.0)
+          partitionentropy<- partitionentropy+(clres$membership[i,k]*log(clres$membership[i,k]))
       }}
     partitionentropy<-partitionentropy/((-1)*xrows)
-    ##partitionentropy <- sum(apply(clres$me*log(clres$me),1,sum))/((-1)*xrows)
+    ##partitionentropy <- sum(apply(clres$membership*log(clres$membership),1,sum))/((-1)*xrows)
     return(partitionentropy)
   }
 
   separation.index <- function(clres, x)
     {
-      xrows <- dim(clres$me)[1]
+      xrows <- dim(clres$membership)[1]
       xcols <- dim(x)[2]
       ncenters <- dim(clres$centers)[1]
       maxcluster <- double(ncenters)
@@ -124,17 +124,17 @@ fclustIndex <- function ( y, x, index= "all" )
       ##hardpartition <- matrix(0,xrows,ncenters)
 
       ##for (i in 1:xrows)
-      ## hardpartition[i,clres$cl[i]] <- 1
+      ## hardpartition[i,clres$cluster[i]] <- 1
       for (i in 1:ncenters){
-        maxcluster[i] <- max(dist(matrix(x[clres$cl==i],ncol=xcols)))
+        maxcluster[i] <- max(dist(matrix(x[clres$cluster==i],ncol=xcols)))
       }
       maxdia <- maxcluster[rev(order(maxcluster))[1]]
       for (i in 1:(ncenters-1)){
         for (j in (i+1):(ncenters)){
           for (m in 1:xrows){
-            if (clres$cl[m]==i){
+            if (clres$cluster[m]==i){
               for (l in 1:xrows){
-                if (clres$cl[l]==j){
+                if (clres$cluster[l]==j){
                   diff <- x[m,]-x[l,]
                   diffdist <- sqrt(t(diff)%*%t(t(diff)))
                   fraction <- diffdist/maxdia
@@ -150,14 +150,14 @@ fclustIndex <- function ( y, x, index= "all" )
   proportion.exponent <- function(clres)
     {
       k <- dim(clres$centers)[2]
-      xrows <- dim(clres$me)[1]
+      xrows <- dim(clres$membership)[1]
 
       bexp <- as.integer(1)
       for (j in 1:xrows){
-        greatint <- as.integer(1/max(clres$me[j,]))
+        greatint <- as.integer(1/max(clres$membership[j,]))
         aexp <- as.integer(0)
         for (l in 1:greatint){
-          aexp <- aexp + (-1)^(l+1)*(gamma(k+1)/(gamma(l+1)*gamma(k-l+1)))*(1-l*max(clres$me[j,]))^(k-1)
+          aexp <- aexp + (-1)^(l+1)*(gamma(k+1)/(gamma(l+1)*gamma(k-l+1)))*(1-l*max(clres$membership[j,]))^(k-1)
           ##if (aexp==0.0){
           ##print("aexp=0.0")
           ##print(j)
@@ -188,9 +188,9 @@ fclustIndex <- function ( y, x, index= "all" )
 
   if (any(index==1) || (index==8)){
     gd <- gath.geva(clres, x)
-    vecallindex[1] <- gd$fuzzy
-    vecallindex[2] <- gd$average
-    vecallindex[3] <- gd$partition}
+    vecallindex[1] <- gd$fuzzy.hypervolume
+    vecallindex[2] <- gd$average.partition.density
+    vecallindex[3] <- gd$partition.density}
   if (any(index==2) || (index==8))
     vecallindex[4] <- xie.beni(clres)
   if (any(index==3) || (index==8))

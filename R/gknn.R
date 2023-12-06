@@ -20,6 +20,7 @@ function (formula, data = NULL, ..., subset, na.action = na.pass, scale = TRUE)
   x <- model.matrix(Terms, m)
   y <- model.extract(m, "response")
   attr(x, "na.action") <- attr(y, "na.action") <- attr(m, "na.action")
+  attr(x, "xlevels") <- .getXlevels(Terms, m)
   if (length(scale) == 1)
     scale <- rep(scale, ncol(x))
   if (any(scale)) {
@@ -80,7 +81,8 @@ predict.gknn <- function(object, newdata,
         newdata <- na.action(newdata)
         act <- attr(newdata, "na.action")
         newdata <- model.matrix(delete.response(terms(object)),
-                                as.data.frame(newdata))
+                                as.data.frame(newdata),
+                                xlev = attr(object$x, "xlevels"))
     } else {
         newdata <- na.action(as.matrix(newdata))
         act <- attr(newdata, "na.action")

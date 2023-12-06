@@ -21,6 +21,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
     x <- model.matrix(Terms, m)
     y <- model.extract(m, "response")
     attr(x, "na.action") <- attr(y, "na.action") <- attr(m, "na.action")
+    attr(x, "xlevels") <- .getXlevels(Terms, m)
     if (length(scale) == 1)
         scale <- rep(scale, ncol(x))
     if (any(scale)) {
@@ -31,6 +32,7 @@ function (formula, data = NULL, ..., subset, na.action = na.omit, scale = TRUE)
                          )
         scale <- !attr(x, "assign") %in% remove
     }
+    class(x) <- c("svm.formula", class(x))
     ret <- svm.default (x, y, scale = scale, ..., na.action = na.action)
     ret$call <- call
     ret$call[[1]] <- as.name("svm")
@@ -91,6 +93,7 @@ function (x,
     if(is.null(epsilon)) stop(sQuote("epsilon"), " must not be NULL!")
     if(is.null(tolerance)) stop(sQuote("tolerance"), " must not be NULL!")
 
+    xlevels <- attr(x, "xlevels")
     xhold   <- if (fitted) x else NULL
     x.scale <- y.scale <- NULL
     formula <- inherits(x, "svm.formula")
@@ -137,7 +140,7 @@ function (x,
             if (is.null(y))
                 x <- na.action(x)
             else {
-                df <- na.action(data.frame(y, x))
+                df <- na.action(data.frame(y, x, check.names = FALSE))
                 y <- df[,1]
                 x <- as.matrix(df[,-1], rownames.force = TRUE)
                 nac <-
@@ -339,7 +342,8 @@ function (x,
                  t(matrix(cret$coefs[1:((cret$nclasses - 1) * cret$nr)],
                           nrow = cret$nclasses - 1,
                           byrow = TRUE)),
-                 na.action = nac
+                 na.action = nac,
+                 xlevels = xlevels
                  )
 
     ## cross-validation-results
@@ -417,7 +421,8 @@ function (object, newdata,
             newdata <- na.action(newdata)
             act <- attr(newdata, "na.action")
             newdata <- model.matrix(delete.response(terms(object)),
-                                    as.data.frame(newdata))
+                                    as.data.frame(newdata),
+                                    xlev = object$xlevels)
         } else {
             ## FIXME: would be safer, but users might provide new data with
             ## other colnames than the training data ...

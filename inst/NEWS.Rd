@@ -2,7 +2,17 @@
 \title{News for Package \pkg{e1071}}
 \newcommand{\cpkg}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in version 1.7-12}{
+\section{Changes in version 1.7-14}{
+  \itemize{
+    \item fix incomplete arguments to avoid partial matches
+    \item fix small bug in svm.cpp (\code{Rprintf()} wrongly called)
+    \item fix \code{predict.gknn()} and \code{predict.svn()} to allow
+  for \code{newdata} argument with character variables instead of
+  factors (levels are taken from original data).
+  }
+}
+
+\section{Changes in version 1.7-13}{
    \itemize{\item add ORCID ids}
 }
 

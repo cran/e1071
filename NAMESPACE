@@ -3,7 +3,8 @@ useDynLib("e1071", .registration = TRUE, .fixes = "R_")
 import(graphics)
 import(grDevices)
 
-importFrom("stats", "cmdscale", "complete.cases", "cutree",
+importFrom("stats",
+             "cmdscale", "complete.cases", "cutree", ".getXlevels",
              "delete.response", "dnorm", "fft", "fitted", "kmeans",
              "median", "model.extract", "model.frame", "model.matrix",
              "model.response", "na.fail", "na.omit", "na.pass",
