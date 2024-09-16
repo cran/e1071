@@ -59,7 +59,7 @@ for (i in 1:reps) {
   trainset  <- na.omit(Glass[-testindex,])
   
   ## svm
-  svm.model <- svm(Type ~ ., data = trainset, cost = 100, gamma = 1)
+  svm.model <- svm(Type ~ ., data = trainset, cost = 8, gamma = 0.0625)
   svm.pred  <- predict(svm.model, testset[,-10])
   tab <- classAgreement(table(svm.pred, testset[,10]))
   sv.acc[i] <- tab$diag
@@ -73,7 +73,7 @@ for (i in 1:reps) {
   rf.kap[i] <- tab$kappa
 
 }
-x <- rbind(summary(sv.acc), summary(sv.kap), summary(rf.acc), summary(rf.kap))
+x <- rbind(summary(sv.acc), summary(rf.acc), summary(sv.kap), summary(rf.kap))
 rownames <- c()
 tab <- cbind(rep(c("svm","randomForest"),2), round(x,2))
 colnames(tab)[1] <- "method"

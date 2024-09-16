@@ -35,9 +35,9 @@ matchControls(formula, data = list(), subset, contlabel = "con",
 
     The right hand side of the \code{formula} gives the variables that
     should be matched.  The matching is done using the
-    \code{\link{daisy}} distance from the \code{cluster} package, i.e.,
+    \code{\link[cluster]{daisy}} distance from the \code{cluster} package, i.e.,
     a model frame is built from the formula and used as input for
-    \code{\link{daisy}}. For each case, the nearest control is
+    \code{\link[cluster]{daisy}}. For each case, the nearest control is
     selected. If \code{replace = FALSE}, each control is used only
     once.
 }

@@ -6,7 +6,7 @@ read.matrix.csr <- function(file, fac = TRUE, ncol = NULL)
     y <- if (is.na(l[[1]][1]) || length(grep(":",l[[1]][1])))
         NULL
     else
-        vapply(l, function(x) x[1], double(1))
+        vapply(l, function(x) x[1], character(1))
 
     ## x-values
     rja <- do.call("rbind",

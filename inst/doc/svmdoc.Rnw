@@ -192,7 +192,7 @@ for (i in 1:reps) {
   trainset  <- na.omit(Glass[-testindex,])
   
   ## svm
-  svm.model <- svm(Type ~ ., data = trainset, cost = 100, gamma = 1)
+  svm.model <- svm(Type ~ ., data = trainset, cost = 8, gamma = 0.0625)
   svm.pred  <- predict(svm.model, testset[,-10])
   tab <- classAgreement(table(svm.pred, testset[,10]))
   sv.acc[i] <- tab$diag
@@ -206,7 +206,7 @@ for (i in 1:reps) {
   rf.kap[i] <- tab$kappa
 
 }
-x <- rbind(summary(sv.acc), summary(sv.kap), summary(rf.acc), summary(rf.kap))
+x <- rbind(summary(sv.acc), summary(rf.acc), summary(sv.kap), summary(rf.kap))
 rownames <- c()
 tab <- cbind(rep(c("svm","randomForest"),2), round(x,2))
 colnames(tab)[1] <- "method"
@@ -217,7 +217,7 @@ xtable(tab, label = "tab:class", caption = "Performance of \\texttt{svm()} and\
 \noindent Finally, we compare the performance of the two methods by computing the 
 respective accuracy rates and the kappa indices (as computed by \texttt{classAgreement()}
 also contained in package \pkg{e1071}). In Table \ref{tab:class}, we
-summarize the results of \Sexpr{reps} replications---Support Vector Machines show better results.
+summarize the results of \Sexpr{reps} replications---Support Vector Machines show worse results.
 
 \subsection*{Non-linear $\epsilon$-Regression}
 
@@ -277,7 +277,7 @@ xtable(rbind(svm = summary(sv.res), randomForest = summary(rf.res)),
 
 \noindent We compare the two methods by the root mean squared error (RMSE)---see Table
 \ref{tab:reg} for a summary of \Sexpr{reps} replications. 
-Again, as for classification, \texttt{svm()}
+In this case, \texttt{svm()}
 does a better job than \texttt{randomForest()}.
 
 \section*{Elements of the \texttt{svm} object}

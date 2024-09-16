@@ -8,6 +8,7 @@
 \newenvironment{smallexample}{\begin{alltt}\small}{\end{alltt}}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 %\VignetteIndexEntry{svm() internals}
 %\VignetteDepends{xtable}
